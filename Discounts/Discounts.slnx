@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/core/" />
+  <Folder Name="/src/presentation/">
+    <Project Path="Discounts.Api/Discounts.Api.csproj" />
+  </Folder>
+</Solution>
