@@ -1,6 +1,12 @@
 <Solution>
   <Folder Name="/src/" />
-  <Folder Name="/src/core/" />
+  <Folder Name="/src/core/">
+    <Project Path="Discounts.Application/Discounts.Application.csproj" Id="1e1cf9d1-8f94-48fc-9a24-c4d84f7e02df" />
+    <Project Path="Discounts.Domain/Discounts.Domain.csproj" Id="d76bf6f0-f381-426e-941f-7af7705bb5f1" />
+  </Folder>
+  <Folder Name="/src/Infrastracture/">
+    <Project Path="Discounts.Infrastracture/Discounts.Infrastracture.csproj" Id="9cc12597-0305-448b-bae3-e17b6f240358" />
+  </Folder>
   <Folder Name="/src/presentation/">
     <Project Path="Discounts.Api/Discounts.Api.csproj" />
   </Folder>
