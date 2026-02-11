@@ -1,8 +1,9 @@
-﻿using Discounts.Api.DTO.Offers;
+﻿using Discounts.Api.DTO;
 using Discounts.Application.Offers.Commands.CreateOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
-using Discounts.Application.Offers.DTO.Offer;
+using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
+using Discounts.Domain.Offers;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,31 +16,42 @@ namespace Discounts.Api.Controllers
         private readonly CreateOfferHandler _createHandler;
         private readonly GetOfferByIdHandler _getHandler;
         private readonly UpdateOfferHandler _updateHandler;
+        private readonly GetAllOffersHandler _getAllHandler;
 
-        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler)
+        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler, GetAllOffersHandler getAllHandler)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
             _updateHandler = updateHandler;
+            _getAllHandler = getAllHandler;
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<GetOfferDetailsResponse>> GetOfferById(CancellationToken token, Guid id)
+        [HttpGet]
+        public async Task<ActionResult<List<OfferListItemDto>>> GetAllOffers(CancellationToken token, [FromQuery] OfferCategory? category,
+                                                                            [FromQuery] OfferStatus? status,
+                                                                            [FromQuery] int page = 1,
+                                                                            [FromQuery] int pageSize = 20)
         {
-            var dto = await _getHandler.GetOfferById(token, new GetOfferByIdQuery(id));
-            var response = dto.Adapt<GetOfferDetailsResponse>();
+            var result = await _getAllHandler.GetAllOffers(token, new GetAllOffersQuery(category, status, page, pageSize));
+            return result;
+        }
 
-            return Ok(response);
+
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<OfferDetailsDto>> GetOfferById(CancellationToken token, Guid id)
+        {
+            var result = await _getHandler.GetOfferById(token, new GetOfferByIdQuery(id));
+            if (result == null) return NotFound();
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferRequestDto request)
+        public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferCommand command)
         {
-            var command = request.Adapt<CreateOfferCommand>();
-
             var result = await _createHandler.CreateOffer(token, command);
 
-            return Created($"{result}", new { result });
+            return CreatedAtAction(nameof(GetOfferById), new { id = result }, result);
         }
 
         [HttpPut("{id:guid}")]

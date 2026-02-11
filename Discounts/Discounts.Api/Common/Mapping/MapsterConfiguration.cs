@@ -1,13 +1,7 @@
 ﻿using Discounts.Application.Offers.Commands.CreateOffer;
-using Discounts.Application.Offers.DTO.Offer;
+using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Domain.Offers;
 using Mapster;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Discounts.Application.Common.Mapping
 {
@@ -28,11 +22,6 @@ namespace Discounts.Application.Common.Mapping
                 src.StartDate,
                 src.EndDate
             ));
-
-            TypeAdapterConfig<CreateOfferRequestDto, CreateOfferCommand>
-            .NewConfig();
-
-
         }
     }
 }
