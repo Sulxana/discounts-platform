@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Common.Exceptions;
+﻿using Azure.Core;
+using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Domain.Offers;
 using FluentValidation;
@@ -24,19 +25,28 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
             var offer = await _repository.GetOfferAsync(token, UpdateOffer.Id);
             if (offer == null) throw new NotFoundException(nameof(Offer), UpdateOffer.Id);
 
-            if (UpdateOffer.EndDate <= offer.StartDate)
-                throw new ValidationException("EndDate must be after StartDate.");
 
-            if (UpdateOffer.EndDate <= DateTime.UtcNow)
-                throw new ValidationException("EndDate must be in the future.");
 
-            if (UpdateOffer.DiscountedPrice >= offer.OriginalPrice)
+            if (UpdateOffer.DiscountedPrice.HasValue && UpdateOffer.DiscountedPrice >= offer.OriginalPrice)
                 throw new ValidationException("DiscountedPrice must be less than OriginalPrice.");
 
+            if (UpdateOffer.EndDate.HasValue)
+            {
+                if (UpdateOffer.EndDate <= offer.StartDate)
+                    throw new ValidationException("EndDate must be after StartDate.");
+
+                if (UpdateOffer.EndDate <= DateTime.UtcNow)
+                    throw new ValidationException("EndDate must be in the future.");
+            }
+
+            if (UpdateOffer.Title is null && UpdateOffer.Description is null && UpdateOffer.ImageUrl is null &&
+                !UpdateOffer.DiscountedPrice.HasValue && !UpdateOffer.EndDate.HasValue)
+            {
+                throw new ValidationException("At least one field must be provided for update.");
+            }
 
             offer.UpdateOfferFields(UpdateOffer.Title, UpdateOffer.Description, UpdateOffer.ImageUrl,
                                     UpdateOffer.DiscountedPrice, UpdateOffer.EndDate);
-
 
             //await _repository.UpdateAsync(token, offer);
             await _repository.SaveChangesAsync(token);

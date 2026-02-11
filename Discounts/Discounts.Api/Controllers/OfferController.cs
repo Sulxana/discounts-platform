@@ -1,5 +1,6 @@
 ﻿using Discounts.Api.DTO.Offers;
 using Discounts.Application.Offers.Commands.CreateOffer;
+using Discounts.Application.Offers.Commands.UpdateOffer;
 using Discounts.Application.Offers.DTO.Offer;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Mapster;
@@ -13,11 +14,13 @@ namespace Discounts.Api.Controllers
     {
         private readonly CreateOfferHandler _createHandler;
         private readonly GetOfferByIdHandler _getHandler;
+        private readonly UpdateOfferHandler _updateHandler;
 
-        public OfferController(CreateOfferHandler handler, GetOfferByIdHandler getHandler)
+        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler)
         {
-            _createHandler = handler;
+            _createHandler = createHandler;
             _getHandler = getHandler;
+            _updateHandler = updateHandler;
         }
 
         [HttpGet("{id:guid}")]
@@ -30,13 +33,22 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create(CancellationToken cancellationToken, [FromBody] CreateOfferRequestDto request)
+        public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferRequestDto request)
         {
             var command = request.Adapt<CreateOfferCommand>();
 
-            var result = await _createHandler.CreateOffer(cancellationToken, command);
+            var result = await _createHandler.CreateOffer(token, command);
 
             return Created($"{result}", new { result });
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateOffer(CancellationToken token, Guid id, [FromBody] UpdateOfferRequestDto request)
+        {
+            var command = request.Adapt<UpdateOfferCommand>();
+            command.Id = id;
+            await _updateHandler.UpdateOfferAsync(token, command);
+            return NoContent();
         }
     }
 }

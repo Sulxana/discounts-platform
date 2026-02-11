@@ -33,13 +33,22 @@
         public OfferStatus Status { get; private set; }
 
 
-        public void UpdateOfferFields(string title,string description,string? imageUrl,decimal discountedPrice,DateTime endDate)
+        public void UpdateOfferFields(string? title, string? description, string? imageUrl, decimal? discountedPrice, DateTime? endDate)
         {
-            Title = title;
-            Description = description;
-            ImageUrl = imageUrl;
-            DiscountedPrice = discountedPrice;
-            EndDate = endDate;
+            if (title is not null)
+                Title = title;
+
+            if (description is not null)
+                Description = description;
+
+            if (imageUrl is not null)
+                ImageUrl = imageUrl;
+
+            if (discountedPrice.HasValue)
+                DiscountedPrice = discountedPrice.Value;
+
+            if (endDate.HasValue)
+                EndDate = endDate.Value;
         }
 
     }
