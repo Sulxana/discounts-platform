@@ -1,21 +1,24 @@
-using Discounts.Api.Infrastracture.Extensions;
 using Discounts.Application;
 using Discounts.Application.Common.Mapping;
 using Discounts.Infrastracture;
-using Discounts.Infrastracture.Persistence.Context;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter()
+        );
+    });
 
-builder.Services.AddServices();
 builder.Services.RegisterMaps();
 builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.AddDbContext<DiscountsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(ConnectionStrings.DiscountsDb))));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -21,7 +21,9 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
             await _validator.ValidateAndThrowAsync(createOffer, token);
 
             var offer = createOffer.Adapt<Offer>();
+
             await _repository.AddAsync(token, offer);
+            await _repository.SaveChangesAsync(token);
 
             return offer.Id;
         }

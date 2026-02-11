@@ -31,7 +31,7 @@ namespace Discounts.Infrastracture.Repositories
         public async Task Add(CancellationToken token, T entity)
         {
             await _dbSet.AddAsync(entity, token);
-            await _context.SaveChangesAsync(token);
+            //await _context.SaveChangesAsync(token);
         }
 
         public async Task Update(CancellationToken token, T entity)
@@ -39,7 +39,7 @@ namespace Discounts.Infrastracture.Repositories
             if (entity == null) return;
 
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync(token);
+            //await _context.SaveChangesAsync(token);
         }
 
         public async Task Remove(CancellationToken token, T entity)
@@ -47,7 +47,7 @@ namespace Discounts.Infrastracture.Repositories
             if (entity == null) return;
 
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync(token);
+            //await _context.SaveChangesAsync(token);
         }
         public async Task Remove(CancellationToken token, params object[] key)
         {
@@ -55,7 +55,7 @@ namespace Discounts.Infrastracture.Repositories
             if (entity == null) return;
 
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync(token);
+            //await _context.SaveChangesAsync(token);
         }
 
         public async Task SaveChanges(CancellationToken token)

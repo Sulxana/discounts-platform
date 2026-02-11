@@ -15,7 +15,7 @@ namespace Discounts.Infrastracture.Repositories
             await base.Add(token, createOffer);
         }
 
-        public async Task<Offer?> GetAsync(CancellationToken token, Guid id)
+        public async Task<Offer?> GetOfferAsync(CancellationToken token, Guid id)
         {
             var offer = await base.Get(token, id);
             return offer;

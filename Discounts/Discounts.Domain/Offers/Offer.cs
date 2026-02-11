@@ -31,5 +31,16 @@
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public OfferStatus Status { get; private set; }
+
+
+        public void UpdateOfferFields(string title,string description,string? imageUrl,decimal discountedPrice,DateTime endDate)
+        {
+            Title = title;
+            Description = description;
+            ImageUrl = imageUrl;
+            DiscountedPrice = discountedPrice;
+            EndDate = endDate;
+        }
+
     }
 }

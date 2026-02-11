@@ -6,7 +6,7 @@ namespace Discounts.Application.Offers.Interfaces
     public interface IOfferRepository
     {
         Task AddAsync(CancellationToken token, Offer createOffer);
-        Task<Offer?> GetAsync(CancellationToken token,Guid id);
+        Task<Offer?> GetOfferAsync(CancellationToken token,Guid id);
         Task UpdateAsync(CancellationToken token, Offer offer);
         Task SaveChangesAsync(CancellationToken token);
 
