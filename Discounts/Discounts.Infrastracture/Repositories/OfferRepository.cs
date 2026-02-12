@@ -13,7 +13,7 @@ namespace Discounts.Infrastracture.Repositories
         {
         }
 
-        public async Task AddAsync(CancellationToken token, Offer createOffer)
+        public async Task AddOfferAsync(CancellationToken token, Offer createOffer)
         {
             await base.Add(token, createOffer);
         }
@@ -46,9 +46,18 @@ namespace Discounts.Infrastracture.Repositories
             await base.SaveChanges(token);
         }
 
-        public async Task UpdateAsync(CancellationToken token, Offer offer)
+        public async Task UpdateOfferAsync(CancellationToken token, Offer offer)
         {
             await base.Update(token, offer);
+        }
+        public async Task DeleteOfferAsync(CancellationToken token, Offer offer)
+        {
+            await base.Remove(token, offer);
+        }
+
+        public async Task DeleteOfferAsync(CancellationToken token, Guid offerId)
+        {
+            await base.Remove(token, offerId);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Discounts.Api.DTO;
 using Discounts.Application.Offers.Commands.CreateOffer;
+using Discounts.Application.Offers.Commands.DeleteOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
@@ -17,13 +18,15 @@ namespace Discounts.Api.Controllers
         private readonly GetOfferByIdHandler _getHandler;
         private readonly UpdateOfferHandler _updateHandler;
         private readonly GetAllOffersHandler _getAllHandler;
+        private readonly DeleteOfferHandler _deleteHandler;
 
-        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler, GetAllOffersHandler getAllHandler)
+        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler, GetAllOffersHandler getAllHandler, DeleteOfferHandler deleteHandler)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
             _updateHandler = updateHandler;
             _getAllHandler = getAllHandler;
+            _deleteHandler = deleteHandler;
         }
 
         [HttpGet]
@@ -60,6 +63,13 @@ namespace Discounts.Api.Controllers
             var command = request.Adapt<UpdateOfferCommand>();
             command.Id = id;
             await _updateHandler.UpdateOfferAsync(token, command);
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteOffer(CancellationToken token,Guid id)
+        {
+            await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id));
             return NoContent();
         }
     }

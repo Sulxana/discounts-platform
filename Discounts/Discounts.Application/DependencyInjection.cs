@@ -1,4 +1,5 @@
 ﻿using Discounts.Application.Offers.Commands.CreateOffer;
+using Discounts.Application.Offers.Commands.DeleteOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
@@ -16,6 +17,7 @@ namespace Discounts.Application
             services.AddScoped<GetOfferByIdHandler>();
             services.AddScoped<UpdateOfferHandler>();
             services.AddScoped<GetAllOffersHandler>();
+            services.AddScoped<DeleteOfferHandler>();
             return services;
         }
     }

@@ -6,11 +6,13 @@ namespace Discounts.Application.Offers.Interfaces
 {
     public interface IOfferRepository
     {
-        Task AddAsync(CancellationToken token, Offer createOffer);
+        Task AddOfferAsync(CancellationToken token, Offer createOffer);
         Task<Offer?> GetOfferAsync(CancellationToken token, Guid id);
         Task<List<Offer>> GetAllOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,
                                             int page, int pageSize);
-        Task UpdateAsync(CancellationToken token, Offer offer);
+        Task UpdateOfferAsync(CancellationToken token, Offer offer);
+        Task DeleteOfferAsync(CancellationToken token, Offer offer);
+        Task DeleteOfferAsync(CancellationToken token, Guid offerId);
         Task SaveChangesAsync(CancellationToken token);
 
     }

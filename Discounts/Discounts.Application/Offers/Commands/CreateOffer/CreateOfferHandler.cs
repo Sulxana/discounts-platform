@@ -22,7 +22,7 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
 
             var offer = createOffer.Adapt<Offer>();
 
-            await _repository.AddAsync(token, offer);
+            await _repository.AddOfferAsync(token, offer);
             await _repository.SaveChangesAsync(token);
 
             return offer.Id;

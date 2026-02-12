@@ -1,0 +1,27 @@
+﻿using Discounts.Application.Common.Exceptions;
+using Discounts.Application.Offers.Interfaces;
+using FluentValidation;
+
+namespace Discounts.Application.Offers.Commands.DeleteOffer
+{
+    public class DeleteOfferHandler
+    {
+        private readonly IOfferRepository _repository;
+        private readonly IValidator<DeleteOfferCommand> _validator;
+
+        public DeleteOfferHandler(IOfferRepository repository, IValidator<DeleteOfferCommand> validator)
+        {
+            _repository = repository;
+            _validator = validator;
+        }
+
+        public async Task DeleteOfferAsync(CancellationToken token, DeleteOfferCommand deleteOffer)
+        {
+            var offer = await _repository.GetOfferAsync(token, deleteOffer.Id);
+            if (offer == null) throw new NotFoundException(nameof(offer), deleteOffer.Id);
+
+            await _repository.DeleteOfferAsync(token, deleteOffer.Id);
+            await _repository.SaveChangesAsync(token);
+        }
+    }
+}
