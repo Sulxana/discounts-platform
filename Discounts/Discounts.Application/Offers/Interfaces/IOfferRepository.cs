@@ -8,7 +8,11 @@ namespace Discounts.Application.Offers.Interfaces
     {
         Task AddOfferAsync(CancellationToken token, Offer createOffer);
         Task<Offer?> GetOfferAsync(CancellationToken token, Guid id);
-        Task<List<Offer>> GetAllOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,
+        Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,
+                                            int page, int pageSize);
+        Task<List<Offer>> GetAllOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,bool Deleted,
+                                            int page, int pageSize);
+        Task<List<Offer>> GetDeletedOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,
                                             int page, int pageSize);
         Task UpdateOfferAsync(CancellationToken token, Offer offer);
         Task DeleteOfferAsync(CancellationToken token, Offer offer);

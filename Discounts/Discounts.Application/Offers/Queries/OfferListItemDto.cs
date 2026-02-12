@@ -1,6 +1,6 @@
 ﻿using Discounts.Domain.Offers;
 
-namespace Discounts.Application.Offers.Queries.GetAllOffers
+namespace Discounts.Application.Offers.Queries
 {
     public class OfferListItemDto
     {

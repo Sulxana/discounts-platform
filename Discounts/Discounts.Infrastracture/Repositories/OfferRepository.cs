@@ -18,7 +18,7 @@ namespace Discounts.Infrastracture.Repositories
             await base.Add(token, createOffer);
         }
 
-        public async Task<List<Offer>> GetAllOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status, int page, int pageSize)
+        public async Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status, int page, int pageSize)
         {
             var query = _context.Set<Offer>().AsNoTracking();
 
@@ -32,6 +32,38 @@ namespace Discounts.Infrastracture.Repositories
 
             var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
 
+            return result;
+        }
+        public async Task<List<Offer>> GetAllOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status, bool Deleted, int page, int pageSize)
+        {
+            if (Deleted)
+            {
+                var query = _context.Set<Offer>().AsNoTracking().IgnoreQueryFilters();
+
+                if (category.HasValue)
+                    query = query.Where(x => x.Category == category.Value);
+
+                if (status.HasValue)
+                    query = query.Where(x => x.Status == status.Value);
+
+                query = query.OrderByDescending(x => x.StartDate);
+
+                var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+
+                return result;
+            }
+            else
+            {
+                var result = await GetActiveOfferAsync(token, category, status, page, pageSize);
+                return result;
+            }
+
+        }
+
+        public async Task<List<Offer>> GetDeletedOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status, int page, int pageSize)
+        {
+            var result = await _dbSet.AsNoTracking().IgnoreQueryFilters()
+                .Where(x => x.IsDeleted == true).ToListAsync();
             return result;
         }
 
@@ -59,5 +91,6 @@ namespace Discounts.Infrastracture.Repositories
         {
             await base.Remove(token, offerId);
         }
+
     }
 }
