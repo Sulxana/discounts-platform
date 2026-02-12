@@ -33,18 +33,22 @@
         public OfferStatus Status { get; private set; }
         public bool IsDeleted { get; private set; }
         public DateTime? DeletedAt { get; private set; }
-
+        public string? RejectionMessage { get; private set; }
         public void MarkAsDeleted()
         {
             if (IsDeleted)
                 return;
             IsDeleted = true;
+            Status = OfferStatus.Deleted;
             DeletedAt = DateTime.UtcNow;
         }
         public void UnMarkAsDeleted()
         {
+            if (!IsDeleted)
+                return;
             IsDeleted = false;
             DeletedAt = null;
+            Status = OfferStatus.Pending;
         }
 
         public void UpdateOfferFields(string? title, string? description, string? imageUrl, decimal? discountedPrice, DateTime? endDate)
@@ -65,5 +69,28 @@
                 EndDate = endDate.Value;
         }
 
+        public void Approve()
+        {
+            if (IsDeleted || Status != OfferStatus.Pending)
+                throw new InvalidOperationException("Only pending offers can be approved.");
+
+            Status = OfferStatus.Approved;
+        }
+        public void Reject(string message)
+        {
+            if (IsDeleted || Status != OfferStatus.Pending)
+                throw new InvalidOperationException("Only pending offers can be approved.");
+
+            if (string.IsNullOrWhiteSpace(message))
+                throw new ArgumentException("Rejection reason is required.");
+            Status = OfferStatus.Rejected;
+            RejectionMessage = message;
+        }
+        public void Expire()
+        {
+            if (IsDeleted || Status != OfferStatus.Approved)
+                throw new InvalidOperationException("Only pending offers can expire.");
+            Status = OfferStatus.Expired;
+        }
     }
 }

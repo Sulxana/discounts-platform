@@ -22,7 +22,7 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
         {
             await _validator.ValidateAndThrowAsync(UpdateOffer, token);
 
-            var offer = await _repository.GetOfferAsync(token, UpdateOffer.Id);
+            var offer = await _repository.GetOfferByIdAsync(token, UpdateOffer.Id);
             if (offer == null) throw new NotFoundException(nameof(Offer), UpdateOffer.Id);
 
 
@@ -48,7 +48,7 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
             offer.UpdateOfferFields(UpdateOffer.Title, UpdateOffer.Description, UpdateOffer.ImageUrl,
                                     UpdateOffer.DiscountedPrice, UpdateOffer.EndDate);
 
-            //await _repository.UpdateAsync(token, offer);
+            await _repository.UpdateOfferAsync(token, offer);
             await _repository.SaveChangesAsync(token);
         }
     }

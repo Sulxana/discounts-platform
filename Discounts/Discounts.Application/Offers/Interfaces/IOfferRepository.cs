@@ -7,7 +7,9 @@ namespace Discounts.Application.Offers.Interfaces
     public interface IOfferRepository
     {
         Task AddOfferAsync(CancellationToken token, Offer createOffer);
-        Task<Offer?> GetOfferAsync(CancellationToken token, Guid id);
+        Task<Offer?> GetOfferByIdAsync(CancellationToken token, Guid id);
+        Task<Offer?> GetOfferForUpdateByIdAsync(CancellationToken token, Guid id);
+        Task<Offer?> GetOfferIncludingDeletedAsync(CancellationToken token, Guid id);
         Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,
                                             int page, int pageSize);
         Task<List<Offer>> GetAllOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status,bool Deleted,

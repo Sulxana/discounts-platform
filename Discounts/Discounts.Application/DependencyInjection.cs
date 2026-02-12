@@ -1,5 +1,7 @@
-﻿using Discounts.Application.Offers.Commands.CreateOffer;
+﻿using Discounts.Application.Offers.Commands.ApproveOffer;
+using Discounts.Application.Offers.Commands.CreateOffer;
 using Discounts.Application.Offers.Commands.DeleteOffer;
+using Discounts.Application.Offers.Commands.RejectOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
@@ -22,6 +24,8 @@ namespace Discounts.Application
             services.AddScoped<GetActiveOffersHandler>();
             services.AddScoped<GetDeletedOffersHandler>();
             services.AddScoped<DeleteOfferHandler>();
+            services.AddScoped<ApproveOfferHandler>();
+            services.AddScoped<RejectOfferHandler>();
             return services;
         }
     }

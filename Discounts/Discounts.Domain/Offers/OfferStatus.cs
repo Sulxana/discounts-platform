@@ -3,8 +3,9 @@
     public enum OfferStatus
     {
         Pending,
-        Approwed,
+        Approved,
         Rejected,
-        Expired
+        Expired,
+        Deleted
     }
 }

@@ -12,5 +12,7 @@ namespace Discounts.Application.Offers.Queries
         public int RemainingCoupons { get; init; }
         public DateTime EndDate { get; init; }
         public OfferStatus Status { get; init; }
+        public string? RejectionMessage { get; init; }
+        
     }
 }

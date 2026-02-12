@@ -62,15 +62,38 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task<List<Offer>> GetDeletedOfferAsync(CancellationToken token, OfferCategory? category, OfferStatus? status, int page, int pageSize)
         {
-            var result = await _dbSet.AsNoTracking().IgnoreQueryFilters()
-                .Where(x => x.IsDeleted == true).ToListAsync();
+            var query = _dbSet.AsNoTracking().IgnoreQueryFilters().Where(x => x.IsDeleted == true);
+
+            if (category.HasValue)
+                query = query.Where(x => x.Category == category.Value);
+
+            if (status.HasValue)
+                query = query.Where(x => x.Status == status.Value);
+
+            query = query.OrderByDescending(x => x.DeletedAt);
+
+            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
             return result;
         }
 
-        public async Task<Offer?> GetOfferAsync(CancellationToken token, Guid id)
+        public async Task<Offer?> GetOfferByIdAsync(CancellationToken token, Guid id)
         {
-            var offer = await base.Get(token, id);
-            return offer;
+            //var offer = await base.Get(token, id);
+
+            return await _dbSet.AsNoTracking()
+                .FirstOrDefaultAsync(o => o.Id == id, token);
+        }
+        public async Task<Offer?> GetOfferIncludingDeletedAsync(CancellationToken token, Guid id)
+        {
+            return await _dbSet
+                .IgnoreQueryFilters()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(o => o.Id == id, token);
+        }
+        public async Task<Offer?> GetOfferForUpdateByIdAsync(CancellationToken token, Guid id)
+        {
+            return await _dbSet
+                .FirstOrDefaultAsync(o => o.Id == id, token); // AsNoTracking
         }
 
         public async Task SaveChangesAsync(CancellationToken token)

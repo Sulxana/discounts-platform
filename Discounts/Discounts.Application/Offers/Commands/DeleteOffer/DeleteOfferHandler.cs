@@ -18,7 +18,7 @@ namespace Discounts.Application.Offers.Commands.DeleteOffer
 
         public async Task DeleteOfferAsync(CancellationToken token, DeleteOfferCommand deleteOffer)
         {
-            var offer = await _repository.GetOfferAsync(token, deleteOffer.Id);
+            var offer = await _repository.GetOfferByIdAsync(token, deleteOffer.Id);
             if (offer == null) throw new NotFoundException(nameof(Offer), deleteOffer.Id);
 
             //await _repository.DeleteOfferAsync(token, offer);

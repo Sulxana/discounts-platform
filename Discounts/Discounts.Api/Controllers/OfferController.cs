@@ -21,8 +21,7 @@ namespace Discounts.Api.Controllers
         private readonly GetOfferByIdHandler _getHandler;
         private readonly UpdateOfferHandler _updateHandler;
         private readonly GetActiveOffersHandler _getActiveHandler;
-        private readonly GetAllOffersHandler _getAllHandler;
-        private readonly GetDeletedOffersHandler _getDeletedHandler;
+        
         private readonly DeleteOfferHandler _deleteHandler;
 
         public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler, GetActiveOffersHandler getActiveHandler, GetAllOffersHandler getAllHandler, GetDeletedOffersHandler getDeletedHandler, DeleteOfferHandler deleteHandler)
@@ -31,8 +30,6 @@ namespace Discounts.Api.Controllers
             _getHandler = getHandler;
             _updateHandler = updateHandler;
             _getActiveHandler = getActiveHandler;
-            _getAllHandler = getAllHandler;
-            _getDeletedHandler = getDeletedHandler;
             _deleteHandler = deleteHandler;
         }
 
@@ -46,25 +43,6 @@ namespace Discounts.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("AllOffers")]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetAllOffers(CancellationToken token, [FromQuery] OfferCategory? category,
-                                                                            [FromQuery] OfferStatus? status, [FromQuery] bool deleted,
-                                                                            [FromQuery] int page = 1,
-                                                                            [FromQuery] int pageSize = 20)
-        {
-            var result = await _getAllHandler.GetAllOffers(token, new GetAllOffersQuery(category, status, deleted, page, pageSize));
-            return Ok(result);
-        }
-
-        [HttpGet("DeletedOffers")]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetDeletedOffers(CancellationToken token, [FromQuery] OfferCategory? category,
-                                                                            [FromQuery] OfferStatus? status,
-                                                                            [FromQuery] int page = 1,
-                                                                            [FromQuery] int pageSize = 20)
-        {
-            var result = await _getDeletedHandler.GetDeletedOffers(token, new GetDeletedOffersQuery(category, status, page, pageSize));
-            return Ok(result);
-        }
 
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<OfferDetailsDto>> GetOfferById(CancellationToken token, Guid id)
