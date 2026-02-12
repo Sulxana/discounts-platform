@@ -31,7 +31,21 @@
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public OfferStatus Status { get; private set; }
+        public bool IsDeleted { get; private set; }
+        public DateTime? DeletedAt { get; private set; }
 
+        public void MarkAsDeleted()
+        {
+            if (IsDeleted)
+                return;
+            IsDeleted = true;
+            DeletedAt = DateTime.UtcNow;
+        }
+        public void UnMarkAsDeleted()
+        {
+            IsDeleted = false;
+            DeletedAt = null;
+        }
 
         public void UpdateOfferFields(string? title, string? description, string? imageUrl, decimal? discountedPrice, DateTime? endDate)
         {

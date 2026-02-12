@@ -20,7 +20,8 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.Property(x => x.StartDate).IsRequired();
             builder.Property(x => x.EndDate).IsRequired();
             builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
-
+            builder.Property(x => x.IsDeleted).IsRequired().HasDefaultValue(false);
+            builder.Property(x => x.DeletedAt).IsRequired(false);
             builder.HasIndex(x => x.Status);
             builder.HasIndex(x => x.EndDate);
             builder.HasIndex(x => new { x.Status, x.Category, x.EndDate });

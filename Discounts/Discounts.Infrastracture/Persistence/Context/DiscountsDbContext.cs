@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Discounts.Domain.Offers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discounts.Infrastracture.Persistence.Context
 {
@@ -13,6 +14,7 @@ namespace Discounts.Infrastracture.Persistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Offer>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DiscountsDbContext).Assembly);
         }
 

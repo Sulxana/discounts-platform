@@ -1,5 +1,6 @@
 ﻿using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Offers.Interfaces;
+using Discounts.Domain.Offers;
 using FluentValidation;
 
 namespace Discounts.Application.Offers.Commands.DeleteOffer
@@ -18,9 +19,11 @@ namespace Discounts.Application.Offers.Commands.DeleteOffer
         public async Task DeleteOfferAsync(CancellationToken token, DeleteOfferCommand deleteOffer)
         {
             var offer = await _repository.GetOfferAsync(token, deleteOffer.Id);
-            if (offer == null) throw new NotFoundException(nameof(offer), deleteOffer.Id);
+            if (offer == null) throw new NotFoundException(nameof(Offer), deleteOffer.Id);
 
-            await _repository.DeleteOfferAsync(token, deleteOffer.Id);
+            //await _repository.DeleteOfferAsync(token, offer);
+
+            offer.MarkAsDeleted();
             await _repository.SaveChangesAsync(token);
         }
     }
