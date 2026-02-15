@@ -13,7 +13,7 @@ namespace Discounts.Infrastracture.Identity
             _userManager = userManager;
         }
 
-        public async Task<(bool IsSuccess, string? Error, Guid UserId)> CreateUserAsync(string email, string password, string firstName, string lastName)
+        public async Task<(bool IsSuccess, string? Error, Guid UserId)> CreateUserAsync(string email, string password, string firstName, string lastName, string role)
         {
             var user = new ApplicationUser
             {
@@ -31,7 +31,7 @@ namespace Discounts.Infrastracture.Identity
                 return (false, string.Join(", ", create.Errors.Select(e => e.Description)), Guid.Empty);
             }
 
-            var roleResult = await _userManager.AddToRoleAsync(user, Roles.Customer);
+            var roleResult = await _userManager.AddToRoleAsync(user, role);
             if (!roleResult.Succeeded)
             {
                 return (false, string.Join(", ", roleResult.Errors.Select(e => e.Description)), Guid.Empty);

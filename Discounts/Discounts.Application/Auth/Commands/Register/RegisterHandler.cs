@@ -29,7 +29,7 @@ namespace Discounts.Application.Auth.Commands.Register
         {
             await _validator.ValidateAndThrowAsync(command, token);
 
-            var (isSuccess, error, userId) = await _identityService.CreateUserAsync(command.Email, command.Password, command.FirstName, command.LastName);
+            var (isSuccess, error, userId) = await _identityService.CreateUserAsync(command.Email, command.Password, command.FirstName, command.LastName, command.Role);
             
             if (!isSuccess)
             {
