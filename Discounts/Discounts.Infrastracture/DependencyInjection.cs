@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Offers.Interfaces;
+﻿using Discounts.Application.Auth;
+using Discounts.Application.Offers.Interfaces;
 using Discounts.Infrastracture.Auth;
 using Discounts.Infrastracture.Persistence.Context;
 using Discounts.Infrastracture.Repositories;
@@ -24,6 +25,7 @@ namespace Discounts.Infrastracture
                 .ValidateOnStart();
 
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

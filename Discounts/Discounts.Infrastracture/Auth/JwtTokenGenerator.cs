@@ -16,7 +16,7 @@ namespace Discounts.Infrastracture.Auth
             _settings = options.Value;
         }
 
-        public (string Token, string JwtId, DateTime ExpiresAtUtc) GenerateAccessToken(Guid userId, string? email, IReadOnlyCollection<string> roles)
+        public (string Token, string JwtId, DateTime ExpiresAtUtc) GenerateAccessToken(Guid userId, string? email, IList<string> roles)
         {
             var jwtId = new Guid().ToString("N");
             var expiresAt = DateTime.UtcNow.AddMinutes(_settings.AccessTokenMinutes);
