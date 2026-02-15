@@ -1,4 +1,5 @@
 ﻿using Discounts.Domain.Offers;
+using Discounts.Domain.Auth;
 using Discounts.Infrastracture.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

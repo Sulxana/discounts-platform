@@ -3,6 +3,10 @@ using Discounts.Application.Offers.Commands.CreateOffer;
 using Discounts.Application.Offers.Commands.DeleteOffer;
 using Discounts.Application.Offers.Commands.RejectOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
+using Discounts.Application.Auth.Commands.Register;
+using Discounts.Application.Auth.Commands.Login;
+using Discounts.Application.Auth.Commands.RefreshTokens;
+using Discounts.Application.Auth.Commands.Revoke;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
@@ -26,6 +30,11 @@ namespace Discounts.Application
             services.AddScoped<DeleteOfferHandler>();
             services.AddScoped<ApproveOfferHandler>();
             services.AddScoped<RejectOfferHandler>();
+
+            services.AddScoped<RegisterHandler>();
+            services.AddScoped<LoginHandler>();
+            services.AddScoped<RefreshTokenHandler>();
+            services.AddScoped<RevokeHandler>();
             return services;
         }
     }

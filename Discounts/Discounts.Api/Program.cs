@@ -2,8 +2,12 @@ using Discounts.Api.Infrastracture.Extensions;
 using Discounts.Application;
 using Discounts.Application.Common.Mapping;
 using Discounts.Infrastracture;
+using Discounts.Application.Common.Security;
 using Discounts.Infrastracture.Auth;
+using Discounts.Infrastracture.Identity;
+using Discounts.Infrastracture.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -25,6 +29,12 @@ builder.Services.RegisterMaps();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApiServices();
+
+builder.Services
+    .AddOptions<JwtSettings>()
+    .Bind(builder.Configuration.GetSection("JwtSettings"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -73,5 +83,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+    await IdentitySeeder.SeedAsync(userManager, roleManager);
+}
 
 app.Run();

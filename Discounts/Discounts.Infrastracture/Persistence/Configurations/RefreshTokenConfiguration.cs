@@ -1,4 +1,5 @@
 ﻿using Discounts.Infrastracture.Identity;
+using Discounts.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,7 +17,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.HasIndex(x => x.TokenHash).IsUnique();
             builder.HasIndex(x => x.UserId);
 
-            builder.HasOne(r => r.User).WithMany(u => u.RefreshTokens).HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne<ApplicationUser>().WithMany(u => u.RefreshTokens).HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

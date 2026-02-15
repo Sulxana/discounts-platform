@@ -1,5 +1,7 @@
 ﻿using Discounts.Application.Auth;
+using Discounts.Application.Auth.Interfaces;
 using Discounts.Application.Common.Interfaces;
+using Discounts.Application.Common.Security;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Infrastracture.Auth;
 using Discounts.Infrastracture.Identity;
@@ -31,13 +33,21 @@ namespace Discounts.Infrastracture
             services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.User.RequireUniqueEmail = true;
+
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = false;
             })
-                .AddRoles<IdentityRole<Guid>>()               
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<DiscountsDbContext>()
+                .AddSignInManager()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
 
             return services;
         }

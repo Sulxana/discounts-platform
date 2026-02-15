@@ -1,4 +1,4 @@
-﻿namespace Discounts.Infrastracture.Auth
+namespace Discounts.Application.Common.Interfaces
 {
     public interface IJwtTokenGenerator
     {
@@ -7,4 +7,3 @@
         string GenerateRefreshToken();
     }
 }
-    

@@ -171,7 +171,7 @@ namespace Discounts.Infrastracture.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Discounts.Infrastracture.Identity.RefreshToken", b =>
+            modelBuilder.Entity("Discounts.Domain.Auth.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

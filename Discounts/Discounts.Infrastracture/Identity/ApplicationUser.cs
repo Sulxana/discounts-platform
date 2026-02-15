@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Discounts.Domain.Auth;
+using Microsoft.AspNetCore.Identity;
 
 namespace Discounts.Infrastracture.Identity
 {
