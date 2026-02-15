@@ -7,6 +7,10 @@ using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Login;
 using Discounts.Application.Auth.Commands.RefreshTokens;
 using Discounts.Application.Auth.Commands.Revoke;
+using Discounts.Application.Auth.Queries.WhoAmI;
+using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
+using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
+using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
@@ -35,6 +39,11 @@ namespace Discounts.Application
             services.AddScoped<LoginHandler>();
             services.AddScoped<RefreshTokenHandler>();
             services.AddScoped<RevokeHandler>();
+            services.AddScoped<WhoAmIHandler>();
+
+            services.AddScoped<ApplyMerchantHandler>();
+            services.AddScoped<ApproveMerchantApplicationHandler>();
+            services.AddScoped<RejectMerchantApplicationHandler>();
             return services;
         }
     }

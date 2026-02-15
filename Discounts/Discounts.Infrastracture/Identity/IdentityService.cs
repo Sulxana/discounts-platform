@@ -77,5 +77,35 @@ namespace Discounts.Infrastracture.Identity
             var user = await _userManager.FindByEmailAsync(email);
             return user != null;
         }
+
+        public async Task AddRoleAsync(Guid userId, string role)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with ID {userId} not found.");
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException($"Failed to add role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        public async Task RemoveRoleAsync(Guid userId, string role)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with ID {userId} not found.");
+            }
+
+            var result = await _userManager.RemoveFromRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException($"Failed to remove role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+        }
     }
 }

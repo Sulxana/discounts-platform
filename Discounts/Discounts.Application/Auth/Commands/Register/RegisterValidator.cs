@@ -16,10 +16,6 @@ namespace Discounts.Application.Auth.Commands.Register
             
             RuleFor(x => x.FirstName).NotEmpty();
             RuleFor(x => x.LastName).NotEmpty();
-            
-            RuleFor(x => x.Role)
-                .Must(role => role == Roles.Customer || role == Roles.Merchant)
-                .WithMessage("Role must be either 'Customer' or 'Merchant'.");
         }
     }
 }

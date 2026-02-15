@@ -2,6 +2,7 @@ using Discounts.Application.Auth.Commands.Login;
 using Discounts.Application.Auth.Commands.RefreshTokens;
 using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Revoke;
+using Discounts.Application.Auth.Queries.WhoAmI;
 using Discounts.Application.Auth.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,15 @@ namespace Discounts.Api.Controllers
         private readonly LoginHandler _loginHandler;
         private readonly RefreshTokenHandler _refreshTokenHandler;
         private readonly RevokeHandler _revokeHandler;
+        private readonly WhoAmIHandler _whoAmIHandler;
 
-        public AuthController(RegisterHandler registerHandler, LoginHandler loginHandler, RefreshTokenHandler refreshTokenHandler, RevokeHandler revokeHandler)
+        public AuthController(RegisterHandler registerHandler, LoginHandler loginHandler, RefreshTokenHandler refreshTokenHandler, RevokeHandler revokeHandler, WhoAmIHandler whoAmIHandler)
         {
             _registerHandler = registerHandler;
             _loginHandler = loginHandler;
             _refreshTokenHandler = refreshTokenHandler;
             _revokeHandler = revokeHandler;
+            _whoAmIHandler = whoAmIHandler;
         }
 
         [HttpPost("register")]
@@ -52,6 +55,14 @@ namespace Discounts.Api.Controllers
         {
             await _revokeHandler.RevokeToken(command, token);
             return NoContent();
+        }
+
+        [HttpGet("whoami")]
+        [Authorize]
+        public async Task<ActionResult<WhoAmIResponse>> WhoAmI(CancellationToken token)
+        {
+            var result = await _whoAmIHandler.Handle(new WhoAmIQuery(), token);
+            return Ok(result);
         }
     }
 }

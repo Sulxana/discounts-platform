@@ -8,5 +8,7 @@ namespace Discounts.Application.Common.Interfaces
         
         Task<bool> UserExistsAsync(string email);
         Task<IList<string>> GetUserRolesAsync(Guid userId);
+        Task AddRoleAsync(Guid userId, string role);
+        Task RemoveRoleAsync(Guid userId, string role);
     }
 }

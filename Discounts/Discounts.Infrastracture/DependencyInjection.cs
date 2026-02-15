@@ -1,12 +1,13 @@
-﻿using Discounts.Application.Auth;
-using Discounts.Application.Auth.Interfaces;
+﻿using Discounts.Application.Auth.Interfaces;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
 using Discounts.Application.Offers.Interfaces;
+using Discounts.Application.MerchantApplications.Interfaces;
 using Discounts.Infrastracture.Auth;
 using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Persistence.Context;
 using Discounts.Infrastracture.Repositories;
+using Discounts.Infrastracture.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Discounts.Infrastracture
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
             services.AddScoped<IOfferRepository, OfferRepository>();
+            services.AddScoped<IMerchantApplicationRepository, MerchantApplicationRepository>();
 
             services.AddDbContext<DiscountsDbContext>(options => options.UseSqlServer(config.GetConnectionString(nameof(ConnectionStrings.DiscountsDb))));
 
