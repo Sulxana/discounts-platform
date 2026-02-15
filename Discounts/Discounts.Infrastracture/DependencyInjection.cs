@@ -1,8 +1,11 @@
 ﻿using Discounts.Application.Auth;
+using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Infrastracture.Auth;
+using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Persistence.Context;
 using Discounts.Infrastracture.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +26,15 @@ namespace Discounts.Infrastracture
                 s.AccessTokenMinutes > 0 && s.RefreshTokenDays > 0,
                 "Invalid Jwt settings. Ensure Secret is 32+ chars, Issuer/Audience set, and durations > 0.")
                 .ValidateOnStart();
+
+            // Identity (USERS And ROLES)
+            services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            })
+                .AddRoles<IdentityRole<Guid>>()               
+                .AddEntityFrameworkStores<DiscountsDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IAuthService, AuthService>();

@@ -21,8 +21,4 @@
 		<ProjectReference Include="..\Discounts.Infrastracture\Discounts.Infrastracture.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Infrastracture\Extensions\" />
-	</ItemGroup>
-
 </Project>

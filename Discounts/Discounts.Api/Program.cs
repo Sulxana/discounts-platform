@@ -1,3 +1,4 @@
+using Discounts.Api.Infrastracture.Extensions;
 using Discounts.Application;
 using Discounts.Application.Common.Mapping;
 using Discounts.Infrastracture;
@@ -23,7 +24,7 @@ builder.Services.AddControllers()
 builder.Services.RegisterMaps();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.AddApiServices();
 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -47,7 +48,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret)),
 
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromSeconds(30)
+            ClockSkew = TimeSpan.FromSeconds(30),
+
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role
+
         };
     });
 
