@@ -3,6 +3,7 @@ using Discounts.Application.Auth.Commands.RefreshTokens;
 using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Revoke;
 using Discounts.Application.Auth.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
@@ -46,6 +47,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpPost("revoke")]
+        [Authorize]
         public async Task<IActionResult> Revoke(CancellationToken token, [FromBody] RevokeCommand command)
         {
             await _revokeHandler.RevokeToken(command, token);

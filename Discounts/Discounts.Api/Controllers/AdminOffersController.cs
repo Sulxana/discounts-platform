@@ -5,7 +5,8 @@ using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Domain.Offers;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Discounts.Application.Common.Security;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,6 +14,7 @@ namespace Discounts.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = Roles.Administrator)]
     public class AdminOffersController : ControllerBase
     {
         private readonly GetAllOffersHandler _getAllHandler;

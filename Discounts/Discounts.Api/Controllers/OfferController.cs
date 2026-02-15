@@ -9,6 +9,8 @@ using Discounts.Application.Offers.Queries.GetDeletedOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Domain.Offers;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
+using Discounts.Application.Common.Security;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
@@ -24,7 +26,7 @@ namespace Discounts.Api.Controllers
         
         private readonly DeleteOfferHandler _deleteHandler;
 
-        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler, GetActiveOffersHandler getActiveHandler, GetAllOffersHandler getAllHandler, GetDeletedOffersHandler getDeletedHandler, DeleteOfferHandler deleteHandler)
+        public OfferController(CreateOfferHandler createHandler, GetOfferByIdHandler getHandler, UpdateOfferHandler updateHandler, GetActiveOffersHandler getActiveHandler, DeleteOfferHandler deleteHandler)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
@@ -34,6 +36,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpGet("ActiveOffers")]
+        [Authorize(Roles = Roles.Customer + "," + Roles.Merchant)]
         public async Task<ActionResult<List<OfferListItemDto>>> GetActiveOffers(CancellationToken token, [FromQuery] OfferCategory? category,
                                                                             [FromQuery] OfferStatus? status,
                                                                             [FromQuery] int page = 1,
@@ -45,6 +48,7 @@ namespace Discounts.Api.Controllers
 
 
         [HttpGet("{id:guid}")]
+        [Authorize(Roles = Roles.Customer + "," + Roles.Merchant)]
         public async Task<ActionResult<OfferDetailsDto>> GetOfferById(CancellationToken token, Guid id)
         {
             var result = await _getHandler.GetOfferById(token, new GetOfferByIdQuery(id));
@@ -54,6 +58,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Merchant)]
         public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferCommand command)
         {
             var result = await _createHandler.CreateOffer(token, command);
@@ -62,6 +67,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = Roles.Merchant)]
         public async Task<IActionResult> UpdateOffer(CancellationToken token, Guid id, [FromBody] UpdateOfferRequestDto request)
         {
             var command = request.Adapt<UpdateOfferCommand>();
@@ -71,6 +77,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = Roles.Merchant)]
         public async Task<IActionResult> DeleteOffer(CancellationToken token, Guid id)
         {
             await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id));
