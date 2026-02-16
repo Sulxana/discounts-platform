@@ -8,6 +8,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Offer> builder)
         {
+            builder.ToTable("Offer");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Title).IsRequired().HasMaxLength(50);
             builder.Property(x => x.Description).IsRequired().HasMaxLength(200);
@@ -23,6 +24,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.Property(x => x.IsDeleted).IsRequired().HasDefaultValue(false);
             builder.Property(x => x.DeletedAt).IsRequired(false);
             builder.Property(x => x.RejectionMessage).IsRequired(false);
+            builder.Property(x => x.RowVersion).IsRowVersion();
 
             builder.HasIndex(x => x.Status);
             builder.HasIndex(x => x.EndDate);

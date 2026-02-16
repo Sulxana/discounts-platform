@@ -34,6 +34,8 @@
         public bool IsDeleted { get; private set; }
         public DateTime? DeletedAt { get; private set; }
         public string? RejectionMessage { get; private set; }
+        public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+
         public void MarkAsDeleted()
         {
             if (IsDeleted)
@@ -91,6 +93,30 @@
             if (IsDeleted || Status != OfferStatus.Approved)
                 throw new InvalidOperationException("Only pending offers can expire.");
             Status = OfferStatus.Expired;
+        }
+
+        public void DecreaseStock(int num = 1)
+        {
+            if (IsDeleted || Status != OfferStatus.Approved)
+                throw new InvalidOperationException("Offer is deleted or not approved");
+
+            if (num < 1)
+                    throw new ArgumentException("Entered quantity must be positive number.");
+
+            if (RemainingCoupons < num)
+                throw new ArgumentOutOfRangeException("There are not enough coupons");
+
+            RemainingCoupons -= num;
+        }
+
+        public void IncreaseStock(int num = 1)
+        {
+            if (num < 1)
+                throw new ArgumentException("Entered quantity must be positive number.");
+
+            RemainingCoupons = Math.Min(TotalCoupons, RemainingCoupons + num);
+
+            RemainingCoupons += num;
         }
     }
 }

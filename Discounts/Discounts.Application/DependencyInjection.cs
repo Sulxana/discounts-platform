@@ -1,21 +1,24 @@
-﻿using Discounts.Application.Offers.Commands.ApproveOffer;
-using Discounts.Application.Offers.Commands.CreateOffer;
-using Discounts.Application.Offers.Commands.DeleteOffer;
-using Discounts.Application.Offers.Commands.RejectOffer;
-using Discounts.Application.Offers.Commands.UpdateOffer;
-using Discounts.Application.Auth.Commands.Register;
-using Discounts.Application.Auth.Commands.Login;
+﻿using Discounts.Application.Auth.Commands.Login;
 using Discounts.Application.Auth.Commands.RefreshTokens;
+using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Revoke;
 using Discounts.Application.Auth.Queries.WhoAmI;
 using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
 using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
+using Discounts.Application.Offers.Commands.ApproveOffer;
+using Discounts.Application.Offers.Commands.CreateOffer;
+using Discounts.Application.Offers.Commands.DeleteOffer;
+using Discounts.Application.Offers.Commands.RejectOffer;
+using Discounts.Application.Offers.Commands.UpdateOffer;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
+using Discounts.Application.Reservations.Commands.CancelReservation;
+using Discounts.Application.Reservations.Commands.CreateReservation;
+using Discounts.Application.Reservations.Queries.GetUserReservations;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -46,6 +49,11 @@ namespace Discounts.Application
             services.AddScoped<ApproveMerchantApplicationHandler>();
             services.AddScoped<RejectMerchantApplicationHandler>();
             services.AddScoped<GetAllMerchantApplicationsHandler>();
+
+            services.AddScoped<CreateReservationHandler>();
+            services.AddScoped<CancelReservationHandler>();
+            services.AddScoped<GetUserReservationsHandler>();
+
             return services;
         }
     }

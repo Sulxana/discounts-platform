@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Discounts.Application.Reservations.Interfaces;
 
 namespace Discounts.Infrastracture
 {
@@ -50,6 +51,7 @@ namespace Discounts.Infrastracture
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
 
             return services;
         }
