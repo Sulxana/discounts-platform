@@ -11,6 +11,7 @@ using Discounts.Application.Auth.Queries.WhoAmI;
 using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
+using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
@@ -44,6 +45,7 @@ namespace Discounts.Application
             services.AddScoped<ApplyMerchantHandler>();
             services.AddScoped<ApproveMerchantApplicationHandler>();
             services.AddScoped<RejectMerchantApplicationHandler>();
+            services.AddScoped<GetAllMerchantApplicationsHandler>();
             return services;
         }
     }

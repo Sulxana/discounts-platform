@@ -15,4 +15,8 @@
     <None Remove="Users\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Reservations\" />
+  </ItemGroup>
+
 </Project>

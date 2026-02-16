@@ -1,5 +1,6 @@
 using Discounts.Application.MerchantApplications.Interfaces;
 using Discounts.Domain.MerchantApplications;
+using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,39 @@ namespace Discounts.Infrastracture.Persistence.Repositories
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<List<MerchantApplicationWithUser>> GetAllWithUsersAsync(
+            MerchantApplicationStatus? status,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken)
+        {
+            var query = _context.MerchantApplications
+                .Join(_context.Users,
+                    application => application.UserId,
+                    user => user.Id,
+                    (application, user) => new { Application = application, User = user });
+
+            // filter by status
+            if (status.HasValue)
+            {
+                query = query.Where(x => x.Application.Status == status.Value);
+            }
+
+            var results = await query
+                .OrderByDescending(x => x.Application.CreatedAtUtc)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return results.Select(x => new MerchantApplicationWithUser(
+                x.Application,
+                x.User.Id,
+                x.User.FirstName,
+                x.User.LastName,
+                x.User.Email ?? string.Empty
+            )).ToList();
         }
     }
 }

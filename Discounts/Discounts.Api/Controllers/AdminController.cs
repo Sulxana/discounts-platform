@@ -1,12 +1,14 @@
 ﻿using Discounts.Application.Common.Security;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
+using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
 using Discounts.Application.Offers.Commands.ApproveOffer;
 using Discounts.Application.Offers.Commands.RejectOffer;
 using Discounts.Application.Offers.Queries;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
+using Discounts.Domain.MerchantApplications;
 using Discounts.Domain.Offers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +28,9 @@ namespace Discounts.Api.Controllers
         private readonly RejectOfferHandler _rejectOfferHandler;
         private readonly ApproveMerchantApplicationHandler _approveUserHandler;
         private readonly RejectMerchantApplicationHandler _rejectUserHandler;
+        private readonly GetAllMerchantApplicationsHandler _getAllMerchantApplicationsHandler;
 
-        public AdminController(GetAllOffersHandler getAllHandler, GetDeletedOffersHandler getDeletedHandler, GetOfferByIdHandler getHandler, ApproveOfferHandler approveOfferHandler, RejectOfferHandler rejectOfferHandler, ApproveMerchantApplicationHandler approveHandler, RejectMerchantApplicationHandler rejectHandler)
+        public AdminController(GetAllOffersHandler getAllHandler, GetDeletedOffersHandler getDeletedHandler, GetOfferByIdHandler getHandler, ApproveOfferHandler approveOfferHandler, RejectOfferHandler rejectOfferHandler, ApproveMerchantApplicationHandler approveHandler, RejectMerchantApplicationHandler rejectHandler, GetAllMerchantApplicationsHandler getAllMerchantApplicationsHandler)
         {
             _getAllHandler = getAllHandler;
             _getDeletedHandler = getDeletedHandler;
@@ -36,6 +39,7 @@ namespace Discounts.Api.Controllers
             _rejectOfferHandler = rejectOfferHandler;
             _approveUserHandler = approveHandler;
             _rejectUserHandler = rejectHandler;
+            _getAllMerchantApplicationsHandler = getAllMerchantApplicationsHandler;
         }
 
         [HttpGet("offers/{id:guid}")]
@@ -67,6 +71,18 @@ namespace Discounts.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("merchant-applications")]
+        public async Task<ActionResult<List<MerchantApplicationDto>>> GetAllMerchantApplications(
+            [FromQuery] MerchantApplicationStatus? status,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            CancellationToken token = default)
+        {
+            var query = new GetAllMerchantApplicationsQuery(status, page, pageSize);
+            var result = await _getAllMerchantApplicationsHandler.Handle(query, token);
+            return Ok(result);
+        }
+
         [HttpPut("offers/{id:guid}/approve")]
         public async Task<IActionResult> ApproveOffer(CancellationToken token, Guid id)
         {
@@ -94,5 +110,7 @@ namespace Discounts.Api.Controllers
             await _rejectUserHandler.Handle(new RejectMerchantApplicationCommand(id, reason), token);
             return NoContent();
         }
+
+        
     }
 }
