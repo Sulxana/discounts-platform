@@ -1,6 +1,5 @@
 using Discounts.Application.MerchantApplications.Interfaces;
 using Discounts.Domain.MerchantApplications;
-using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 

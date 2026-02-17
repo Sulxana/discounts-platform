@@ -57,6 +57,7 @@ namespace Discounts.Infrastracture
 
             services.AddScoped<IGlobalSettingRepository, GlobalSettingRepository>();
             services.AddScoped<IGlobalSettingsService, GlobalSettingsService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddMemoryCache();
 
 

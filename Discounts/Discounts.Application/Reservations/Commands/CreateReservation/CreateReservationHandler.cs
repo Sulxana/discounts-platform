@@ -17,16 +17,18 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
         private readonly ICurrentUserService _currentUserService;
         private readonly IValidator<CreateReservationCommand> _validator;
         private readonly IGlobalSettingsService _settingsService;
+        private readonly IUnitOfWork _unitOfWork;
 
         //private const int DEFAULT_RESERVATION_MINUTES = 30;
 
-        public CreateReservationHandler(IReservationRepository reservationRepository, IOfferRepository offerRepository, ICurrentUserService currentUserService, IValidator<CreateReservationCommand> validator, IGlobalSettingsService settingsService)
+        public CreateReservationHandler(IReservationRepository reservationRepository, IOfferRepository offerRepository, ICurrentUserService currentUserService, IValidator<CreateReservationCommand> validator, IGlobalSettingsService settingsService, IUnitOfWork unitOfWork)
         {
             _reservationRepository = reservationRepository;
             _offerRepository = offerRepository;
             _currentUserService = currentUserService;
             _validator = validator;
             _settingsService = settingsService;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -66,10 +68,16 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
             var expiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes);
 
             var reservation = new Reservation(userId.Value, command.OfferId, command.Quantity, expiresAt);
-
+            
+            // Old Logic
+            
+            //await _reservationRepository.AddAsync(token, reservation);
+            //await _reservationRepository.SaveChangesAsync(token);
+            //await _offerRepository.SaveChangesAsync(token);
+            
+            // New Logic
             await _reservationRepository.AddAsync(token, reservation);
-            await _reservationRepository.SaveChangesAsync(token);
-            await _offerRepository.SaveChangesAsync(token);
+            await _unitOfWork.SaveChangesAsync(token);
 
             return reservation.Id;
         }

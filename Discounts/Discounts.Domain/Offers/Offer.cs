@@ -1,4 +1,6 @@
-﻿namespace Discounts.Domain.Offers
+﻿using Discounts.Domain.Reservations;
+
+namespace Discounts.Domain.Offers
 {
     public class Offer
     {
@@ -37,8 +39,10 @@
         public DateTime? DeletedAt { get; private set; }
         public string? RejectionMessage { get; private set; }
         public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+        
+        public int MinutesRemaining => (int)Math.Max(0, (EndDate - DateTime.UtcNow).TotalMinutes);
 
-        public virtual ICollection<Discounts.Domain.Reservations.Reservation> Reservations { get; private set; } = new List<Discounts.Domain.Reservations.Reservation>();
+        public virtual ICollection<Reservation> Reservations { get; private set; } = new List<Reservation>();
 
         public void MarkAsDeleted(string? reason = null)
         {
