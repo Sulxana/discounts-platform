@@ -4,6 +4,7 @@ using Discounts.Infrastracture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discounts.Infrastracture.Migrations
 {
     [DbContext(typeof(DiscountsDbContext))]
-    partial class DiscountsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260217132445_AddReservationForeignKeys")]
+    partial class AddReservationForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,9 +188,6 @@ namespace Discounts.Infrastracture.Migrations
                     b.Property<Guid>("OfferId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("OfferId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -201,8 +201,6 @@ namespace Discounts.Infrastracture.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OfferId");
-
-                    b.HasIndex("OfferId1");
 
                     b.HasIndex("Status", "ExpiresAt");
 
@@ -245,7 +243,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.ExpirationMinutes",
                             Description = "Minutes before reservation expires",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 17, 13, 59, 37, 314, DateTimeKind.Utc).AddTicks(477),
+                            UpdatedAt = new DateTime(2026, 2, 17, 13, 24, 44, 946, DateTimeKind.Utc).AddTicks(9229),
                             Value = "30"
                         },
                         new
@@ -253,7 +251,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.MaxQuantity",
                             Description = "Maximum quantity per reservation",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 17, 13, 59, 37, 314, DateTimeKind.Utc).AddTicks(480),
+                            UpdatedAt = new DateTime(2026, 2, 17, 13, 24, 44, 946, DateTimeKind.Utc).AddTicks(9233),
                             Value = "10"
                         },
                         new
@@ -261,7 +259,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Merchant.EditWindowHours",
                             Description = "Hours after creation when merchant can edit offer",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 17, 13, 59, 37, 314, DateTimeKind.Utc).AddTicks(481),
+                            UpdatedAt = new DateTime(2026, 2, 17, 13, 24, 44, 946, DateTimeKind.Utc).AddTicks(9234),
                             Value = "24"
                         });
                 });
@@ -488,10 +486,6 @@ namespace Discounts.Infrastracture.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Discounts.Domain.Offers.Offer", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("OfferId1");
-
                     b.HasOne("Discounts.Infrastracture.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -548,11 +542,6 @@ namespace Discounts.Infrastracture.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Discounts.Domain.Offers.Offer", b =>
-                {
-                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("Discounts.Infrastracture.Identity.ApplicationUser", b =>

@@ -35,7 +35,7 @@ namespace Discounts.Application.Reservations.Commands.CancelReservation
 
             reservation.Cancel();
 
-            var offer = await _offerRepository.GetOfferByIdAsync(token, reservation.OfferId);
+            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, reservation.OfferId);
             if (offer != null)
             {
                 offer.IncreaseStock(reservation.Quantity);

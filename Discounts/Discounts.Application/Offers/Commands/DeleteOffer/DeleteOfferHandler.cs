@@ -18,12 +18,16 @@ namespace Discounts.Application.Offers.Commands.DeleteOffer
 
         public async Task DeleteOfferAsync(CancellationToken token, DeleteOfferCommand deleteOffer)
         {
-            var offer = await _repository.GetOfferByIdAsync(token, deleteOffer.Id);
+            var offer = await _repository.GetOfferForUpdateByIdAsync(token, deleteOffer.Id);
             if (offer == null) throw new NotFoundException(nameof(Offer), deleteOffer.Id);
+
+            var hasActiveReservations = offer.Reservations.Any(r => r.IsActive());
+            if (hasActiveReservations)
+                throw new InvalidOperationException("Cannot delete offer with active reservations. Please wait for them to expire or cancel them.");
 
             //await _repository.DeleteOfferAsync(token, offer);
 
-            offer.MarkAsDeleted();
+            offer.MarkAsDeleted(deleteOffer.Reason);
             await _repository.SaveChangesAsync(token);
         }
     }

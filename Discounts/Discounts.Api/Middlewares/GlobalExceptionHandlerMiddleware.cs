@@ -32,7 +32,7 @@ namespace Discounts.Api.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            // Can't modify response if headers already sent
+            
             if (context.Response.HasStarted)
             {
                 _logger.LogWarning("Response has already started, cannot handle exception");
@@ -40,7 +40,7 @@ namespace Discounts.Api.Middlewares
             }
 
             var response = context.Response;
-            response.Clear(); // Clear any partial response
+            response.Clear(); 
             response.ContentType = "application/json";
 
             var errorResponse = new ErrorResponse
@@ -89,8 +89,14 @@ namespace Discounts.Api.Middlewares
                     errorResponse.Message = argumentException.Message;
                     break;
 
+                case Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException:
+                    _logger.LogWarning(ex, "Concurrency conflict occurred.");
+                    response.StatusCode = (int)HttpStatusCode.Conflict;
+                    errorResponse.StatusCode = response.StatusCode;
+                    errorResponse.Message = "The resource was modified by another user. Please reload and try again.";
+                    break;
+
                 default:
-                    // This is a critical unhandled exception
                     _logger.LogError(ex, "Unhandled exception occurred: {Message}", ex.Message);
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     errorResponse.StatusCode = response.StatusCode;
@@ -108,7 +114,7 @@ namespace Discounts.Api.Middlewares
                     break;
             }
 
-            // Serialize and write the response
+            
             var jsonResponse = System.Text.Json.JsonSerializer.Serialize(errorResponse, new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase

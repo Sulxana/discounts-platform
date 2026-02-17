@@ -1,4 +1,6 @@
-﻿using Discounts.Domain.Reservations;
+﻿using Discounts.Domain.Offers;
+using Discounts.Domain.Reservations;
+using Discounts.Infrastracture.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +20,18 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.Property(x => x.ExpiresAt).IsRequired();
             builder.Property(x => x.Status).IsRequired().HasConversion<string>();
 
+            
+            builder.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne<Offer>()
+                .WithMany()
+                .HasForeignKey(x => x.OfferId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            // Indexes
             builder.HasIndex(x => new { x.UserId, x.OfferId }); // user-ის აქტიური რეზერვები
             builder.HasIndex(x => new { x.Status, x.ExpiresAt });//user-ის expired აქტიური რეზერვები
         }

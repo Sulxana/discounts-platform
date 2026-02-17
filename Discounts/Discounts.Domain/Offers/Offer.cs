@@ -38,13 +38,19 @@
         public string? RejectionMessage { get; private set; }
         public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
 
-        public void MarkAsDeleted()
+        public virtual ICollection<Discounts.Domain.Reservations.Reservation> Reservations { get; private set; } = new List<Discounts.Domain.Reservations.Reservation>();
+
+        public void MarkAsDeleted(string? reason = null)
         {
             if (IsDeleted)
                 return;
             IsDeleted = true;
             Status = OfferStatus.Deleted;
             DeletedAt = DateTime.UtcNow;
+            if (!string.IsNullOrWhiteSpace(reason))
+            {
+                RejectionMessage = reason;
+            }
         }
         public void UnMarkAsDeleted()
         {

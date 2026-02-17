@@ -30,7 +30,7 @@ namespace Discounts.Api.Controllers
         {
             var result = await _createHandler.CreateOffer(token, command);
 
-            return CreatedAtAction("GetOfferById", new { id = result }, result);
+            return CreatedAtAction(nameof(OfferController.GetOfferById), "Offer", new { id = result }, result);
         }
 
         [HttpPut("{id:guid}")]
@@ -43,9 +43,9 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteOffer(CancellationToken token, Guid id)
+        public async Task<IActionResult> DeleteOffer(CancellationToken token, Guid id, [FromQuery] string? reason)
         {
-            await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id));
+            await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id, reason));
             return NoContent();
         }
 

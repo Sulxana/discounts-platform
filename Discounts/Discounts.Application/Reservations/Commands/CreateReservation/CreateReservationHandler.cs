@@ -39,7 +39,7 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
             if (userId == null)
                 throw new UnauthorizedAccessException("User must be authenticated");
 
-            var offer = await _offerRepository.GetOfferByIdAsync(token, command.OfferId);
+            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, command.OfferId);
             if (offer == null)
                 throw new InvalidOperationException("Offer not found");
 
