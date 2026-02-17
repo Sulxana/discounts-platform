@@ -17,6 +17,7 @@
             StartDate = startDate;
             EndDate = endDate;
             Status = OfferStatus.Pending;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; private set; } = Guid.NewGuid();
@@ -31,6 +32,7 @@
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public OfferStatus Status { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public bool IsDeleted { get; private set; }
         public DateTime? DeletedAt { get; private set; }
         public string? RejectionMessage { get; private set; }

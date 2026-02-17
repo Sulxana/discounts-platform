@@ -1,7 +1,9 @@
 ﻿using Azure.Core;
 using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Offers.Interfaces;
+using Discounts.Application.Settings.Interfaces;
 using Discounts.Domain.Offers;
+using Discounts.Domain.Settings;
 using FluentValidation;
 using Mapster;
 
@@ -11,11 +13,13 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
     {
         private readonly IOfferRepository _repository;
         private readonly IValidator<UpdateOfferCommand> _validator;
+        private readonly IGlobalSettingsService _settingsService;
 
-        public UpdateOfferHandler(IOfferRepository repository, IValidator<UpdateOfferCommand> validator)
+        public UpdateOfferHandler(IOfferRepository repository, IValidator<UpdateOfferCommand> validator, IGlobalSettingsService settingsService)
         {
             _repository = repository;
             _validator = validator;
+            _settingsService = settingsService;
         }
 
         public async Task UpdateOfferAsync(CancellationToken token, UpdateOfferCommand UpdateOffer)
@@ -24,6 +28,13 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
 
             var offer = await _repository.GetOfferByIdAsync(token, UpdateOffer.Id);
             if (offer == null) throw new NotFoundException(nameof(Offer), UpdateOffer.Id);
+
+            var editWindowHours = await _settingsService.GetIntAsync(
+                SettingKeys.MerchantEditWindowHours, defaultValue: 24, token);
+            
+            var cutoffTime = offer.CreatedAt.AddHours(editWindowHours);
+            if (DateTime.UtcNow > cutoffTime)
+                throw new InvalidOperationException($"Cannot edit offer after {editWindowHours} hours from creation");
 
 
 

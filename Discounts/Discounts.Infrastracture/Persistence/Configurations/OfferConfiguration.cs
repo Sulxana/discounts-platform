@@ -21,6 +21,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.Property(x => x.StartDate).IsRequired();
             builder.Property(x => x.EndDate).IsRequired();
             builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            builder.Property(x => x.CreatedAt).IsRequired();
             builder.Property(x => x.IsDeleted).IsRequired().HasDefaultValue(false);
             builder.Property(x => x.DeletedAt).IsRequired(false);
             builder.Property(x => x.RejectionMessage).IsRequired(false);

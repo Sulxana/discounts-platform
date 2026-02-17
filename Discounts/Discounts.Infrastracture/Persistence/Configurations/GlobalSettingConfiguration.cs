@@ -19,7 +19,8 @@ namespace Discounts.Infrastracture.Persistence.Configurations
 
             builder.HasData(
                 new GlobalSetting("Reservation.ExpirationMinutes", "30", "Minutes before reservation expires", SettingType.Integer),
-                new GlobalSetting("Reservation.MaxQuantity", "10", "Maximum quantity per reservation", SettingType.Integer)
+                new GlobalSetting("Reservation.MaxQuantity", "10", "Maximum quantity per reservation", SettingType.Integer),
+                new GlobalSetting("Merchant.EditWindowHours", "24", "Hours after creation when merchant can edit offer", SettingType.Integer)
             );
         }
     }
