@@ -1,6 +1,7 @@
 ﻿using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Domain.Offers;
+using FluentValidation;
 using Mapster;
 
 namespace Discounts.Application.Offers.Queries.GetOfferById
@@ -18,7 +19,7 @@ namespace Discounts.Application.Offers.Queries.GetOfferById
         {
             if (query.Id == Guid.Empty)
             {
-                throw new ValidationsException("Offer id cannot be empty.");
+                throw new ValidationException("Offer id cannot be empty.");
             }
             var result = await _repository.GetOfferByIdAsync(token, query.Id);
             if (result == null)
@@ -30,7 +31,7 @@ namespace Discounts.Application.Offers.Queries.GetOfferById
         {
             if (query.Id == Guid.Empty)
             {
-                throw new ValidationsException("Offer id cannot be empty.");
+                throw new ValidationException("Offer id cannot be empty.");
             }
             var result = await _repository.GetOfferIncludingDeletedAsync(token, query.Id);
             if (result == null)

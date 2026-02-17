@@ -1,6 +1,4 @@
-﻿using Discounts.Application.Common.Security;
-using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
-using Discounts.Application.Offers.Queries;
+﻿using Discounts.Application.Offers.Queries;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Domain.Offers;

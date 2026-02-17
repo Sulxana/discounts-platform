@@ -2,6 +2,7 @@ using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Exceptions;
 using Discounts.Application.MerchantApplications.Interfaces;
 using Discounts.Domain.MerchantApplications;
+using FluentValidation;
 
 namespace Discounts.Application.MerchantApplications.Commands.ApplyMerchant
 {
@@ -31,7 +32,7 @@ namespace Discounts.Application.MerchantApplications.Commands.ApplyMerchant
 
             if (existingPending)
             {
-                throw new ValidationsException("You already have a pending merchant application.");
+                throw new ValidationException("You already have a pending merchant application.");
             }
 
             var application = new MerchantApplication(userId.Value);
