@@ -27,6 +27,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DiscountsDb=Server=discounts-db;Database=DiscountsDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/live" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     depends_on:
       - discounts-db
     networks:

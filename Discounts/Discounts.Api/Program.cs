@@ -3,7 +3,6 @@ using Discounts.Application;
 using Discounts.Application.Common.Mapping;
 using Discounts.Infrastracture;
 using Discounts.Application.Common.Security;
-using Discounts.Infrastracture.Auth;
 using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using Discounts.Api.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,11 +109,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Health Checks
-app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = r => r.Name.Contains("self")
 });
-app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
     Predicate = _ => true
 });
