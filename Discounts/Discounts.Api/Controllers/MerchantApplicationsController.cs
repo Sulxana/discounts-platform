@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Common.Security;
+﻿using Asp.Versioning;
+using Discounts.Application.Common.Security;
 using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/merchant-applications")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/merchant-applications")]
     [ApiController]
     [Authorize(Roles = Roles.Customer)]
     public class MerchantApplicationsController : ControllerBase

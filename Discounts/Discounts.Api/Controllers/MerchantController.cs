@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Discounts.Api.DTO;
 using Discounts.Application.Common.Security;
 using Discounts.Application.Offers.Commands.CreateOffer;
@@ -9,7 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(Roles =Roles.Merchant)]
     public class MerchantController : ControllerBase

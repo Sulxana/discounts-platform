@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Common.Security;
+﻿using Asp.Versioning;
+using Discounts.Application.Common.Security;
 using Discounts.Application.Reservations.Commands.CancelReservation;
 using Discounts.Application.Reservations.Commands.CreateReservation;
 using Discounts.Application.Reservations.Queries.GetUserReservations;
@@ -8,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/reservations")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/reservations")]
     [ApiController]
     [Authorize(Roles = Roles.Customer)]
     public class ReservationController : ControllerBase

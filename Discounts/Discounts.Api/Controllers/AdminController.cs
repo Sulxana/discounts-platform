@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Common.Security;
+﻿using Asp.Versioning;
+using Discounts.Application.Common.Security;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
 using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
@@ -16,7 +17,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(Roles = Roles.Administrator)]
     public class AdminController : ControllerBase

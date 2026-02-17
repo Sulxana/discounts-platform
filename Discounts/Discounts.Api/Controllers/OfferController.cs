@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Offers.Queries;
+﻿using Asp.Versioning;
+using Discounts.Application.Offers.Queries;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Domain.Offers;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/offers")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/offers")]
     [ApiController]
     [Authorize]
     public class OfferController : ControllerBase

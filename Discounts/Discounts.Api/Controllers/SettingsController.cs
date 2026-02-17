@@ -1,4 +1,5 @@
-﻿using Discounts.Application.Common.Security;
+﻿using Asp.Versioning;
+using Discounts.Application.Common.Security;
 using Discounts.Application.Settings.Commands.UpdateSetting;
 using Discounts.Application.Settings.Queries.GetAllSettings;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/admin/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/admin/[controller]")]
     [ApiController]
     [Authorize(Roles = Roles.Administrator)]
     public class SettingsController : ControllerBase

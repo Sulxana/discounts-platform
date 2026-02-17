@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Discounts.Application.Auth.Commands.Login;
 using Discounts.Application.Auth.Commands.RefreshTokens;
 using Discounts.Application.Auth.Commands.Register;
@@ -9,7 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
