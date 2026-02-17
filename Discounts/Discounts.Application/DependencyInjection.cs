@@ -19,6 +19,8 @@ using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Application.Reservations.Commands.CancelReservation;
 using Discounts.Application.Reservations.Commands.CreateReservation;
 using Discounts.Application.Reservations.Queries.GetUserReservations;
+using Discounts.Application.Settings.Commands.UpdateSetting;
+using Discounts.Application.Settings.Queries.GetAllSettings;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,6 +55,9 @@ namespace Discounts.Application
             services.AddScoped<CreateReservationHandler>();
             services.AddScoped<CancelReservationHandler>();
             services.AddScoped<GetUserReservationsHandler>();
+
+            services.AddScoped<GetAllSettingsHandler>();
+            services.AddScoped<UpdateSettingHandler>();
 
             return services;
         }

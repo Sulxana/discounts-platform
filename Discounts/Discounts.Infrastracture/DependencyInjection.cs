@@ -1,18 +1,20 @@
 ﻿using Discounts.Application.Auth.Interfaces;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
-using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.MerchantApplications.Interfaces;
+using Discounts.Application.Offers.Interfaces;
+using Discounts.Application.Reservations.Interfaces;
+using Discounts.Application.Settings.Interfaces;
 using Discounts.Infrastracture.Auth;
 using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Persistence.Context;
-using Discounts.Infrastracture.Repositories;
 using Discounts.Infrastracture.Persistence.Repositories;
+using Discounts.Infrastracture.Repositories;
+using Discounts.Infrastracture.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Discounts.Application.Reservations.Interfaces;
 
 namespace Discounts.Infrastracture
 {
@@ -52,6 +54,11 @@ namespace Discounts.Infrastracture
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
+
+            services.AddScoped<IGlobalSettingRepository, GlobalSettingRepository>();
+            services.AddScoped<IGlobalSettingsService, GlobalSettingsService>();
+            services.AddMemoryCache();
+
 
             return services;
         }

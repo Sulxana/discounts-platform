@@ -2,6 +2,7 @@
 using Discounts.Domain.MerchantApplications;
 using Discounts.Domain.Offers;
 using Discounts.Domain.Reservations;
+using Discounts.Domain.Settings;
 using Discounts.Infrastracture.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace Discounts.Infrastracture.Persistence.Context
         public DbSet<RefreshToken> RefreshTokens{ get; set; }
         public DbSet<MerchantApplication> MerchantApplications { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<GlobalSetting> GlobalSettings { get; set; }
 
 
         #region Configuration

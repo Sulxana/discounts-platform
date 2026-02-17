@@ -115,8 +115,6 @@
                 throw new ArgumentException("Entered quantity must be positive number.");
 
             RemainingCoupons = Math.Min(TotalCoupons, RemainingCoupons + num);
-
-            RemainingCoupons += num;
         }
     }
 }

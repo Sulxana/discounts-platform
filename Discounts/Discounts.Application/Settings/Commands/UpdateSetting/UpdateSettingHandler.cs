@@ -1,0 +1,28 @@
+﻿using Discounts.Application.Settings.Interfaces;
+
+namespace Discounts.Application.Settings.Commands.UpdateSetting
+{
+    public class UpdateSettingHandler
+    {
+        private readonly IGlobalSettingRepository _repository;
+        private readonly IGlobalSettingsService _settingsService;
+
+        public UpdateSettingHandler(IGlobalSettingRepository repository, IGlobalSettingsService settingsService)
+        {
+            _repository = repository;
+            _settingsService = settingsService;
+        }
+
+        public async Task Handle(UpdateSettingCommand command, CancellationToken token)
+        {
+            var setting = await _repository.GetByKeyAsync(token, command.Key);
+
+            if (setting == null)
+                throw new InvalidOperationException($"Setting with key '{command.Key}' not found");
+            setting.UpdateValue(command.Value);
+
+            await _repository.SaveChangesAsync(token);
+            _settingsService.RemoveFromCache(command.Key);
+        }
+    }
+}

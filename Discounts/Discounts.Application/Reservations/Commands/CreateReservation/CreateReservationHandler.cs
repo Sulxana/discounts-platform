@@ -1,8 +1,10 @@
 ﻿using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Reservations.Interfaces;
+using Discounts.Application.Settings.Interfaces;
 using Discounts.Domain.Offers;
 using Discounts.Domain.Reservations;
+using Discounts.Domain.Settings;
 using FluentValidation;
 using Mapster;
 
@@ -14,15 +16,20 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
         private readonly IOfferRepository _offerRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IValidator<CreateReservationCommand> _validator;
+        private readonly IGlobalSettingsService _settingsService;
 
-        private const int DEFAULT_RESERVATION_MINUTES = 30;
-        public CreateReservationHandler(IReservationRepository repository, IOfferRepository offerRepository, ICurrentUserService currentUserService, IValidator<CreateReservationCommand> validator)
+        //private const int DEFAULT_RESERVATION_MINUTES = 30;
+
+        public CreateReservationHandler(IReservationRepository reservationRepository, IOfferRepository offerRepository, ICurrentUserService currentUserService, IValidator<CreateReservationCommand> validator, IGlobalSettingsService settingsService)
         {
-            _reservationRepository = repository;
+            _reservationRepository = reservationRepository;
             _offerRepository = offerRepository;
             _currentUserService = currentUserService;
             _validator = validator;
+            _settingsService = settingsService;
         }
+
+
 
         public async Task<Guid> CreateReservation(CancellationToken token, CreateReservationCommand command)
         {
@@ -52,7 +59,11 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
 
             offer.DecreaseStock(command.Quantity);
 
-            var expiresAt = DateTime.UtcNow.AddMinutes(DEFAULT_RESERVATION_MINUTES);
+            var expirationMinutes = await _settingsService.GetIntAsync(
+               SettingKeys.ReservationExpirationMinutes, defaultValue: 30, token);
+
+
+            var expiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes);
 
             var reservation = new Reservation(userId.Value, command.OfferId, command.Quantity, expiresAt);
 
