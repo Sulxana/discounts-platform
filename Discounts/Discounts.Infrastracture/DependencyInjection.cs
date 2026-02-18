@@ -62,6 +62,7 @@ namespace Discounts.Infrastracture
             services.AddMemoryCache();
 
             services.AddHostedService<ReservationCleanupWorker>();
+            services.AddHostedService<OfferExpirationWorker>();
 
 
             return services;

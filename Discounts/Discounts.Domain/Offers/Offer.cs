@@ -102,8 +102,8 @@ namespace Discounts.Domain.Offers
         }
         public void Expire()
         {
-            if (IsDeleted || Status != OfferStatus.Approved)
-                throw new InvalidOperationException("Only pending offers can expire.");
+            if (IsDeleted || (Status != OfferStatus.Approved && Status != OfferStatus.Pending))
+                throw new InvalidOperationException("Only pending or approved offers can expire.");
             Status = OfferStatus.Expired;
         }
 

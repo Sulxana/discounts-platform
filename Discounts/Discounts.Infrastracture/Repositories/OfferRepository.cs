@@ -115,5 +115,13 @@ namespace Discounts.Infrastracture.Repositories
             await base.Remove(token, offerId);
         }
 
+        public async Task<List<Offer>> GetExpiredActiveAsync(CancellationToken token)
+        {
+            var now = DateTime.UtcNow;
+            return await _dbSet
+                .Where(o => (o.Status == OfferStatus.Approved || o.Status == OfferStatus.Pending) && o.EndDate < now)
+                .ToListAsync(token);
+        }
+
     }
 }

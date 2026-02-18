@@ -1,6 +1,4 @@
-﻿using Discounts.Application.Offers.Commands.CreateOffer;
-using Discounts.Application.Offers.Queries.GetAllOffers;
-using Discounts.Domain.Offers;
+﻿using Discounts.Domain.Offers;
 
 namespace Discounts.Application.Offers.Interfaces
 {
@@ -19,6 +17,7 @@ namespace Discounts.Application.Offers.Interfaces
         Task UpdateOfferAsync(CancellationToken token, Offer offer);
         Task DeleteOfferAsync(CancellationToken token, Offer offer);
         Task DeleteOfferAsync(CancellationToken token, Guid offerId);
+        Task<List<Offer>> GetExpiredActiveAsync(CancellationToken token);
         Task SaveChangesAsync(CancellationToken token);
 
     }
