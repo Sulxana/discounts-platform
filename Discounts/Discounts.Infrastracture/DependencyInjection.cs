@@ -6,6 +6,7 @@ using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Reservations.Interfaces;
 using Discounts.Application.Settings.Interfaces;
 using Discounts.Infrastracture.Auth;
+using Discounts.Infrastracture.BackgroundJobs;
 using Discounts.Infrastracture.Identity;
 using Discounts.Infrastracture.Persistence.Context;
 using Discounts.Infrastracture.Persistence.Repositories;
@@ -59,6 +60,8 @@ namespace Discounts.Infrastracture
             services.AddScoped<IGlobalSettingsService, GlobalSettingsService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddMemoryCache();
+
+            services.AddHostedService<ReservationCleanupWorker>();
 
 
             return services;

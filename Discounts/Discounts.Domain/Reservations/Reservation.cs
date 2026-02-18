@@ -1,4 +1,4 @@
-﻿namespace Discounts.Domain.Reservations
+namespace Discounts.Domain.Reservations
 {
     public class Reservation
     {

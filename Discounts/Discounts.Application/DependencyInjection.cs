@@ -21,6 +21,8 @@ using Discounts.Application.Reservations.Commands.CreateReservation;
 using Discounts.Application.Reservations.Queries.GetUserReservations;
 using Discounts.Application.Settings.Commands.UpdateSetting;
 using Discounts.Application.Settings.Queries.GetAllSettings;
+using Discounts.Application.Settings.Queries.GetAllSettings;
+using Discounts.Application.Reservations.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -58,6 +60,8 @@ namespace Discounts.Application
 
             services.AddScoped<GetAllSettingsHandler>();
             services.AddScoped<UpdateSettingHandler>();
+
+            services.AddScoped<IReservationCleanupService, ReservationCleanupService>();
 
             return services;
         }
