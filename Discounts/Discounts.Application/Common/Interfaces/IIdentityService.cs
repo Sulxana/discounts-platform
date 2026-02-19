@@ -10,5 +10,8 @@ namespace Discounts.Application.Common.Interfaces
         Task<IList<string>> GetUserRolesAsync(Guid userId);
         Task AddRoleAsync(Guid userId, string role);
         Task RemoveRoleAsync(Guid userId, string role);
+        Task<bool> BlockUserAsync(Guid userId);
+        Task<bool> UnblockUserAsync(Guid userId);
+        Task<bool> UpdateUserAsync(Guid userId, string? email, string? firstName, string? lastName);
     }
 }

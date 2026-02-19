@@ -1,55 +1,77 @@
+using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Common.Interfaces;
-using Discounts.Application.Common.Security; // For Roles
+using Discounts.Infrastracture.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discounts.Infrastracture.Identity
 {
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public IdentityService(UserManager<ApplicationUser> userManager)
+        public IdentityService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<(bool IsSuccess, string? Error, Guid UserId)> CreateUserAsync(string email, string password, string firstName, string lastName, string role)
         {
             var user = new ApplicationUser
             {
-                Id = Guid.NewGuid(),
-                Email = email,
                 UserName = email,
+                Email = email,
                 FirstName = firstName,
-                LastName = lastName,
-                EmailConfirmed = true
+                LastName = lastName
             };
 
-            var create = await _userManager.CreateAsync(user, password);
-            if (!create.Succeeded)
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (!result.Succeeded)
             {
-                return (false, string.Join(", ", create.Errors.Select(e => e.Description)), Guid.Empty);
+                return (false, result.Errors.First().Description, Guid.Empty);
             }
 
-            var roleResult = await _userManager.AddToRoleAsync(user, role);
-            if (!roleResult.Succeeded)
-            {
-                return (false, string.Join(", ", roleResult.Errors.Select(e => e.Description)), Guid.Empty);
-            }
+            await _userManager.AddToRoleAsync(user, role);
 
             return (true, null, user.Id);
         }
 
-        public async Task<(bool IsSuccess, Guid UserId, string Email, IList<string> Roles)> GetUserByIdAsync(Guid userId)
+        public async Task<(bool IsSuccess, Guid UserId, string Email, IList<string> Roles)> LoginUserAsync(string email, string password)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByEmailAsync(email);
+
             if (user == null)
             {
                 return (false, Guid.Empty, string.Empty, new List<string>());
             }
 
+            var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+
+            if (!result.Succeeded)
+            {
+                return (false, Guid.Empty, string.Empty, new List<string>());
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return (true, user.Id, user.Email!, roles);
+        }
+
+        public async Task<(bool IsSuccess, Guid UserId, string Email, IList<string> Roles)> GetUserByIdAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return (false, Guid.Empty, string.Empty, new List<string>());
+
             var roles = await _userManager.GetRolesAsync(user);
             return (true, user.Id, user.Email!, roles);
+        }
+
+        public async Task<bool> UserExistsAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email) != null;
         }
 
         public async Task<IList<string>> GetUserRolesAsync(Guid userId)
@@ -59,53 +81,59 @@ namespace Discounts.Infrastracture.Identity
             return await _userManager.GetRolesAsync(user);
         }
 
-        public async Task<(bool IsSuccess, Guid UserId, string Email, IList<string> Roles)> LoginUserAsync(string email, string password)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return (false, Guid.Empty, string.Empty, new List<string>());
-
-            var check = await _userManager.CheckPasswordAsync(user, password);
-            if (!check) return (false, Guid.Empty, string.Empty, new List<string>());
-
-            var roles = await _userManager.GetRolesAsync(user);
-            return (true, user.Id, user.Email!, roles);
-
-        }
-
-        public async Task<bool> UserExistsAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            return user != null;
-        }
-
         public async Task AddRoleAsync(Guid userId, string role)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
-                throw new InvalidOperationException($"User with ID {userId} not found.");
-            }
-
-            var result = await _userManager.AddToRoleAsync(user, role);
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException($"Failed to add role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
-            }
+             var user = await _userManager.FindByIdAsync(userId.ToString());
+             if (user != null)
+             {
+                 await _userManager.AddToRoleAsync(user, role);
+             }
         }
 
         public async Task RemoveRoleAsync(Guid userId, string role)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
+            if (user != null)
             {
-                throw new InvalidOperationException($"User with ID {userId} not found.");
+                await _userManager.RemoveFromRoleAsync(user, role);
+            }
+        }
+
+        public async Task<bool> BlockUserAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
+
+            var result = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+            return result.Succeeded;
+        }
+
+        public async Task<bool> UnblockUserAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
+
+            var result = await _userManager.SetLockoutEndDateAsync(user, null);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> UpdateUserAsync(Guid userId, string? email, string? firstName, string? lastName)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) throw new NotFoundException(nameof(ApplicationUser), userId);
+
+            if (!string.IsNullOrWhiteSpace(email) && email != user.Email)
+            {
+                var emailResult = await _userManager.SetEmailAsync(user, email);
+                if (!emailResult.Succeeded) return false;
+                user.UserName = email;
             }
 
-            var result = await _userManager.RemoveFromRoleAsync(user, role);
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException($"Failed to remove role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
-            }
+            if (!string.IsNullOrWhiteSpace(firstName)) user.FirstName = firstName;
+            if (!string.IsNullOrWhiteSpace(lastName)) user.LastName = lastName;
+
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
         }
     }
 }

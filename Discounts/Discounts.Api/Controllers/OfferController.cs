@@ -24,7 +24,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetActiveOffers(CancellationToken token, [FromQuery] OfferCategory? category,
+        public async Task<ActionResult<List<OfferListItemDto>>> GetActiveOffers(CancellationToken token, [FromQuery] string? category,
                                                                             [FromQuery] OfferStatus? status,
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)

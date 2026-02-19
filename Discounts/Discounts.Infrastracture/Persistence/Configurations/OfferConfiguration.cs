@@ -13,7 +13,12 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.Property(x => x.MerchantId).IsRequired();
             builder.Property(x => x.Title).IsRequired().HasMaxLength(50);
             builder.Property(x => x.Description).IsRequired().HasMaxLength(200);
-            builder.Property(x => x.Category).HasConversion<string>().HasMaxLength(30).IsRequired();
+            builder.Property(x => x.CategoryId).IsRequired();
+            builder.HasOne(x => x.Category)
+                   .WithMany(x => x.Offers)
+                   .HasForeignKey(x => x.CategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(x => x.ImageUrl).HasMaxLength(1500);
             builder.Property(x => x.OriginalPrice).HasPrecision(18, 2).IsRequired();
             builder.Property(x => x.DiscountedPrice).HasPrecision(18, 2).IsRequired();
@@ -30,7 +35,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
 
             builder.HasIndex(x => x.Status);
             builder.HasIndex(x => x.EndDate);
-            builder.HasIndex(x => new { x.Status, x.Category, x.EndDate });
+            builder.HasIndex(x => new { x.Status, x.CategoryId, x.EndDate });
 
         }
     }

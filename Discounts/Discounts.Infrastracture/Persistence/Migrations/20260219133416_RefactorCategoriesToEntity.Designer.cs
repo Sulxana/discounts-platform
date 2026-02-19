@@ -4,16 +4,19 @@ using Discounts.Infrastracture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Discounts.Infrastracture.Migrations
+namespace Discounts.Infrastracture.Persistence.Migrations
 {
     [DbContext(typeof(DiscountsDbContext))]
-    partial class DiscountsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260219133416_RefactorCategoriesToEntity")]
+    partial class RefactorCategoriesToEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,49 +72,11 @@ namespace Discounts.Infrastracture.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Name = "Restaurant"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Name = "Fitness"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Name = "Tourism"
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            Name = "Entertainment"
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            Name = "Services"
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            Name = "Education"
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            Name = "Other"
-                        });
                 });
 
             modelBuilder.Entity("Discounts.Domain.Coupons.Coupon", b =>
@@ -337,7 +302,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.ExpirationMinutes",
                             Description = "Minutes before reservation expires",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 19, 17, 34, 46, 985, DateTimeKind.Utc).AddTicks(152),
+                            UpdatedAt = new DateTime(2026, 2, 19, 13, 34, 16, 101, DateTimeKind.Utc).AddTicks(9204),
                             Value = "30"
                         },
                         new
@@ -345,7 +310,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.MaxQuantity",
                             Description = "Maximum quantity per reservation",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 19, 17, 34, 46, 985, DateTimeKind.Utc).AddTicks(156),
+                            UpdatedAt = new DateTime(2026, 2, 19, 13, 34, 16, 101, DateTimeKind.Utc).AddTicks(9208),
                             Value = "10"
                         },
                         new
@@ -353,7 +318,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Merchant.EditWindowHours",
                             Description = "Hours after creation when merchant can edit offer",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 19, 17, 34, 46, 985, DateTimeKind.Utc).AddTicks(157),
+                            UpdatedAt = new DateTime(2026, 2, 19, 13, 34, 16, 101, DateTimeKind.Utc).AddTicks(9209),
                             Value = "24"
                         });
                 });

@@ -54,7 +54,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpGet("offers")]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetAllOffers(CancellationToken token, [FromQuery] OfferCategory? category,
+        public async Task<ActionResult<List<OfferListItemDto>>> GetAllOffers(CancellationToken token, [FromQuery] string? category,
                                                                             [FromQuery] OfferStatus? status, [FromQuery] bool deleted,
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
@@ -64,7 +64,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpGet("offers/deleted")]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetDeletedOffers(CancellationToken token, [FromQuery] OfferCategory? category,
+        public async Task<ActionResult<List<OfferListItemDto>>> GetDeletedOffers(CancellationToken token, [FromQuery] string? category,
                                                                             [FromQuery] OfferStatus? status,
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)

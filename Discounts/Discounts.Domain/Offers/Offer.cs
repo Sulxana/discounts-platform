@@ -1,16 +1,20 @@
-﻿using Discounts.Domain.Reservations;
+﻿using Discounts.Domain.Categories;
+using Discounts.Domain.Reservations;
 
 namespace Discounts.Domain.Offers
 {
     public class Offer
     {
+        [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
         private Offer() { }
 
-        public Offer(string title, string description, OfferCategory category, string? imageUrl, decimal originalPrice, decimal discountedPrice, int totalCoupons, DateTime startDate, DateTime endDate, Guid merchantId)
+        [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
+        public Offer(string title, string description, Guid categoryId, string? imageUrl, decimal originalPrice, decimal discountedPrice, int totalCoupons, DateTime startDate, DateTime endDate, Guid merchantId)
         {
+            Id = Guid.NewGuid(); // Id is initialized here as per the instruction's constructor body
             Title = title;
             Description = description;
-            Category = category;
+            CategoryId = categoryId; // Changed from Category = category
             ImageUrl = imageUrl;
             OriginalPrice = originalPrice;
             DiscountedPrice = discountedPrice;
@@ -18,9 +22,9 @@ namespace Discounts.Domain.Offers
             RemainingCoupons = totalCoupons;
             StartDate = startDate;
             EndDate = endDate;
-            MerchantId = merchantId;
-            Status = OfferStatus.Pending;
-            CreatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.UtcNow; // Reordered as per instruction
+            Status = OfferStatus.Pending; // Reordered as per instruction
+            MerchantId = merchantId; // Reordered as per instruction
         }
 
         public Guid Id { get; private set; } = Guid.NewGuid();
@@ -30,9 +34,10 @@ namespace Discounts.Domain.Offers
             if (MerchantId != Guid.Empty) throw new InvalidOperationException("MerchantId is already set");
             MerchantId = merchantId;
         }
-        public string Title { get; private set; }
-        public string Description { get; private set; }
-        public OfferCategory Category { get; private set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }
+        public Guid CategoryId { get; private set; } // Added CategoryId
+        public Category? Category { get; private set; } // Added Category navigation property
         public string? ImageUrl { get; private set; }
         public decimal OriginalPrice { get; private set; }
         public decimal DiscountedPrice { get; private set; }

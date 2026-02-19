@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Discounts.Application.Categories.Interfaces;
 
 namespace Discounts.Infrastracture
 {
@@ -60,6 +61,7 @@ namespace Discounts.Infrastracture
             services.AddScoped<IGlobalSettingRepository, GlobalSettingRepository>();
             services.AddScoped<IGlobalSettingsService, GlobalSettingsService>();
             services.AddScoped<ICouponRepository, CouponRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddMemoryCache();
 

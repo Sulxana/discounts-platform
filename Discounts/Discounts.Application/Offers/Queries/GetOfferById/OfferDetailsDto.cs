@@ -12,7 +12,7 @@ namespace Discounts.Application.Offers.Queries.GetOfferById
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public OfferCategory Category { get; set; }
+        public CategoryDto Category { get; set; }
         public string? ImageUrl { get; set; }
         public decimal OriginalPrice { get; set; }
         public decimal DiscountedPrice { get; set; }

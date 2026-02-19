@@ -38,6 +38,8 @@ namespace Discounts.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+
             services.AddScoped<CreateOfferHandler>();
             services.AddScoped<GetOfferByIdHandler>();
             services.AddScoped<UpdateOfferHandler>();
@@ -72,6 +74,16 @@ namespace Discounts.Application
             services.AddScoped<PurchaseReservationHandler>();
             services.AddScoped<DirectPurchaseHandler>();
             services.AddScoped<GetMyCouponsHandler>();
+
+            services.AddScoped<Discounts.Application.Users.Commands.BlockUser.BlockUserHandler>();
+            services.AddScoped<Discounts.Application.Users.Commands.UnblockUser.UnblockUserHandler>();
+            services.AddScoped<Discounts.Application.Users.Commands.UpdateUser.UpdateUserHandler>();
+
+            services.AddScoped<Discounts.Application.Categories.Commands.CreateCategory.CreateCategoryHandler>();
+            services.AddScoped<Discounts.Application.Categories.Commands.UpdateCategory.UpdateCategoryHandler>();
+            services.AddScoped<Discounts.Application.Categories.Commands.DeleteCategory.DeleteCategoryHandler>();
+            services.AddScoped<Discounts.Application.Categories.Queries.GetAllCategories.GetAllCategoriesHandler>();
+
             return services;
         }
     }

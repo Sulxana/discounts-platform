@@ -13,7 +13,7 @@ namespace Discounts.Api.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Authorize(Roles =Roles.Merchant)]
+    [Authorize]
     public class MerchantController : ControllerBase
     {
         private readonly CreateOfferHandler _createHandler;
@@ -28,6 +28,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Merchant)]
         public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferCommand command)
         {
             var result = await _createHandler.CreateOffer(token, command);
@@ -36,6 +37,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = Roles.Administrator + "," + Roles.Merchant)]
         public async Task<IActionResult> UpdateOffer(CancellationToken token, Guid id, [FromBody] UpdateOfferRequestDto request)
         {
             var command = request.Adapt<UpdateOfferCommand>();
@@ -45,6 +47,7 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = Roles.Administrator + "," + Roles.Merchant)]
         public async Task<IActionResult> DeleteOffer(CancellationToken token, Guid id, [FromQuery] string? reason)
         {
             await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id, reason));

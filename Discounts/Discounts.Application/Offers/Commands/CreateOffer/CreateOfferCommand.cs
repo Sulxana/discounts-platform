@@ -6,7 +6,7 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public OfferCategory Category { get; set; }
+        public Guid CategoryId { get; set; }
         public string? ImageUrl { get; set; }
         public decimal OriginalPrice { get; set; }
         public decimal DiscountedPrice { get; set; }

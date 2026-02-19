@@ -17,7 +17,7 @@ namespace Discounts.Application.Offers.Queries.GetDeletedOffers
 
         public async Task<List<OfferListItemDto>> GetDeletedOffers(CancellationToken token, GetDeletedOffersQuery query)
         {
-            var result = await _repository.GetDeletedOfferAsync(token, query.Category, query.Status, query.Page, query.PageSize);
+            var result = await _repository.GetDeletedOfferAsync(token, query.CategoryName, query.Status, query.Page, query.PageSize);
             return result.Adapt<List<OfferListItemDto>>();
         }
     }

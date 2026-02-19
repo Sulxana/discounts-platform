@@ -19,7 +19,7 @@ namespace Discounts.Application.Offers.Queries.GetActiveOffers
         {
             await _validator.ValidateAndThrowAsync(query, token);
 
-            var offers = await _repository.GetActiveOfferAsync(token, query.Category, query.Status, query.Page, query.PageSize);
+            var offers = await _repository.GetActiveOfferAsync(token, query.CategoryName, query.Status, query.Page, query.PageSize);
 
             return offers.Adapt<List<OfferListItemDto>>();
         }

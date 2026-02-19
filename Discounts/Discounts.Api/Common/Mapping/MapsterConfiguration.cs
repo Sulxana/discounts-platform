@@ -1,4 +1,5 @@
 ﻿using Discounts.Application.Offers.Commands.CreateOffer;
+using Discounts.Application.Offers.Queries;
 using Discounts.Domain.Offers;
 using Mapster;
 
@@ -13,7 +14,7 @@ namespace Discounts.Application.Common.Mapping
             .ConstructUsing(src => new Offer(
                 src.Title,
                 src.Description,
-                src.Category,
+                src.CategoryId,
                 src.ImageUrl,
                 src.OriginalPrice,
                 src.DiscountedPrice,
@@ -22,6 +23,10 @@ namespace Discounts.Application.Common.Mapping
                 src.EndDate,
                 Guid.Empty // set by handler
             ));
+
+            TypeAdapterConfig<Offer, OfferListItemDto>
+                .NewConfig()
+                .Map(dest => dest.Category, src => src.Category != null ? src.Category.Name : "Unknown");
         }
     }
 }
