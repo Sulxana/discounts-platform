@@ -6,7 +6,7 @@ namespace Discounts.Domain.Offers
     {
         private Offer() { }
 
-        public Offer(string title, string description, OfferCategory category, string? imageUrl, decimal originalPrice, decimal discountedPrice, int totalCoupons, DateTime startDate, DateTime endDate)
+        public Offer(string title, string description, OfferCategory category, string? imageUrl, decimal originalPrice, decimal discountedPrice, int totalCoupons, DateTime startDate, DateTime endDate, Guid merchantId)
         {
             Title = title;
             Description = description;
@@ -18,11 +18,18 @@ namespace Discounts.Domain.Offers
             RemainingCoupons = totalCoupons;
             StartDate = startDate;
             EndDate = endDate;
+            MerchantId = merchantId;
             Status = OfferStatus.Pending;
             CreatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid MerchantId { get; private set; }
+        public void SetMerchantId(Guid merchantId)
+        {
+            if (MerchantId != Guid.Empty) throw new InvalidOperationException("MerchantId is already set");
+            MerchantId = merchantId;
+        }
         public string Title { get; private set; }
         public string Description { get; private set; }
         public OfferCategory Category { get; private set; }

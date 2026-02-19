@@ -25,6 +25,9 @@ using Discounts.Application.Reservations.Services;
 using Discounts.Application.Offers.Services;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Reservations.Interfaces;
+using Discounts.Application.Reservations.Commands.PurchaseReservation;
+using Discounts.Application.Coupons.Commands.DirectPurchase;
+using Discounts.Application.Coupons.Queries.GetMyCoupons;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -65,6 +68,10 @@ namespace Discounts.Application
 
             services.AddScoped<IReservationCleanupService, ReservationCleanupService>();
             services.AddScoped<IOfferCleanupService, OfferCleanupService>();
+            
+            services.AddScoped<PurchaseReservationHandler>();
+            services.AddScoped<DirectPurchaseHandler>();
+            services.AddScoped<GetMyCouponsHandler>();
             return services;
         }
     }

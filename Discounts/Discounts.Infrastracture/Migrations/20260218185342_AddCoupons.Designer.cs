@@ -4,6 +4,7 @@ using Discounts.Infrastracture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discounts.Infrastracture.Migrations
 {
     [DbContext(typeof(DiscountsDbContext))]
-    partial class DiscountsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218185342_AddCoupons")]
+    partial class AddCoupons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,9 +171,6 @@ namespace Discounts.Infrastracture.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("MerchantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("OriginalPrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -229,6 +229,9 @@ namespace Discounts.Infrastracture.Migrations
                     b.Property<Guid>("OfferId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OfferId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -242,6 +245,8 @@ namespace Discounts.Infrastracture.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OfferId");
+
+                    b.HasIndex("OfferId1");
 
                     b.HasIndex("Status", "ExpiresAt");
 
@@ -284,7 +289,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.ExpirationMinutes",
                             Description = "Minutes before reservation expires",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 18, 19, 42, 2, 22, DateTimeKind.Utc).AddTicks(1796),
+                            UpdatedAt = new DateTime(2026, 2, 18, 18, 53, 41, 894, DateTimeKind.Utc).AddTicks(4223),
                             Value = "30"
                         },
                         new
@@ -292,7 +297,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.MaxQuantity",
                             Description = "Maximum quantity per reservation",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 18, 19, 42, 2, 22, DateTimeKind.Utc).AddTicks(1799),
+                            UpdatedAt = new DateTime(2026, 2, 18, 18, 53, 41, 894, DateTimeKind.Utc).AddTicks(4230),
                             Value = "10"
                         },
                         new
@@ -300,7 +305,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Merchant.EditWindowHours",
                             Description = "Hours after creation when merchant can edit offer",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 18, 19, 42, 2, 22, DateTimeKind.Utc).AddTicks(1800),
+                            UpdatedAt = new DateTime(2026, 2, 18, 18, 53, 41, 894, DateTimeKind.Utc).AddTicks(4231),
                             Value = "24"
                         });
                 });
@@ -537,10 +542,14 @@ namespace Discounts.Infrastracture.Migrations
             modelBuilder.Entity("Discounts.Domain.Reservations.Reservation", b =>
                 {
                     b.HasOne("Discounts.Domain.Offers.Offer", null)
-                        .WithMany("Reservations")
+                        .WithMany()
                         .HasForeignKey("OfferId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Discounts.Domain.Offers.Offer", null)
+                        .WithMany("Reservations")
+                        .HasForeignKey("OfferId1");
 
                     b.HasOne("Discounts.Infrastracture.Identity.ApplicationUser", null)
                         .WithMany()

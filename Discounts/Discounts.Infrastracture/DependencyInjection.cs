@@ -12,6 +12,7 @@ using Discounts.Infrastracture.Persistence.Context;
 using Discounts.Infrastracture.Persistence.Repositories;
 using Discounts.Infrastracture.Repositories;
 using Discounts.Infrastracture.Services;
+using Discounts.Application.Coupons.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +59,7 @@ namespace Discounts.Infrastracture
 
             services.AddScoped<IGlobalSettingRepository, GlobalSettingRepository>();
             services.AddScoped<IGlobalSettingsService, GlobalSettingsService>();
+            services.AddScoped<ICouponRepository, CouponRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddMemoryCache();
 

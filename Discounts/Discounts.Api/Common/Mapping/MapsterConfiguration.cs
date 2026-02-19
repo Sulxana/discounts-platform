@@ -1,5 +1,4 @@
 ﻿using Discounts.Application.Offers.Commands.CreateOffer;
-using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Domain.Offers;
 using Mapster;
 
@@ -20,7 +19,8 @@ namespace Discounts.Application.Common.Mapping
                 src.DiscountedPrice,
                 src.TotalCoupons,
                 src.StartDate,
-                src.EndDate
+                src.EndDate,
+                Guid.Empty // set by handler
             ));
         }
     }

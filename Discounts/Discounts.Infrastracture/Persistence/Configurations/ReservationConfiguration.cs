@@ -27,7 +27,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne<Offer>()
-                .WithMany()
+                .WithMany(x => x.Reservations)
                 .HasForeignKey(x => x.OfferId)
                 .OnDelete(DeleteBehavior.Restrict); 
 
