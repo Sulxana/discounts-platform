@@ -125,5 +125,41 @@ namespace Discounts.Infrastracture.Repositories
                 .ToListAsync(token);
         }
 
+        public async Task<Application.Offers.Queries.GetMerchantDashboardStats.MerchantDashboardStatsDto> GetMerchantDashboardStatsAsync(CancellationToken token, Guid merchantId)
+        {
+            var stats = new Application.Offers.Queries.GetMerchantDashboardStats.MerchantDashboardStatsDto();
+
+            stats.TotalOffers = await _dbSet.Where(o => o.MerchantId == merchantId).CountAsync(token);
+            stats.ActiveOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Approved).CountAsync(token);
+            stats.ExpiredOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Expired).CountAsync(token);
+            stats.PendingOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Pending).CountAsync(token);
+            stats.RejectedOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Rejected).CountAsync(token);
+
+            return stats;
+        }
+
+        public async Task<List<Application.Offers.Queries.GetMerchantSalesHistory.MerchantSalesHistoryDto>> GetMerchantSalesHistoryAsync(CancellationToken token, Guid merchantId, int page, int pageSize)
+        {
+            var query = from coupon in _context.Set<Discounts.Domain.Coupons.Coupon>()
+                        join offer in _dbSet on coupon.OfferId equals offer.Id
+                        join user in _context.Set<Discounts.Infrastracture.Identity.ApplicationUser>() on coupon.UserId equals user.Id
+                        where offer.MerchantId == merchantId
+                        orderby coupon.PurchasedAt descending
+                        select new Application.Offers.Queries.GetMerchantSalesHistory.MerchantSalesHistoryDto
+                        {
+                            CouponId = coupon.Id,
+                            Code = coupon.Code,
+                            OfferId = offer.Id,
+                            OfferTitle = offer.Title,
+                            CustomerId = user.Id,
+                            CustomerName = user.FirstName + " " + user.LastName,
+                            PurchasedAt = coupon.PurchasedAt,
+                            IsRedeemed = coupon.IsRedeemed,
+                            RedeemedAt = coupon.RedeemedAt
+                        };
+
+            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+        }
+
     }
 }

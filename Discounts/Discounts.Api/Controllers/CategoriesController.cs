@@ -25,10 +25,8 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous] // Allow viewing categories without login? Or maybe just Authenticated? 
-                         // Requirement says "Categories Controller", usually public for filtering offers.
-                         // But Create/Update/Delete should be Admin.
-                         // IMPORTANT: Existing Offers logic allows public viewing. Categories likely public too.
+        [AllowAnonymous]
+                         
         public async Task<ActionResult<List<CategoryDto>>> GetAll(CancellationToken token)
         {
             var result = await _mediator.Send(new GetAllCategoriesQuery(), token);

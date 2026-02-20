@@ -12,10 +12,25 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Discounts.Api.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Serilog;
+using Serilog.Events;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
+try
+{
+    Log.Information("Starting web host");
+    var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .WriteTo.Console());
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -93,6 +108,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -134,3 +150,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

@@ -1,4 +1,6 @@
-﻿using Discounts.Domain.Offers;
+﻿using Discounts.Application.Offers.Queries.GetMerchantDashboardStats;
+using Discounts.Application.Offers.Queries.GetMerchantSalesHistory;
+using Discounts.Domain.Offers;
 
 namespace Discounts.Application.Offers.Interfaces
 {
@@ -18,6 +20,8 @@ namespace Discounts.Application.Offers.Interfaces
         Task DeleteOfferAsync(CancellationToken token, Offer offer);
         Task DeleteOfferAsync(CancellationToken token, Guid offerId);
         Task<List<Offer>> GetExpiredActiveAsync(CancellationToken token);
+        Task<MerchantDashboardStatsDto> GetMerchantDashboardStatsAsync(CancellationToken token, Guid merchantId);
+        Task<List<MerchantSalesHistoryDto>> GetMerchantSalesHistoryAsync(CancellationToken token, Guid merchantId, int page, int pageSize);
         Task SaveChangesAsync(CancellationToken token);
 
     }

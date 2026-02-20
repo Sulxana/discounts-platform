@@ -54,22 +54,22 @@ namespace Discounts.Api.Controllers
         }
 
         [HttpGet("offers")]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetAllOffers(CancellationToken token, [FromQuery] string? category,
+        public async Task<ActionResult<List<OfferListItemDto>>> GetAllOffers(CancellationToken token, [FromQuery] CategoryDto? category,
                                                                             [FromQuery] OfferStatus? status, [FromQuery] bool deleted,
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _getAllHandler.GetAllOffers(token, new GetAllOffersQuery(category, status, deleted, page, pageSize));
+            var result = await _getAllHandler.GetAllOffers(token, new GetAllOffersQuery(category.Name, status, deleted, page, pageSize));
             return Ok(result);
         }
 
         [HttpGet("offers/deleted")]
-        public async Task<ActionResult<List<OfferListItemDto>>> GetDeletedOffers(CancellationToken token, [FromQuery] string? category,
+        public async Task<ActionResult<List<OfferListItemDto>>> GetDeletedOffers(CancellationToken token, [FromQuery] CategoryDto? category,
                                                                             [FromQuery] OfferStatus? status,
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _getDeletedHandler.GetDeletedOffers(token, new GetDeletedOffersQuery(category, status, page, pageSize));
+            var result = await _getDeletedHandler.GetDeletedOffers(token, new GetDeletedOffersQuery(category.Name, status, page, pageSize));
             return Ok(result);
         }
 
@@ -114,5 +114,32 @@ namespace Discounts.Api.Controllers
         }
 
         
+        [HttpPost("users/{id:guid}/block")]
+        public async Task<IActionResult> BlockUser(Guid id, [FromServices] Discounts.Application.Users.Commands.BlockUser.BlockUserHandler handler, CancellationToken token)
+        {
+            await handler.Handle(new Discounts.Application.Users.Commands.BlockUser.BlockUserCommand(id), token);
+            return NoContent();
+        }
+
+        [HttpPost("users/{id:guid}/unblock")]
+        public async Task<IActionResult> UnblockUser(Guid id, [FromServices] Discounts.Application.Users.Commands.UnblockUser.UnblockUserHandler handler, CancellationToken token)
+        {
+            await handler.Handle(new Discounts.Application.Users.Commands.UnblockUser.UnblockUserCommand(id), token);
+            return NoContent();
+        }
+
+        [HttpPut("users/{id:guid}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] Discounts.Application.Users.Commands.UpdateUser.UpdateUserRequest request, [FromServices] Discounts.Application.Users.Commands.UpdateUser.UpdateUserHandler handler, CancellationToken token)
+        {
+            var command = new Discounts.Application.Users.Commands.UpdateUser.UpdateUserCommand
+            {
+                UserId = id,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email
+            };
+            await handler.Handle(command, token);
+            return NoContent();
+        }
     }
 }
