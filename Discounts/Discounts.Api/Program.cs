@@ -30,7 +30,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
     .ReadFrom.Services(services)
     .Enrich.FromLogContext()
-    .WriteTo.Console());
+    .Enrich.WithCorrelationId()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [ReqId: {RequestId}] [CorrId: {CorrelationId}] {Message:lj}{NewLine}{Exception}"));
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -145,8 +146,10 @@ using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<Discounts.Infrastracture.Persistence.Context.DiscountsDbContext>();
 
     await IdentitySeeder.SeedAsync(userManager, roleManager);
+    await DatabaseSeeder.SeedAsync(dbContext, userManager);
 }
 
 app.Run();

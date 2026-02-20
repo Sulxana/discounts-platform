@@ -23,7 +23,17 @@ namespace Discounts.Api.Controllers
             _getActiveHandler = getActiveHandler;
         }
 
+        /// <summary>
+        /// Retrieves paginated list of active (Approved and Not Expired) offers.
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <param name="category">Filter by category name</param>
+        /// <param name="status">Filter by status (ignored for public active offers)</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Items per page</param>
+        /// <returns>List of active offers</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(List<OfferListItemDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<OfferListItemDto>>> GetActiveOffers(CancellationToken token, [FromQuery] string? category,
                                                                             [FromQuery] OfferStatus? status,
                                                                             [FromQuery] int page = 1,
@@ -33,7 +43,15 @@ namespace Discounts.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Retrieves details of a specific offer by ID.
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <param name="id">Offer ID</param>
+        /// <returns>Offer details or NotFound</returns>
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(OfferDetailsDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<OfferDetailsDto>> GetOfferById(CancellationToken token, Guid id)
         {
             var result = await _getHandler.GetOfferById(token, new GetOfferByIdQuery(id));

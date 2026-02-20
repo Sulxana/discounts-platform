@@ -20,13 +20,15 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status, int page, int pageSize)
         {
-            IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().Include(x => x.Category);
+            var now = DateTime.UtcNow;
+            IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().Include(x => x.Category)
+                .Where(x => x.Status == OfferStatus.Approved && x.EndDate > now);
 
             if (!string.IsNullOrEmpty(categoryName))
                 query = query.Where(x => x.Category.Name == categoryName);
 
-            if (status.HasValue)
-                query = query.Where(x => x.Status == status.Value);
+            // Ignore status parameter if passed, as Active offers are strictly Approved & not expired.
+            // if (status.HasValue) query = query.Where(x => x.Status == status.Value);
 
             query = query.OrderByDescending(x => x.StartDate);
 
@@ -54,7 +56,17 @@ namespace Discounts.Infrastracture.Repositories
             }
             else
             {
-                var result = await GetActiveOfferAsync(token, categoryName, status, page, pageSize);
+                IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().IgnoreQueryFilters().Include(x => x.Category).Where(x => x.IsDeleted == false);
+
+                if (!string.IsNullOrEmpty(categoryName))
+                    query = query.Where(x => x.Category.Name == categoryName);
+
+                if (status.HasValue)
+                    query = query.Where(x => x.Status == status.Value);
+
+                query = query.OrderByDescending(x => x.StartDate);
+
+                var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
                 return result;
             }
 

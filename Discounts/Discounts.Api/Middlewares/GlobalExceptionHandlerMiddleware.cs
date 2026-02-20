@@ -46,7 +46,8 @@ namespace Discounts.Api.Middlewares
             var errorResponse = new ErrorResponse
             {
                 TraceId = context.TraceIdentifier,
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.UtcNow,
+                Instance = context.Request.Path
             };
 
             switch (ex)
@@ -54,8 +55,10 @@ namespace Discounts.Api.Middlewares
                 case ValidationException validationException:
                     _logger.LogWarning(ex, "Validation error occurred");
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = "Validation failed";
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Validation failed";
+                    errorResponse.Detail = "One or more validation errors occurred.";
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
                     errorResponse.Errors = validationException.Errors
                         .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
                         .ToList();
@@ -64,45 +67,57 @@ namespace Discounts.Api.Middlewares
                 case NotFoundException notFoundException:
                     _logger.LogWarning(ex, "Resource not found: {Message}", ex.Message);
                     response.StatusCode = (int)HttpStatusCode.NotFound;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = notFoundException.Message;
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Resource not found";
+                    errorResponse.Detail = notFoundException.Message;
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
                     break;
 
                 case UnauthorizedAccessException:
                     _logger.LogWarning(ex, "Unauthorized access attempt");
                     response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = "Access denied";
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Access denied";
+                    errorResponse.Detail = "You are not authorized to perform this action.";
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3";
                     break;
 
                 case InvalidOperationException invalidOpException:
                     _logger.LogWarning(ex, "Invalid operation: {Message}", ex.Message);
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = invalidOpException.Message;
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Invalid operation";
+                    errorResponse.Detail = invalidOpException.Message;
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
                     break;
 
                 case ArgumentException argumentException:
                     _logger.LogWarning(ex, "Invalid argument: {Message}", ex.Message);
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = argumentException.Message;
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Invalid argument";
+                    errorResponse.Detail = argumentException.Message;
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
                     break;
 
                 case Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException:
                     _logger.LogWarning(ex, "Concurrency conflict occurred.");
                     response.StatusCode = (int)HttpStatusCode.Conflict;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = "The resource was modified by another user. Please reload and try again.";
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Concurrency conflict";
+                    errorResponse.Detail = "The resource was modified by another user. Please reload and try again.";
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.8";
                     break;
 
                 default:
                     _logger.LogError(ex, "Unhandled exception occurred: {Message}", ex.Message);
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    errorResponse.StatusCode = response.StatusCode;
-                    errorResponse.Message = _env.IsDevelopment()
+                    errorResponse.Status = response.StatusCode;
+                    errorResponse.Title = "Internal Server Error";
+                    errorResponse.Detail = _env.IsDevelopment()
                         ? ex.Message
                         : "An error occurred while processing your request";
+                    errorResponse.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
 
                     if (_env.IsDevelopment())
                     {

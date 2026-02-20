@@ -25,14 +25,28 @@ namespace Discounts.Api.Controllers
             _getHandler = getHandler;
         }
 
+        /// <summary>
+        /// Retrieves the list of active/completed reservations for the current customer.
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>List of reservations</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(List<ReservationDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ReservationDto>>> GetMyReservations(CancellationToken token)
         {
             var reservations = await _getHandler.GetUserReservations(token, new GetUserReservationsQuery());
             return Ok(reservations);
         }
 
+        /// <summary>
+        /// Creates a new reservation for an offer.
+        /// </summary>
+        /// <param name="command">Reservation details (e.g. OfferId, Quantity)</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>The ID of the newly created reservation</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Guid>> Create(
             [FromBody] CreateReservationCommand command,
             CancellationToken token)
@@ -41,7 +55,16 @@ namespace Discounts.Api.Controllers
             return Ok(reservationId);
         }
 
+        /// <summary>
+        /// Cancels an existing, active reservation.
+        /// </summary>
+        /// <param name="id">The ID of the reservation to cancel</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>NoContent if successful</returns>
         [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Cancel(Guid id, CancellationToken token)
         {
             await _cancelHandler.CancelReservationAsync(token, new CancelReservationCommand(id));

@@ -1,5 +1,7 @@
 ﻿using Azure.Core;
 using Discounts.Application.Common.Exceptions;
+using Discounts.Application.Common.Interfaces;
+using Discounts.Application.Common.Security;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Settings.Interfaces;
 using Discounts.Domain.Offers;
@@ -14,12 +16,14 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
         private readonly IOfferRepository _repository;
         private readonly IValidator<UpdateOfferCommand> _validator;
         private readonly IGlobalSettingsService _settingsService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public UpdateOfferHandler(IOfferRepository repository, IValidator<UpdateOfferCommand> validator, IGlobalSettingsService settingsService)
+        public UpdateOfferHandler(IOfferRepository repository, IValidator<UpdateOfferCommand> validator, IGlobalSettingsService settingsService, ICurrentUserService currentUserService)
         {
             _repository = repository;
             _validator = validator;
             _settingsService = settingsService;
+            _currentUserService = currentUserService;
         }
 
         public async Task UpdateOfferAsync(CancellationToken token, UpdateOfferCommand UpdateOffer)
@@ -28,6 +32,12 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
 
             var offer = await _repository.GetOfferByIdAsync(token, UpdateOffer.Id);
             if (offer == null) throw new NotFoundException(nameof(Offer), UpdateOffer.Id);
+
+            var userId = _currentUserService.UserId;
+            if (userId != offer.MerchantId && !_currentUserService.IsInRole(Roles.Administrator))
+            {
+                throw new UnauthorizedAccessException("You are not authorized to update this offer.");
+            }
 
             var editWindowHours = await _settingsService.GetIntAsync(
                 SettingKeys.MerchantEditWindowHours, defaultValue: 24, token);
