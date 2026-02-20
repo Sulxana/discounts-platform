@@ -4,16 +4,19 @@ using Discounts.Infrastracture.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Discounts.Infrastracture.Migrations
+namespace Discounts.Infrastracture.Persistence.Migrations
 {
     [DbContext(typeof(DiscountsDbContext))]
-    partial class DiscountsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260220165103_SeedingEntities")]
+    partial class SeedingEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,9 +127,6 @@ namespace Discounts.Infrastracture.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRedeemed")
                         .HasColumnType("bit");
@@ -340,7 +340,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.ExpirationMinutes",
                             Description = "Minutes before reservation expires",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 20, 18, 21, 24, 695, DateTimeKind.Utc).AddTicks(3171),
+                            UpdatedAt = new DateTime(2026, 2, 20, 16, 51, 2, 785, DateTimeKind.Utc).AddTicks(9311),
                             Value = "30"
                         },
                         new
@@ -348,7 +348,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Reservation.MaxQuantity",
                             Description = "Maximum quantity per reservation",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 20, 18, 21, 24, 695, DateTimeKind.Utc).AddTicks(3174),
+                            UpdatedAt = new DateTime(2026, 2, 20, 16, 51, 2, 785, DateTimeKind.Utc).AddTicks(9316),
                             Value = "10"
                         },
                         new
@@ -356,7 +356,7 @@ namespace Discounts.Infrastracture.Migrations
                             Key = "Merchant.EditWindowHours",
                             Description = "Hours after creation when merchant can edit offer",
                             Type = "Integer",
-                            UpdatedAt = new DateTime(2026, 2, 20, 18, 21, 24, 695, DateTimeKind.Utc).AddTicks(3175),
+                            UpdatedAt = new DateTime(2026, 2, 20, 16, 51, 2, 785, DateTimeKind.Utc).AddTicks(9316),
                             Value = "24"
                         });
                 });

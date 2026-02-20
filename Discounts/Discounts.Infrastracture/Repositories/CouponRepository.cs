@@ -29,5 +29,15 @@ namespace Discounts.Infrastracture.Repositories
         {
             return await _dbSet.AnyAsync(x => x.OfferId == offerId, token);
         }
+
+        public async Task<Coupon?> GetByIdAsync(Guid id, CancellationToken token)
+        {
+            return await _dbSet.FirstOrDefaultAsync(x => x.Id == id, token);
+        }
+
+        public async Task<Coupon?> GetByCodeAsync(string code, CancellationToken token)
+        {
+            return await _dbSet.FirstOrDefaultAsync(x => x.Code == code, token);
+        }
     }
 }

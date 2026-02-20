@@ -4,6 +4,7 @@ using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Revoke;
 using Discounts.Application.Auth.Queries.WhoAmI;
 using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
+using Discounts.Application.Coupons.Commands.RedeemCoupon;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
 using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
@@ -78,6 +79,7 @@ namespace Discounts.Application
             services.AddScoped<PurchaseReservationHandler>();
             services.AddScoped<DirectPurchaseHandler>();
             services.AddScoped<GetMyCouponsHandler>();
+            services.AddScoped<RedeemCouponHandler>();
 
             services.AddScoped<Discounts.Application.Users.Commands.BlockUser.BlockUserHandler>();
             services.AddScoped<Discounts.Application.Users.Commands.UnblockUser.UnblockUserHandler>();

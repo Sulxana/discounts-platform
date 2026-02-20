@@ -14,6 +14,7 @@ using Discounts.Api.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
+using Microsoft.EntityFrameworkCore;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -147,6 +148,8 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     var dbContext = scope.ServiceProvider.GetRequiredService<Discounts.Infrastracture.Persistence.Context.DiscountsDbContext>();
+
+    await dbContext.Database.MigrateAsync();
 
     await IdentitySeeder.SeedAsync(userManager, roleManager);
     await DatabaseSeeder.SeedAsync(dbContext, userManager);

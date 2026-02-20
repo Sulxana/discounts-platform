@@ -10,4 +10,5 @@
   <Folder Name="/src/presentation/">
     <Project Path="Discounts.Api/Discounts.Api.csproj" />
   </Folder>
+  <Project Path="Discounts.Application.UnitTests/Discounts.Application.UnitTests.csproj" />
 </Solution>

@@ -2,6 +2,7 @@ using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Reservations.Interfaces;
 using Discounts.Domain.Coupons;
 using Discounts.Application.Coupons.Interfaces;
+using Discounts.Application.Offers.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Discounts.Application.Reservations.Commands.PurchaseReservation
@@ -12,13 +13,15 @@ namespace Discounts.Application.Reservations.Commands.PurchaseReservation
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PurchaseReservationHandler> _logger;
         private readonly ICouponRepository _couponRepository;
+        private readonly IOfferRepository _offerRepository;
 
-        public PurchaseReservationHandler(IReservationRepository reservationRepository, IUnitOfWork unitOfWork, ILogger<PurchaseReservationHandler> logger, ICouponRepository couponRepository)
+        public PurchaseReservationHandler(IReservationRepository reservationRepository, IUnitOfWork unitOfWork, ILogger<PurchaseReservationHandler> logger, ICouponRepository couponRepository, IOfferRepository offerRepository)
         {
             _reservationRepository = reservationRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _couponRepository = couponRepository;
+            _offerRepository = offerRepository;
         }
 
         public async Task<List<Guid>> Handle(PurchaseReservationCommand command, CancellationToken token)
@@ -36,10 +39,14 @@ namespace Discounts.Application.Reservations.Commands.PurchaseReservation
 
             reservation.MarkAsCompleted();
 
+            var offer = await _offerRepository.GetOfferByIdAsync(token, reservation.OfferId);
+            if (offer == null)
+                throw new KeyNotFoundException($"Offer {reservation.OfferId} not found.");
+
             var coupons = new List<Coupon>();
             for (int i = 0; i < reservation.Quantity; i++)
             {
-                var coupon = new Coupon(reservation.UserId, reservation.OfferId, reservation.Id);
+                var coupon = new Coupon(reservation.UserId, reservation.OfferId, reservation.Id, offer.EndDate);
                 coupons.Add(coupon);
             }
 
