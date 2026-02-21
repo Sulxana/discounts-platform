@@ -30,6 +30,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<Discounts.Application.Common.Interfaces.ICurrentUserService, Discounts.Infrastracture.Services.CurrentUserService>();
+builder.Services.AddScoped<Discounts.Mvc.Services.IImageStorageService, Discounts.Mvc.Services.LocalImageStorageService>();
 
 // Mapster config (scan assembly)
 var config = TypeAdapterConfig.GlobalSettings;
@@ -61,6 +62,14 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+var supportedCultures = new[] { "ka-GE", "en-US" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizationOptions);
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

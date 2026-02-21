@@ -1,0 +1,113 @@
+@model List<Discounts.Application.Reservations.Queries.GetUserReservations.ReservationDto>
+
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+<div class="row mb-4">
+    <div class="col">
+        <h2>My Active Reservations</h2>
+        <p class="text-muted">You must purchase these reservations before they expire, otherwise they will be cancelled.</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You don't have any active reservations currently. Browse offers and reserve some!
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Browse Offers</a>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var reservation in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-warning">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <strong>Reservation</strong>
+                        <span class="badge bg-danger rounded-pill timer" data-expires="@reservation.ExpiresAt.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                            @reservation.MinutesRemaining min left
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@reservation.OfferTitle</h5>
+                        <p class="card-text mb-1">
+                            <strong>Quantity:</strong> @reservation.Quantity
+                        </p>
+                        <p class="card-text mb-1">
+                            <strong>Price:</strong> <span class="text-success fw-bold">@reservation.Price.ToString("C")</span>
+                        </p>
+                        <p class="card-text text-muted small">
+                            Reserved: @reservation.CreatedAt.ToLocalTime().ToString("g")<br />
+                            Expires: @reservation.ExpiresAt.ToLocalTime().ToString("g")
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-grid gap-2">
+                        <form asp-controller="CustomerReservations" asp-action="Purchase" method="post" class="d-inline w-100">
+                            <input type="hidden" name="reservationId" value="@reservation.Id" />
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-cart-check" style="font-style: normal;">🛒</i> Purchase Now
+                            </button>
+                        </form>
+                        <form asp-controller="CustomerReservations" asp-action="Cancel" method="post" class="d-inline w-100">
+                            <input type="hidden" name="id" value="@reservation.Id" />
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to cancel this reservation?')">
+                                <i class="bi bi-x-circle" style="font-style: normal;">✖</i> Cancel Reservation
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Simple countdown timer for reservations
+        document.addEventListener('DOMContentLoaded', function() {
+            const timers = document.querySelectorAll('.timer');
+            
+            function updateTimers() {
+                const now = new Date();
+                
+                timers.forEach(function(timer) {
+                    const expiresAt = new Date(timer.getAttribute('data-expires'));
+                    const diff = expiresAt - now; // Difference in milliseconds
+                    
+                    if (diff <= 0) {
+                        timer.textContent = "Expired";
+                        timer.classList.remove('bg-danger');
+                        timer.classList.add('bg-secondary');
+                    } else {
+                        const totalSeconds = Math.floor(diff / 1000);
+                        const minutes = Math.floor(totalSeconds / 60);
+                        const seconds = totalSeconds % 60;
+                        timer.textContent = `${minutes}m ${seconds}s left`;
+                    }
+                });
+            }
+
+            updateTimers();
+            setInterval(updateTimers, 1000);
+        });
+    </script>
+}

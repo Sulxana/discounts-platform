@@ -32,6 +32,7 @@ using Discounts.Application.Reservations.Interfaces;
 using Discounts.Application.Reservations.Commands.PurchaseReservation;
 using Discounts.Application.Coupons.Commands.DirectPurchase;
 using Discounts.Application.Coupons.Queries.GetMyCoupons;
+using Discounts.Application.Coupons.Queries.GetUserCoupons;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Discounts.Application.Users.Commands.BlockUser;
@@ -74,6 +75,7 @@ namespace Discounts.Application
             services.AddScoped<ApproveMerchantApplicationHandler>();
             services.AddScoped<RejectMerchantApplicationHandler>();
             services.AddScoped<GetAllMerchantApplicationsHandler>();
+            services.AddScoped<Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication.GetUserMerchantApplicationHandler>();
 
             services.AddScoped<CreateReservationHandler>();
             services.AddScoped<CancelReservationHandler>();
@@ -88,6 +90,7 @@ namespace Discounts.Application
             services.AddScoped<PurchaseReservationHandler>();
             services.AddScoped<DirectPurchaseHandler>();
             services.AddScoped<GetMyCouponsHandler>();
+            services.AddScoped<GetUserCouponsHandler>();
             services.AddScoped<RedeemCouponHandler>();
 
             services.AddScoped<BlockUserHandler>();

@@ -26,18 +26,16 @@ namespace Discounts.Api.Controllers
         private readonly MediatR.ISender _mediator;
         private readonly GetDeletedOffersHandler _getDeletedHandler;
         private readonly GetOfferByIdHandler _getHandler;
-        private readonly ApproveOfferHandler _approveOfferHandler;
         private readonly RejectOfferHandler _rejectOfferHandler;
         private readonly ApproveMerchantApplicationHandler _approveUserHandler;
         private readonly RejectMerchantApplicationHandler _rejectUserHandler;
         private readonly GetAllMerchantApplicationsHandler _getAllMerchantApplicationsHandler;
 
-        public AdminController(MediatR.ISender mediator, GetDeletedOffersHandler getDeletedHandler, GetOfferByIdHandler getHandler, ApproveOfferHandler approveOfferHandler, RejectOfferHandler rejectOfferHandler, ApproveMerchantApplicationHandler approveHandler, RejectMerchantApplicationHandler rejectHandler, GetAllMerchantApplicationsHandler getAllMerchantApplicationsHandler)
+        public AdminController(MediatR.ISender mediator, GetDeletedOffersHandler getDeletedHandler, GetOfferByIdHandler getHandler, RejectOfferHandler rejectOfferHandler, ApproveMerchantApplicationHandler approveHandler, RejectMerchantApplicationHandler rejectHandler, GetAllMerchantApplicationsHandler getAllMerchantApplicationsHandler)
         {
             _mediator = mediator;
             _getDeletedHandler = getDeletedHandler;
             _getHandler = getHandler;
-            _approveOfferHandler = approveOfferHandler;
             _rejectOfferHandler = rejectOfferHandler;
             _approveUserHandler = approveHandler;
             _rejectUserHandler = rejectHandler;
@@ -88,7 +86,7 @@ namespace Discounts.Api.Controllers
         [HttpPut("offers/{id:guid}/approve")]
         public async Task<IActionResult> ApproveOffer(CancellationToken token, Guid id)
         {
-            await _approveOfferHandler.ApproveOfferAsync(token, new ApproveOfferCommand(id));
+            await _mediator.Send(new ApproveOfferCommand(id), token);
             return NoContent();
         }
 

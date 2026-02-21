@@ -23,10 +23,21 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
         {
             await _validator.ValidateAndThrowAsync(createOffer, token);
 
-            var offer = createOffer.Adapt<Offer>();
             var userId = _currentUserService.UserId;
             if (userId == null) throw new UnauthorizedAccessException();
-            offer.SetMerchantId(userId.Value);
+
+            var offer = new Offer(
+                createOffer.Title,
+                createOffer.Description,
+                createOffer.CategoryId,
+                createOffer.ImageUrl,
+                createOffer.OriginalPrice,
+                createOffer.DiscountedPrice,
+                createOffer.TotalCoupons,
+                createOffer.StartDate,
+                createOffer.EndDate,
+                userId.Value
+            );
 
             await _repository.AddOfferAsync(token, offer);
             await _repository.SaveChangesAsync(token);

@@ -61,7 +61,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            await _handler.ApproveOfferAsync(CancellationToken.None, command);
+            await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             offer.Status.Should().Be(OfferStatus.Approved);
@@ -80,7 +80,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.ApproveOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
@@ -104,7 +104,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync((Offer?)null);
 
             // Act
-            var act = async () => await _handler.ApproveOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>();
@@ -143,7 +143,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.ApproveOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()

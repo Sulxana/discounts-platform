@@ -71,52 +71,6 @@ namespace Discounts.Mvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // --- Merchant Applications Moderation ---
-
-        public async Task<IActionResult> MerchantApplications(int page = 1, CancellationToken token = default)
-        {
-            var query = new GetAllMerchantApplicationsQuery(MerchantApplicationStatus.Pending, page, 20);
-            var apps = await _mediator.Send(query, token);
-            ViewBag.CurrentPage = page;
-            return View(apps);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ApproveApplication(Guid id, CancellationToken token)
-        {
-            try
-            {
-                await _mediator.Send(new ApproveMerchantApplicationCommand(id), token);
-                TempData["SuccessMessage"] = "Merchant application approved successfully.";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-            }
-            return RedirectToAction(nameof(MerchantApplications));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejectApplication(Guid id, string reason, CancellationToken token)
-        {
-            if (string.IsNullOrWhiteSpace(reason))
-            {
-                TempData["ErrorMessage"] = "A rejection reason is required.";
-                return RedirectToAction(nameof(MerchantApplications));
-            }
-
-            try
-            {
-                await _mediator.Send(new RejectMerchantApplicationCommand(id, reason), token);
-                TempData["SuccessMessage"] = "Merchant application rejected.";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-            }
-            return RedirectToAction(nameof(MerchantApplications));
-        }
+        // Removed Merchant Applications Moderation per user request
     }
 }

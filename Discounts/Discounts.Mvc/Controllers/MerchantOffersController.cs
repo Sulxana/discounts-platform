@@ -9,6 +9,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using Discounts.Mvc.Services;
 
 namespace Discounts.Mvc.Controllers
 {
@@ -21,6 +23,7 @@ namespace Discounts.Mvc.Controllers
         private readonly GetOfferByIdHandler _getOfferByIdHandler;
         private readonly ISender _mediator;
         private readonly IGlobalSettingsService _settingsService;
+        private readonly IImageStorageService _imageStorage;
 
         public MerchantOffersController(
             GetMerchantOffersHandler getMerchantOffersHandler,
@@ -28,7 +31,8 @@ namespace Discounts.Mvc.Controllers
             UpdateOfferHandler updateOfferHandler,
             GetOfferByIdHandler getOfferByIdHandler,
             ISender mediator,
-            IGlobalSettingsService settingsService)
+            IGlobalSettingsService settingsService,
+            IImageStorageService imageStorage)
         {
             _getMerchantOffersHandler = getMerchantOffersHandler;
             _createOfferHandler = createOfferHandler;
@@ -36,6 +40,7 @@ namespace Discounts.Mvc.Controllers
             _getOfferByIdHandler = getOfferByIdHandler;
             _mediator = mediator;
             _settingsService = settingsService;
+            _imageStorage = imageStorage;
         }
 
         public async Task<IActionResult> Index(int page = 1, CancellationToken token = default)
@@ -61,7 +66,7 @@ namespace Discounts.Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateOfferCommand command, CancellationToken token)
+        public async Task<IActionResult> Create(CreateOfferCommand command, IFormFile? ImageFile, CancellationToken token)
         {
             if (!ModelState.IsValid)
             {
@@ -71,6 +76,11 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
+                if (ImageFile is { Length: > 0 })
+                {
+                    command.ImageUrl = await _imageStorage.SaveAsync(ImageFile, token);
+                }
+
                 await _createOfferHandler.CreateOffer(token, command);
                 TempData["SuccessMessage"] = "Offer created successfully. It is now pending approval.";
                 return RedirectToAction("Index");
@@ -122,7 +132,7 @@ namespace Discounts.Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UpdateOfferCommand command, CancellationToken token)
+        public async Task<IActionResult> Edit(Guid id, UpdateOfferCommand command, IFormFile? ImageFile, CancellationToken token)
         {
             if (id != command.Id) return BadRequest();
 
@@ -133,6 +143,11 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
+                if (ImageFile is { Length: > 0 })
+                {
+                    command.ImageUrl = await _imageStorage.SaveAsync(ImageFile, token);
+                }
+
                 await _updateOfferHandler.UpdateOfferAsync(token, command);
                 TempData["SuccessMessage"] = "Offer updated successfully.";
                 return RedirectToAction("Index");

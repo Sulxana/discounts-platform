@@ -2,10 +2,11 @@
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Domain.Offers;
 using FluentValidation;
+using MediatR;
 
 namespace Discounts.Application.Offers.Commands.ApproveOffer
 {
-    public class ApproveOfferHandler
+    public class ApproveOfferHandler : IRequestHandler<ApproveOfferCommand>
     {
         private readonly IOfferRepository _repository;
         private readonly IValidator<ApproveOfferCommand> _validator;
@@ -16,15 +17,15 @@ namespace Discounts.Application.Offers.Commands.ApproveOffer
             _validator = validator;
         }
 
-        public async Task ApproveOfferAsync(CancellationToken token, ApproveOfferCommand approvedOffer)
+        public async Task Handle(ApproveOfferCommand request, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(approvedOffer, token);
+            await _validator.ValidateAndThrowAsync(request, cancellationToken);
 
-            var offer = await _repository.GetOfferForUpdateByIdAsync(token, approvedOffer.Id);
-            if (offer == null) throw new NotFoundException(nameof(Offer), approvedOffer.Id);
+            var offer = await _repository.GetOfferForUpdateByIdAsync(cancellationToken, request.Id);
+            if (offer == null) throw new NotFoundException(nameof(Offer), request.Id);
 
             offer.Approve();
-            await _repository.SaveChangesAsync(token);
+            await _repository.SaveChangesAsync(cancellationToken);
         }
 
     }

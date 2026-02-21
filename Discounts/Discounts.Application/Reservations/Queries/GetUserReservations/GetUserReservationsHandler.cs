@@ -30,7 +30,8 @@ namespace Discounts.Application.Reservations.Queries.GetUserReservations
                 CreatedAt = r.Reservation.CreatedAt,
                 ExpiresAt = r.Reservation.ExpiresAt,
                 Status = r.Reservation.Status.ToString(),
-                MinutesRemaining = (int)(r.Reservation.ExpiresAt - DateTime.UtcNow).TotalMinutes
+                MinutesRemaining = (int)(r.Reservation.ExpiresAt - DateTime.UtcNow).TotalMinutes,
+                Price = r.Price
             }).ToList();
         }
     }

@@ -138,6 +138,14 @@
 
                             <!-- Title + desc -->
                             <div class="offer-title">@offer.Title</div>
+                            
+                            <div class="card-price-row mt-2">
+                                <span class="discount-price text-success fw-bold fs-5">@offer.DiscountedPrice.ToString("C")</span>
+                                @if (hasDiscount)
+                                {
+                                    <span class="original-price text-muted text-decoration-line-through ms-2 small">@offer.OriginalPrice.ToString("C")</span>
+                                }
+                            </div>
 
                             <!-- Footer -->
                             <div class="card-footer-custom">

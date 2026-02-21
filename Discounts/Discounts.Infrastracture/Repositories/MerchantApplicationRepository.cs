@@ -20,6 +20,14 @@ namespace Discounts.Infrastracture.Persistence.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
+        public async Task<MerchantApplication?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            return await _context.MerchantApplications
+                .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.CreatedAtUtc)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public async Task<bool> HasPendingApplicationAsync(Guid userId, CancellationToken cancellationToken)
         {
             return await _context.MerchantApplications

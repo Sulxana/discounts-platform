@@ -40,6 +40,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Customer" asp-action="MyCoupons">My Coupons</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="CustomerReservations" asp-action="MyReservations">My Reservations</a>
+                                </li>
                             }
                             else if (User.IsInRole("Merchant"))
                             {
@@ -98,6 +101,8 @@
             </div>
         </nav>
     </header>
+
+    @await Component.InvokeAsync("MerchantApplicationBanner")
 
     <div class="container-fluid px-4">
         <main role="main">

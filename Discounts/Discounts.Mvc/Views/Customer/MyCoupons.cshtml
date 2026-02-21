@@ -9,9 +9,33 @@
     
     @if (!User.IsInRole("Merchant"))
     {
-        <form method="post" asp-controller="Customer" asp-action="ApplyForMerchant">
-            <button type="submit" class="btn btn-outline-primary">Apply to become a Merchant</button>
-        </form>
+            var app = ViewBag.MerchantApplication as Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication.UserMerchantApplicationDto;
+
+            if (app == null)
+            {
+                <form method="post" asp-controller="Customer" asp-action="ApplyForMerchant" class="m-0 p-0">
+                    <button type="submit" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                        <i class="bi bi-shop"></i>
+                        <span>Apply to become a Merchant</span>
+                    </button>
+                </form>
+            }
+            else if (app.Status == "Pending")
+            {
+                <div class="d-flex align-items-center gap-2 text-warning fw-bold border border-warning rounded px-3 py-2">
+                    <i class="bi bi-hourglass-split"></i>
+                    <span>Merchant Application Pending (Submitted @app.CreatedAt.ToLocalTime().ToString("g"))</span>
+                </div>
+            }
+            else if (app.Status == "Rejected")
+            {
+                <form method="post" asp-controller="Customer" asp-action="ApplyForMerchant" class="m-0 p-0">
+                    <button type="submit" class="btn btn-outline-danger d-flex align-items-center gap-2">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Re-apply for Merchant</span>
+                    </button>
+                </form>
+            }
     }
 </div>
 

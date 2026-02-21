@@ -1,6 +1,8 @@
-﻿namespace Discounts.Application.Offers.Commands.ApproveOffer
+﻿using MediatR;
+
+namespace Discounts.Application.Offers.Commands.ApproveOffer
 {
-    public class ApproveOfferCommand
+    public class ApproveOfferCommand : IRequest
     {
         public Guid Id { get; private set; }
 

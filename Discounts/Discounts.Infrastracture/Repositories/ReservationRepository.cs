@@ -23,18 +23,18 @@ namespace Discounts.Infrastracture.Repositories
         {
             return await _context.Reservations.FirstOrDefaultAsync(r => r.Id == id, token);
         }
-        public async Task<List<(Reservation Reservation, string OfferTitle)>> GetUserActiveReservationsWithOffersAsync(Guid userId,CancellationToken token)
+        public async Task<List<(Reservation Reservation, string OfferTitle, decimal Price)>> GetUserActiveReservationsWithOffersAsync(Guid userId,CancellationToken token)
         {
             var results = await _context.Reservations
                 .Where(r => r.UserId == userId && r.Status == ReservationStatus.Active)
                 .Join(_context.Offer,
                     reservation => reservation.OfferId,
                     offer => offer.Id,
-                    (reservation, offer) => new { Reservation = reservation, OfferTitle = offer.Title })
+                    (reservation, offer) => new { Reservation = reservation, OfferTitle = offer.Title, Price = offer.DiscountedPrice })
                 .OrderByDescending(x => x.Reservation.CreatedAt)
                 .ToListAsync(token);
 
-            return results.Select(x => (x.Reservation, x.OfferTitle)).ToList();
+            return results.Select(x => (x.Reservation, x.OfferTitle, x.Price)).ToList();
         }
         public async Task<List<Reservation>> GetExpiredActiveAsync(CancellationToken token)
         {
