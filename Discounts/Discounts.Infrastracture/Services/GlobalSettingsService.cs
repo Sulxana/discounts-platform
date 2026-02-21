@@ -35,25 +35,29 @@ namespace Discounts.Infrastracture.Services
             var value = await GetValueAsync(key, cancellationToken);
             return bool.TryParse(value, out var result) ? result : defaultValue;
         }
+        private string NormalizeKey(string key) => key?.Trim().ToLowerInvariant() ?? string.Empty;
+
         private async Task<string?> GetValueAsync(string key, CancellationToken token)
         {
-            
-            if (_cache.TryGetValue(key, out string? cachedValue))
+            var normalizedKey = NormalizeKey(key);
+
+            if (_cache.TryGetValue(normalizedKey, out string? cachedValue))
                 return cachedValue;
             
-            var setting = await _repository.GetByKeyAsync(token, key);
+            var setting = await _repository.GetByKeyAsync(token, key); 
 
             if (setting == null)
                 return null;
             
-            _cache.Set(key, setting.Value, TimeSpan.FromMinutes(CACHE_MINUTES));
+            _cache.Set(normalizedKey, setting.Value, TimeSpan.FromMinutes(CACHE_MINUTES));
 
             return setting.Value;
         }
 
         public void RemoveFromCache(string key)
         {
-            _cache.Remove(key);
+            var normalizedKey = NormalizeKey(key);
+            _cache.Remove(normalizedKey);
         }
     }
 }

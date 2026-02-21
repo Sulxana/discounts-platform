@@ -16,14 +16,18 @@ namespace Discounts.Application.Settings.Commands.UpdateSetting
 
         public async Task Handle(UpdateSettingCommand command, CancellationToken token)
         {
+            var normalizedKey = command.Key?.Trim().ToLowerInvariant() ?? string.Empty;
+            var trimmedValue = command.Value?.Trim() ?? string.Empty;
+
             var setting = await _repository.GetByKeyAsync(token, command.Key);
 
             if (setting == null)
                 throw new InvalidOperationException($"Setting with key '{command.Key}' not found");
-            setting.UpdateValue(command.Value);
+            
+            setting.UpdateValue(trimmedValue);
 
             await _repository.SaveChangesAsync(token);
-            _settingsService.RemoveFromCache(command.Key);
+            _settingsService.RemoveFromCache(normalizedKey);
         }
     }
 }

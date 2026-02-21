@@ -14,7 +14,7 @@
 
         <div class="card shadow-sm">
             <div class="card-body">
-                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <form asp-action="Edit" method="post">
                     <input type="hidden" asp-for="Id" />
                     
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -48,16 +48,15 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Offer Image (Optional)</label>
-                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        <label asp-for="ImageUrl" class="form-label">Image URL (Optional)</label>
+                        @if (!string.IsNullOrEmpty(Model?.ImageUrl))
                         {
                             <div class="mb-2">
                                 <img src="@Model.ImageUrl" alt="Current image" style="height:120px; object-fit:cover; border-radius:8px;" />
-                                <div class="form-text">Current image. Upload a new file to replace it.</div>
                             </div>
                         }
-                        <input type="file" name="imageFile" class="form-control" accept="image/*" />
-                        <input type="hidden" asp-for="ImageUrl" />
+                        <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
                     </div>
 
                     <div class="d-flex justify-content-between">

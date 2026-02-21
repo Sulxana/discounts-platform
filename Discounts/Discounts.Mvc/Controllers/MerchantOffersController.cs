@@ -1,5 +1,4 @@
 using Discounts.Application.Categories.Queries.GetAllCategories;
-using Discounts.Application.Interfaces;
 using Discounts.Application.Offers.Commands.CreateOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
 using Discounts.Application.Offers.Queries.GetMerchantOffers;
@@ -21,7 +20,6 @@ namespace Discounts.Mvc.Controllers
         private readonly UpdateOfferHandler _updateOfferHandler;
         private readonly GetOfferByIdHandler _getOfferByIdHandler;
         private readonly ISender _mediator;
-        private readonly IImageStorageService _imageStorage;
         private readonly IGlobalSettingsService _settingsService;
 
         public MerchantOffersController(
@@ -30,7 +28,6 @@ namespace Discounts.Mvc.Controllers
             UpdateOfferHandler updateOfferHandler,
             GetOfferByIdHandler getOfferByIdHandler,
             ISender mediator,
-            IImageStorageService imageStorage,
             IGlobalSettingsService settingsService)
         {
             _getMerchantOffersHandler = getMerchantOffersHandler;
@@ -38,7 +35,6 @@ namespace Discounts.Mvc.Controllers
             _updateOfferHandler = updateOfferHandler;
             _getOfferByIdHandler = getOfferByIdHandler;
             _mediator = mediator;
-            _imageStorage = imageStorage;
             _settingsService = settingsService;
         }
 
@@ -65,7 +61,7 @@ namespace Discounts.Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateOfferCommand command, IFormFile? imageFile, CancellationToken token)
+        public async Task<IActionResult> Create(CreateOfferCommand command, CancellationToken token)
         {
             if (!ModelState.IsValid)
             {
@@ -75,12 +71,6 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                if (imageFile is { Length: > 0 })
-                {
-                    using var stream = imageFile.OpenReadStream();
-                    command.ImageUrl = await _imageStorage.UploadAsync(stream, imageFile.FileName, token);
-                }
-
                 await _createOfferHandler.CreateOffer(token, command);
                 TempData["SuccessMessage"] = "Offer created successfully. It is now pending approval.";
                 return RedirectToAction("Index");
@@ -102,7 +92,6 @@ namespace Discounts.Mvc.Controllers
             {
                 var offer = await _getOfferByIdHandler.GetOfferById(token, new GetOfferByIdQuery(id));
 
-                // Block editing if the admin-configured edit window has passed
                 var editWindowHours = await _settingsService.GetIntAsync(
                     SettingKeys.MerchantEditWindowHours, defaultValue: 24, token);
                 var cutoffTime = offer.CreatedAt.AddHours(editWindowHours);
@@ -133,7 +122,7 @@ namespace Discounts.Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UpdateOfferCommand command, IFormFile? imageFile, CancellationToken token)
+        public async Task<IActionResult> Edit(Guid id, UpdateOfferCommand command, CancellationToken token)
         {
             if (id != command.Id) return BadRequest();
 
@@ -144,19 +133,12 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                if (imageFile is { Length: > 0 })
-                {
-                    using var stream = imageFile.OpenReadStream();
-                    command.ImageUrl = await _imageStorage.UploadAsync(stream, imageFile.FileName, token);
-                }
-
                 await _updateOfferHandler.UpdateOfferAsync(token, command);
                 TempData["SuccessMessage"] = "Offer updated successfully.";
                 return RedirectToAction("Index");
             }
             catch (InvalidOperationException ex)
             {
-                // e.g. edit window has expired
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }

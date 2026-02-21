@@ -38,7 +38,6 @@ namespace Discounts.Api.Controllers
         public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferCommand command)
         {
             var result = await _createHandler.CreateOffer(token, command);
-
             return CreatedAtAction(nameof(OfferController.GetOfferById), "Offer", new { id = result }, result);
         }
 
@@ -75,6 +74,5 @@ namespace Discounts.Api.Controllers
             await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id, reason));
             return NoContent();
         }
-
     }
 }

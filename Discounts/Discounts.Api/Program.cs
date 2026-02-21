@@ -46,6 +46,7 @@ builder.Services.AddControllers()
 builder.Services.RegisterMaps();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHttpClient();
 builder.Services.AddApiServices();
 
 builder.Services

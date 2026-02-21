@@ -1,8 +1,5 @@
-using CloudinaryDotNet;
 using Discounts.Application;
-using Discounts.Application.Interfaces;
 using Discounts.Infrastracture;
-using Discounts.Infrastracture.Images;
 using Mapster;
 using MapsterMapper;
 using System.Reflection;
@@ -10,7 +7,20 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 
+using Microsoft.AspNetCore.Http.Features;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Ensure file upload limits won’t crash the app (raise to 20MB max upload)
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.MultipartBodyLengthLimit = 20 * 1024 * 1024; // 20MB
+});
+
+builder.WebHost.ConfigureKestrel(o =>
+{
+    o.Limits.MaxRequestBodySize = 20 * 1024 * 1024; // 20MB
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -34,15 +44,7 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 builder.Services.AddSingleton<Microsoft.AspNetCore.Authentication.ISystemClock, Microsoft.AspNetCore.Authentication.SystemClock>();
 
-// Cloudinary
-var cloudinarySection = builder.Configuration.GetSection("Cloudinary");
-var cloudinary = new Cloudinary(new Account(
-    cloudinarySection["CloudName"],
-    cloudinarySection["ApiKey"],
-    cloudinarySection["ApiSecret"]));
-cloudinary.Api.Secure = true;
-builder.Services.AddSingleton(cloudinary);
-builder.Services.AddScoped<IImageStorageService, CloudinaryImageService>();
+
 
 // Configure authentication scheme for Identity
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
@@ -61,11 +63,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
+}
+else
+{
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
