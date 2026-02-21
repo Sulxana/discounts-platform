@@ -33,6 +33,13 @@ using Discounts.Application.Coupons.Commands.DirectPurchase;
 using Discounts.Application.Coupons.Queries.GetMyCoupons;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Discounts.Application.Users.Commands.BlockUser;
+using Discounts.Application.Users.Commands.UpdateUser;
+using Discounts.Application.Users.Commands.UnblockUser;
+using Discounts.Application.Categories.Commands.CreateCategory;
+using Discounts.Application.Categories.Commands.UpdateCategory;
+using Discounts.Application.Categories.Commands.DeleteCategory;
+using Discounts.Application.Categories.Queries.GetAllCategories;
 
 namespace Discounts.Application
 {
@@ -81,14 +88,14 @@ namespace Discounts.Application
             services.AddScoped<GetMyCouponsHandler>();
             services.AddScoped<RedeemCouponHandler>();
 
-            services.AddScoped<Discounts.Application.Users.Commands.BlockUser.BlockUserHandler>();
-            services.AddScoped<Discounts.Application.Users.Commands.UnblockUser.UnblockUserHandler>();
-            services.AddScoped<Discounts.Application.Users.Commands.UpdateUser.UpdateUserHandler>();
+            services.AddScoped<BlockUserHandler>();
+            services.AddScoped<UnblockUserHandler>();
+            services.AddScoped<UpdateUserHandler>();
 
-            services.AddScoped<Discounts.Application.Categories.Commands.CreateCategory.CreateCategoryHandler>();
-            services.AddScoped<Discounts.Application.Categories.Commands.UpdateCategory.UpdateCategoryHandler>();
-            services.AddScoped<Discounts.Application.Categories.Commands.DeleteCategory.DeleteCategoryHandler>();
-            services.AddScoped<Discounts.Application.Categories.Queries.GetAllCategories.GetAllCategoriesHandler>();
+            services.AddScoped<CreateCategoryHandler>();
+            services.AddScoped<UpdateCategoryHandler>();
+            services.AddScoped<DeleteCategoryHandler>();
+            services.AddScoped<GetAllCategoriesHandler>();
 
             return services;
         }
