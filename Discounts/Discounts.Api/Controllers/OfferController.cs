@@ -15,12 +15,12 @@ namespace Discounts.Api.Controllers
     public class OfferController : ControllerBase
     {
         private readonly GetOfferByIdHandler _getHandler;
-        private readonly GetActiveOffersHandler _getActiveHandler;
+        private readonly MediatR.ISender _mediator;
 
-        public OfferController(GetOfferByIdHandler getHandler, GetActiveOffersHandler getActiveHandler)
+        public OfferController(GetOfferByIdHandler getHandler, MediatR.ISender mediator)
         {
             _getHandler = getHandler;
-            _getActiveHandler = getActiveHandler;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Discounts.Api.Controllers
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _getActiveHandler.GetActiveOffers(token, new GetActiveOffersQuery(category, status, page, pageSize));
+            var result = await _mediator.Send(new GetActiveOffersQuery(category, null, null, null, status, page, pageSize), token);
             return Ok(result);
         }
 

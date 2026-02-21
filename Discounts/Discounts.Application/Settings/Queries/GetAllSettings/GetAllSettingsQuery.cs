@@ -1,5 +1,7 @@
-﻿namespace Discounts.Application.Settings.Queries.GetAllSettings
+﻿using MediatR;
+
+namespace Discounts.Application.Settings.Queries.GetAllSettings
 {
-    public record GetAllSettingsQuery();
+    public record GetAllSettingsQuery() : IRequest<List<GlobalSettingDto>>;
 
 }

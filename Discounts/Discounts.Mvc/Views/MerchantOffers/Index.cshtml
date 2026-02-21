@@ -1,0 +1,124 @@
+@model List<Discounts.Application.Offers.Queries.OfferListItemDto>
+
+@{
+    ViewData["Title"] = "My Offers";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>My Offers</h2>
+    <a asp-action="Create" class="btn btn-primary">Create New Offer</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You haven't created any offers yet.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Coupons</th>
+                    <th>Ends On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var offer in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(offer.ImageUrl))
+                            {
+                                <img src="@offer.ImageUrl" alt="Offer Image" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <div class="bg-light text-muted d-flex align-items-center justify-content-center border" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            }
+                        </td>
+                        <td class="fw-bold">@offer.Title</td>
+                        <td>@offer.Category</td>
+                        <td>
+                            <span class="text-success fw-bold">@offer.DiscountedPrice.ToString("C")</span><br />
+                            <small class="text-decoration-line-through text-muted">@offer.OriginalPrice.ToString("C")</small>
+                        </td>
+                        <td>
+                            @switch (offer.Status.ToString())
+                            {
+                                case "Approved":
+                                    <span class="badge bg-success">Approved</span>
+                                    break;
+                                case "Pending":
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                    break;
+                                case "Rejected":
+                                    <span class="badge bg-danger">Rejected</span>
+                                    break;
+                                case "Expired":
+                                    <span class="badge bg-secondary">Expired</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-info">@offer.Status</span>
+                                    break;
+                            }
+                        </td>
+                        <td>@offer.RemainingCoupons</td>
+                        <td>@offer.EndDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a asp-controller="Offers" asp-action="Details" asp-route-id="@offer.Id" class="btn btn-sm btn-outline-info">View</a>
+                                <a asp-action="Edit" asp-route-id="@offer.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination snippet similar to before -->
+    <div class="d-flex justify-content-between mt-4">
+        @if (currentPage > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(currentPage - 1)" class="btn btn-secondary">Previous</a>
+        }
+        else
+        {
+            <div></div>
+        }
+
+        @if (Model.Count == 20)
+        {
+            <a asp-action="Index" asp-route-page="@(currentPage + 1)" class="btn btn-secondary">Next</a>
+        }
+        else
+        {
+            <div></div>
+        }
+    </div>
+}

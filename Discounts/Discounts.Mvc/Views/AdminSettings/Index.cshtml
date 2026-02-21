@@ -1,0 +1,66 @@
+@model List<Discounts.Application.Settings.Queries.GetAllSettings.GlobalSettingDto>
+
+@{
+    ViewData["Title"] = "Global Settings";
+}
+
+<h2 class="mb-4">Global Settings</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-warning">No global settings found.</div>
+                }
+                else
+                {
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Key</th>
+                                <th>Description</th>
+                                <th>Value</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var setting in Model)
+                            {
+                                <tr>
+                                    <form asp-action="Update" method="post">
+                                        <input type="hidden" name="key" value="@setting.Key" />
+                                        <td class="fw-bold">@setting.Key</td>
+                                        <td>@setting.Description</td>
+                                        <td>
+                                            <input type="text" name="value" class="form-control" value="@setting.Value" required />
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                        </td>
+                                    </form>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

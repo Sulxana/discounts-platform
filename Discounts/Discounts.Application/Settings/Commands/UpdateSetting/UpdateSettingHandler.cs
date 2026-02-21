@@ -1,8 +1,9 @@
 ﻿using Discounts.Application.Settings.Interfaces;
+using MediatR;
 
 namespace Discounts.Application.Settings.Commands.UpdateSetting
 {
-    public class UpdateSettingHandler
+    public class UpdateSettingHandler : IRequestHandler<UpdateSettingCommand>
     {
         private readonly IGlobalSettingRepository _repository;
         private readonly IGlobalSettingsService _settingsService;

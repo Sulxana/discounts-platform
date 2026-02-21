@@ -38,6 +38,7 @@ namespace Discounts.Infrastracture
                 .ValidateOnStart();
 
             // Identity (USERS And ROLES)
+            services.AddSingleton<TimeProvider>(TimeProvider.System);
             services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.User.RequireUniqueEmail = true;

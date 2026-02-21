@@ -9,6 +9,7 @@
   </Folder>
   <Folder Name="/src/presentation/">
     <Project Path="Discounts.Api/Discounts.Api.csproj" />
+    <Project Path="Discounts.Mvc/Discounts.Mvc.csproj" />
   </Folder>
   <Project Path="Discounts.Application.UnitTests/Discounts.Application.UnitTests.csproj" />
 </Solution>

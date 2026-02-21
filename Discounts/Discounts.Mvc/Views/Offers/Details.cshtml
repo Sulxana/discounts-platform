@@ -1,0 +1,92 @@
+@model Discounts.Application.Offers.Queries.GetOfferById.OfferDetailsDto
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row mt-4">
+    <!-- Image Column -->
+    <div class="col-md-6 mb-4">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="img-fluid rounded shadow-sm w-100" alt="@Model.Title" style="max-height: 400px; object-fit: cover;" />
+        }
+        else
+        {
+            <div class="bg-light d-flex align-items-center justify-content-center text-muted rounded shadow-sm" style="height: 400px;">
+                <i class="fas fa-image fa-5x"></i>
+                <span class="ms-3 fs-4">No Image Available</span>
+            </div>
+        }
+    </div>
+
+    <!-- Details Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-route-categoryName="@Model.Category.Name">@Model.Category.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+            </ol>
+        </nav>
+
+        <h2 class="mb-3">@Model.Title</h2>
+        
+        <div class="d-flex align-items-center mb-4">
+            <h3 class="text-success mb-0 me-3">@Model.DiscountedPrice.ToString("C")</h3>
+            <span class="text-decoration-line-through text-muted fs-5">@Model.OriginalPrice.ToString("C")</span>
+        </div>
+
+        <div class="card bg-light mb-4 border-0">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4 border-end">
+                        <small class="text-muted d-block text-uppercase">Coupons Left</small>
+                        <span class="fs-4 fw-bold @(Model.RemainingCoupons == 0 ? "text-danger" : "text-dark")">
+                            @Model.RemainingCoupons
+                        </span>
+                    </div>
+                    <div class="col-4 border-end">
+                        <small class="text-muted d-block text-uppercase">Starts</small>
+                        <span class="fw-bold">@Model.StartDate.ToString("MMM dd")</span>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block text-uppercase">Ends</small>
+                        <span class="fw-bold">@Model.EndDate.ToString("MMM dd")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h5>Description</h5>
+            <p style="white-space: pre-line;">@Model.Description</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2">
+            @if (Model.RemainingCoupons <= 0)
+            {
+                <button class="btn btn-secondary btn-lg" disabled>Sold Out</button>
+            }
+            else if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+            {
+                <form method="post" asp-controller="CustomerReservations" asp-action="Reserve" class="d-grid gap-2 mb-2">
+                    <input type="hidden" name="offerId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-outline-primary btn-lg">Reserve Coupon</button>
+                </form>
+
+                <form method="post" asp-controller="CustomerCoupons" asp-action="BuyDirect" class="d-grid gap-2">
+                    <input type="hidden" name="offerId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success btn-lg">Buy Now</button>
+                </form>
+            }
+            else if (User.Identity?.IsAuthenticated != true)
+            {
+                <div class="alert alert-info text-center">
+                    Please <a asp-controller="Auth" asp-action="Login">login</a> as a customer to reserve or buy coupons.
+                </div>
+            }
+        </div>
+    </div>
+</div>

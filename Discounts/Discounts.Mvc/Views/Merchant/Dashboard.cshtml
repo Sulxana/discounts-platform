@@ -1,0 +1,64 @@
+@model Discounts.Application.Offers.Queries.GetMerchantDashboardStats.MerchantDashboardStatsDto
+
+@{
+    ViewData["Title"] = "Merchant Dashboard";
+}
+
+<h2 class="mb-4">Merchant Dashboard</h2>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+    <div class="col">
+        <div class="card bg-primary text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Total Offers</h5>
+                <p class="display-4 mb-0">@Model.TotalOffers</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col">
+        <div class="card bg-success text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Active Offers</h5>
+                <p class="display-4 mb-0">@Model.ActiveOffers</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col">
+        <div class="card bg-warning text-dark h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Pending Offers</h5>
+                <p class="display-4 mb-0">@Model.PendingOffers</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card bg-danger text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Rejected Offers</h5>
+                <p class="display-4 mb-0">@Model.RejectedOffers</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card bg-secondary text-white h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Expired Offers</h5>
+                <p class="display-4 mb-0">@Model.ExpiredOffers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <h4>Quick Actions</h4>
+    <hr />
+    <div class="d-flex gap-3 mt-3">
+        <a asp-controller="MerchantOffers" asp-action="Create" class="btn btn-outline-primary btn-lg">Create New Offer</a>
+        <a asp-controller="MerchantOffers" asp-action="Index" class="btn btn-outline-secondary btn-lg">Manage Offers</a>
+        <a asp-controller="Merchant" asp-action="SalesHistory" class="btn btn-outline-success btn-lg">View Sales History</a>
+    </div>
+</div>

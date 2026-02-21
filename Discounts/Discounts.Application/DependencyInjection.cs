@@ -17,6 +17,7 @@ using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
 using Discounts.Application.Offers.Queries.GetMerchantDashboardStats;
+using Discounts.Application.Offers.Queries.GetMerchantOffers;
 using Discounts.Application.Offers.Queries.GetMerchantSalesHistory;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Application.Reservations.Commands.CancelReservation;
@@ -56,6 +57,7 @@ namespace Discounts.Application
             services.AddScoped<GetAllOffersHandler>();
             services.AddScoped<GetActiveOffersHandler>();
             services.AddScoped<GetDeletedOffersHandler>();
+            services.AddScoped<GetMerchantOffersHandler>();
             services.AddScoped<DeleteOfferHandler>();
             services.AddScoped<ApproveOfferHandler>();
             services.AddScoped<RejectOfferHandler>();

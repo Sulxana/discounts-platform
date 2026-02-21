@@ -1,8 +1,9 @@
 ﻿using Discounts.Domain.Offers;
+using MediatR;
 
 namespace Discounts.Application.Offers.Queries.GetAllOffers
 {
-    public class GetAllOffersQuery
+    public class GetAllOffersQuery : IRequest<List<OfferListItemDto>>
     {
         public GetAllOffersQuery(string? categoryName, OfferStatus? status, bool deleted, int page, int pageSize)
         {

@@ -23,7 +23,7 @@ namespace Discounts.Api.Controllers
     [Authorize(Roles = Roles.Administrator)]
     public class AdminController : ControllerBase
     {
-        private readonly GetAllOffersHandler _getAllHandler;
+        private readonly MediatR.ISender _mediator;
         private readonly GetDeletedOffersHandler _getDeletedHandler;
         private readonly GetOfferByIdHandler _getHandler;
         private readonly ApproveOfferHandler _approveOfferHandler;
@@ -32,9 +32,9 @@ namespace Discounts.Api.Controllers
         private readonly RejectMerchantApplicationHandler _rejectUserHandler;
         private readonly GetAllMerchantApplicationsHandler _getAllMerchantApplicationsHandler;
 
-        public AdminController(GetAllOffersHandler getAllHandler, GetDeletedOffersHandler getDeletedHandler, GetOfferByIdHandler getHandler, ApproveOfferHandler approveOfferHandler, RejectOfferHandler rejectOfferHandler, ApproveMerchantApplicationHandler approveHandler, RejectMerchantApplicationHandler rejectHandler, GetAllMerchantApplicationsHandler getAllMerchantApplicationsHandler)
+        public AdminController(MediatR.ISender mediator, GetDeletedOffersHandler getDeletedHandler, GetOfferByIdHandler getHandler, ApproveOfferHandler approveOfferHandler, RejectOfferHandler rejectOfferHandler, ApproveMerchantApplicationHandler approveHandler, RejectMerchantApplicationHandler rejectHandler, GetAllMerchantApplicationsHandler getAllMerchantApplicationsHandler)
         {
-            _getAllHandler = getAllHandler;
+            _mediator = mediator;
             _getDeletedHandler = getDeletedHandler;
             _getHandler = getHandler;
             _approveOfferHandler = approveOfferHandler;
@@ -59,7 +59,7 @@ namespace Discounts.Api.Controllers
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _getAllHandler.GetAllOffers(token, new GetAllOffersQuery(category.Name, status, deleted, page, pageSize));
+            var result = await _mediator.Send(new GetAllOffersQuery(category?.Name, status, deleted, page, pageSize), token);
             return Ok(result);
         }
 

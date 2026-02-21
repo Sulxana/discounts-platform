@@ -13,6 +13,8 @@ namespace Discounts.Application.Offers.Queries
         public required DateTime EndDate { get; init; }
         public required OfferStatus Status { get; init; }
         public string? RejectionMessage { get; init; }
+        public string MerchantName { get; init; } = string.Empty;
+        public string? ImageUrl { get; set; }
         
     }
 }

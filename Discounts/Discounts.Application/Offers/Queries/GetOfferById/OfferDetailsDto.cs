@@ -20,6 +20,7 @@ namespace Discounts.Application.Offers.Queries.GetOfferById
         public int RemainingCoupons { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public DateTime CreatedAt { get; set; }
         public OfferStatus Status { get; set; }
     }
 }

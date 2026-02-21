@@ -18,7 +18,7 @@ namespace Discounts.Infrastracture.Repositories
             await base.Add(token, createOffer);
         }
 
-        public async Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status, int page, int pageSize)
+        public async Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, string? categoryName, decimal? minPrice, decimal? maxPrice, string? searchTerm, OfferStatus? status, int page, int pageSize)
         {
             var now = DateTime.UtcNow;
             IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().Include(x => x.Category)
@@ -26,6 +26,15 @@ namespace Discounts.Infrastracture.Repositories
 
             if (!string.IsNullOrEmpty(categoryName))
                 query = query.Where(x => x.Category.Name == categoryName);
+
+            if (minPrice.HasValue)
+                query = query.Where(x => x.DiscountedPrice >= minPrice.Value);
+
+            if (maxPrice.HasValue)
+                query = query.Where(x => x.DiscountedPrice <= maxPrice.Value);
+
+            if (!string.IsNullOrEmpty(searchTerm))
+                query = query.Where(x => x.Title.Contains(searchTerm) || x.Description.Contains(searchTerm));
 
             // Ignore status parameter if passed, as Active offers are strictly Approved & not expired.
             // if (status.HasValue) query = query.Where(x => x.Status == status.Value);
@@ -171,6 +180,17 @@ namespace Discounts.Infrastracture.Repositories
                         };
 
             return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+        }
+
+        public async Task<List<Offer>> GetMerchantOffersAsync(CancellationToken token, Guid merchantId, int page, int pageSize)
+        {
+            return await _dbSet.AsNoTracking()
+                .Include(x => x.Category)
+                .Where(x => x.MerchantId == merchantId)
+                .OrderByDescending(x => x.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(token);
         }
 
     }

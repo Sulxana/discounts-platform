@@ -10,7 +10,7 @@ namespace Discounts.Application.Offers.Interfaces
         Task<Offer?> GetOfferByIdAsync(CancellationToken token, Guid id);
         Task<Offer?> GetOfferForUpdateByIdAsync(CancellationToken token, Guid id);
         Task<Offer?> GetOfferIncludingDeletedAsync(CancellationToken token, Guid id);
-        Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status,
+        Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, string? categoryName, decimal? minPrice, decimal? maxPrice, string? searchTerm, OfferStatus? status,
                                             int page, int pageSize);
         Task<List<Offer>> GetAllOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status,bool Deleted,
                                             int page, int pageSize);
@@ -22,6 +22,7 @@ namespace Discounts.Application.Offers.Interfaces
         Task<List<Offer>> GetExpiredActiveAsync(CancellationToken token);
         Task<MerchantDashboardStatsDto> GetMerchantDashboardStatsAsync(CancellationToken token, Guid merchantId);
         Task<List<MerchantSalesHistoryDto>> GetMerchantSalesHistoryAsync(CancellationToken token, Guid merchantId, int page, int pageSize);
+        Task<List<Offer>> GetMerchantOffersAsync(CancellationToken token, Guid merchantId, int page, int pageSize);
         Task SaveChangesAsync(CancellationToken token);
 
     }

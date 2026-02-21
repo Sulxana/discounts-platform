@@ -1,8 +1,9 @@
 ﻿using Discounts.Application.Settings.Interfaces;
+using MediatR;
 
 namespace Discounts.Application.Settings.Queries.GetAllSettings
 {
-    public class GetAllSettingsHandler
+    public class GetAllSettingsHandler : IRequestHandler<GetAllSettingsQuery, List<GlobalSettingDto>>
     {
         private readonly IGlobalSettingRepository _repository;
         public GetAllSettingsHandler(IGlobalSettingRepository repository)

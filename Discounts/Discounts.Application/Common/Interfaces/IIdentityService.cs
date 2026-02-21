@@ -13,5 +13,6 @@ namespace Discounts.Application.Common.Interfaces
         Task<bool> BlockUserAsync(Guid userId);
         Task<bool> UnblockUserAsync(Guid userId);
         Task<bool> UpdateUserAsync(Guid userId, string? email, string? firstName, string? lastName);
+        Task<List<(Guid Id, string Email, string FirstName, string LastName, bool IsBlocked, IList<string> Roles)>> GetAllUsersAsync();
     }
 }

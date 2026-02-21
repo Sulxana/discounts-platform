@@ -135,5 +135,20 @@ namespace Discounts.Infrastracture.Identity
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
+
+        public async Task<List<(Guid Id, string Email, string FirstName, string LastName, bool IsBlocked, IList<string> Roles)>> GetAllUsersAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var userList = new List<(Guid Id, string Email, string FirstName, string LastName, bool IsBlocked, IList<string> Roles)>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                bool isBlocked = user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow;
+                userList.Add((user.Id, user.Email!, user.FirstName, user.LastName, isBlocked, roles));
+            }
+
+            return userList;
+        }
     }
 }
