@@ -44,7 +44,6 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 Guid.NewGuid()
             );
 
-            // Using reflection to set the Id since the constructor generates a new one
             var idProperty = typeof(Offer).GetProperty("Id");
             idProperty?.SetValue(offer, offerId);
 
@@ -144,7 +143,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
-                .WithMessage("Only pending offers can be approved."); // The actual exception in Offer.cs hardcodes "approved" for Reject too for some reason - tested against actual Domain logic
+                .WithMessage("Only pending offers can be approved."); 
             _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 

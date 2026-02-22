@@ -15,6 +15,7 @@ using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
 using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
+using Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication;
 using Discounts.Application.Offers.Commands.ApproveOffer;
 using Discounts.Application.Offers.Commands.CreateOffer;
 using Discounts.Application.Offers.Commands.DeleteOffer;
@@ -74,7 +75,7 @@ namespace Discounts.Application
             services.AddScoped<ApproveMerchantApplicationHandler>();
             services.AddScoped<RejectMerchantApplicationHandler>();
             services.AddScoped<GetAllMerchantApplicationsHandler>();
-            services.AddScoped<Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication.GetUserMerchantApplicationHandler>();
+            services.AddScoped<GetUserMerchantApplicationHandler>();
 
             services.AddScoped<CreateReservationHandler>();
             services.AddScoped<CancelReservationHandler>();

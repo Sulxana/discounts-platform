@@ -82,7 +82,6 @@ else
 
 @section Scripts {
     <script>
-        // Simple countdown timer for reservations
         document.addEventListener('DOMContentLoaded', function() {
             const timers = document.querySelectorAll('.timer');
             
@@ -91,7 +90,7 @@ else
                 
                 timers.forEach(function(timer) {
                     const expiresAt = new Date(timer.getAttribute('data-expires'));
-                    const diff = expiresAt - now; // Difference in milliseconds
+                    const diff = expiresAt - now; 
                     
                     if (diff <= 0) {
                         timer.textContent = "Expired";

@@ -49,8 +49,6 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 merchantId
             );
 
-            // Using reflection to set CreatedAt manually since we need to test edit window 
-            // and constructor sets it to DateTime.UtcNow
             var createdAtProperty = typeof(Offer).GetProperty("CreatedAt");
             createdAtProperty?.SetValue(offer, createdAt);
 

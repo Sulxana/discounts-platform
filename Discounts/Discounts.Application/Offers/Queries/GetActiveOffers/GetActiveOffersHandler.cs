@@ -20,7 +20,8 @@ namespace Discounts.Application.Offers.Queries.GetActiveOffers
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
 
-            var offers = await _repository.GetActiveOfferAsync(cancellationToken, request.CategoryName, request.MinPrice, request.MaxPrice, request.SearchTerm, request.Status, request.Page, request.PageSize).ConfigureAwait(false);
+            var offers = await _repository.GetActiveOfferAsync(cancellationToken, request.CategoryName, request.MinPrice, request.MaxPrice,
+                request.SearchTerm, request.Status, request.Page, request.PageSize).ConfigureAwait(false);
 
             return offers.Adapt<List<OfferListItemDto>>();
         }

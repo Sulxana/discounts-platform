@@ -15,6 +15,6 @@ namespace Discounts.Mvc.Models
 
         public int CurrentPage { get; set; } = 1;
         public int PageSize { get; set; } = 12;
-        public bool HasNextPage => Offers.Count == PageSize; // Simple pagination logic based on return count
+        public bool HasNextPage => Offers.Count == PageSize; 
     }
 }

@@ -66,6 +66,5 @@ namespace Discounts.Mvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Removed Merchant Applications Moderation per user request
     }
 }

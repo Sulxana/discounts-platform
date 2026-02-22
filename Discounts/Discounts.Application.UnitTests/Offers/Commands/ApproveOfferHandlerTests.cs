@@ -43,7 +43,6 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 Guid.NewGuid()
             );
 
-            // Using reflection to set the Id since the constructor generates a new one
             var idProperty = typeof(Offer).GetProperty("Id");
             idProperty?.SetValue(offer, offerId);
 

@@ -81,7 +81,6 @@ namespace Discounts.Application.UnitTests.Auth.Commands
             var storedToken = new RefreshToken(userId, hash, jwtId, DateTime.UtcNow.AddDays(7));
             storedToken.Revoke(); // Make it inactive
 
-            // Capture the time it was revoked to ensure it wasn't revoked again (which would update the time)
             var originalRevokedAt = storedToken.RevokedAt;
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RevokeCommand>>(), It.IsAny<CancellationToken>()))

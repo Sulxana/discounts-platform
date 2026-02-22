@@ -52,6 +52,9 @@ namespace Discounts.Application.Reservations.Commands.PurchaseReservation
 
             await _couponRepository.AddRangeAsync(token, coupons).ConfigureAwait(false);
 
+            //await _offerRepository.SaveChangesAsync(token);
+            //await _reservationRepository.SaveChangesAsync(token);
+
             await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
 
             _logger.LogInformation($"Successfully purchased reservation {command.ReservationId}. Created {coupons.Count} coupons.");

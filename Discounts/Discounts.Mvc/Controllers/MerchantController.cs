@@ -28,7 +28,6 @@ namespace Discounts.Mvc.Controllers
             var query = new GetMerchantSalesHistoryQuery(page, 20); // Default to 20 items per page
             var history = await _salesHistoryHandler.Handle(query, token).ConfigureAwait(false);
 
-            // To pass current page to the view for simple pagination checks mapping
             ViewBag.CurrentPage = page;
 
             return View(history);

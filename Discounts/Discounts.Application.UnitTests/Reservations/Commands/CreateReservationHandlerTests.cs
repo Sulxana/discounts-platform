@@ -56,7 +56,6 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 Guid.NewGuid()
             );
 
-            // Access internal state for testing constraints
             var remainingCouponsProp = typeof(Offer).GetProperty("RemainingCoupons");
             remainingCouponsProp?.SetValue(offer, remainingCoupons);
 

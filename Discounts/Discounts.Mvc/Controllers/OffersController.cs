@@ -27,7 +27,6 @@ namespace Discounts.Mvc.Controllers
             }
             catch (Exception)
             {
-                // In a deeper implementation, handle NotFoundException directly
                 TempData["ErrorMessage"] = "Offer not found or unavailable.";
                 return RedirectToAction("Index", "Home");
             }

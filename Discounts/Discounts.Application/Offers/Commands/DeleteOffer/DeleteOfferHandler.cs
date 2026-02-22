@@ -15,7 +15,7 @@ namespace Discounts.Application.Offers.Commands.DeleteOffer
         private readonly ICouponRepository _couponRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public DeleteOfferHandler(IOfferRepository repository, IValidator<DeleteOfferCommand> validator, Discounts.Application.Coupons.Interfaces.ICouponRepository couponRepository, Discounts.Application.Common.Interfaces.ICurrentUserService currentUserService)
+        public DeleteOfferHandler(IOfferRepository repository, IValidator<DeleteOfferCommand> validator, ICouponRepository couponRepository, ICurrentUserService currentUserService)
         {
             _repository = repository;
             _validator = validator;

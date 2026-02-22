@@ -22,7 +22,6 @@
         </div>
     </div>
 
-    <!-- Featured Offers Header -->
     <div id="offers">
         <div class="featured-row">
             <h3 class="featured-title">
@@ -31,7 +30,6 @@
             </h3>
         </div>
 
-        <!-- Category Pills + Sort Row -->
         <div class="filter-sort-row">
             <div class="category-pills">
                 <a asp-action="Index"
@@ -78,7 +76,6 @@
             </div>
         </div>
 
-        <!-- Offers Grid -->
         @if (!Model.Offers.Any())
         {
             <div class="empty-state">
@@ -92,7 +89,6 @@
                 @foreach (var offer in Model.Offers)
                 {
                     <div class="offer-card">
-                        <!-- Image -->
                         <div class="card-img-wrap">
                             @if (!string.IsNullOrEmpty(offer.ImageUrl))
                             {
@@ -103,12 +99,10 @@
                                 <div class="card-img-placeholder">No Image</div>
                             }
 
-                            <!-- Top-left badges -->
                             <div class="img-badges-tl">
                                 <span class="badge-cat">@offer.Category?.ToUpper()</span>
                             </div>
 
-                            <!-- Bottom-right badge: discount -->
                             @{
                                 var hasDiscount = offer.OriginalPrice > 0 && offer.DiscountedPrice > 0 && offer.OriginalPrice > offer.DiscountedPrice;
                                 var discountPct = hasDiscount
@@ -121,9 +115,7 @@
                             }
                         </div>
 
-                        <!-- Card Body -->
                         <div class="card-body-custom">
-                            <!-- Merchant row -->
                             <div class="merchant-row">
                                 <span class="merchant-name">
                                     <span class="merchant-avatar">@(string.IsNullOrEmpty(offer.MerchantName) ? "M" : offer.MerchantName[0].ToString().ToUpper())</span>
@@ -136,7 +128,6 @@
                                 </span>
                             </div>
 
-                            <!-- Title + desc -->
                             <div class="offer-title">@offer.Title</div>
                             
                             <div class="card-price-row mt-2">
@@ -147,7 +138,6 @@
                                 }
                             </div>
 
-                            <!-- Footer -->
                             <div class="card-footer-custom">
                                 <span class="expiry-info">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -162,7 +152,6 @@
                 }
             </div>
 
-            <!-- Pagination -->
             <div class="pagination-row">
                 @if (Model.CurrentPage > 1)
                 {

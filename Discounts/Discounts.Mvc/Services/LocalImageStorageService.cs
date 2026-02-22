@@ -11,7 +11,7 @@ namespace Discounts.Mvc.Services
 
         public async Task<string> SaveAsync(IFormFile file, CancellationToken token = default)
         {
-            // WebRootPath points to wwwroot/
+            
             var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "offers");
             Directory.CreateDirectory(uploadsDir);
 
@@ -22,7 +22,6 @@ namespace Discounts.Mvc.Services
             using var stream = new FileStream(fullPath, FileMode.Create);
             await file.CopyToAsync(stream, token).ConfigureAwait(false);
 
-            // Return the URL that can be used by the browser to fetch the image
             return $"/uploads/offers/{fileName}";
         }
     }
