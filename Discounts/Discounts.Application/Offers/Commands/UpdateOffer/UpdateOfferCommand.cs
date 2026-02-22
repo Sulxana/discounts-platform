@@ -1,6 +1,4 @@
-﻿using Discounts.Domain.Offers;
-
-namespace Discounts.Application.Offers.Commands.UpdateOffer
+﻿namespace Discounts.Application.Offers.Commands.UpdateOffer
 {
     public class UpdateOfferCommand
     {

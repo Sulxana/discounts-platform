@@ -37,7 +37,7 @@ namespace Discounts.Api.Controllers
         [Authorize(Roles = Roles.Merchant)]
         public async Task<ActionResult<Guid>> Create(CancellationToken token, [FromBody] CreateOfferCommand command)
         {
-            var result = await _createHandler.CreateOffer(token, command);
+            var result = await _createHandler.CreateOffer(token, command).ConfigureAwait(false);
             return CreatedAtAction(nameof(OfferController.GetOfferById), "Offer", new { id = result }, result);
         }
 
@@ -45,7 +45,7 @@ namespace Discounts.Api.Controllers
         [Authorize(Roles = Roles.Merchant)]
         public async Task<ActionResult<MerchantDashboardStatsDto>> GetDashboardStats(CancellationToken token)
         {
-            var result = await _getStatsHandler.Handle(new GetMerchantDashboardStatsQuery(), token);
+            var result = await _getStatsHandler.Handle(new GetMerchantDashboardStatsQuery(), token).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -53,7 +53,7 @@ namespace Discounts.Api.Controllers
         [Authorize(Roles = Roles.Merchant)]
         public async Task<ActionResult<List<MerchantSalesHistoryDto>>> GetSalesHistory([FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken token = default)
         {
-            var result = await _getSalesHistoryHandler.Handle(new GetMerchantSalesHistoryQuery(page, pageSize), token);
+            var result = await _getSalesHistoryHandler.Handle(new GetMerchantSalesHistoryQuery(page, pageSize), token).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -63,7 +63,7 @@ namespace Discounts.Api.Controllers
         {
             var command = request.Adapt<UpdateOfferCommand>();
             command.Id = id;
-            await _updateHandler.UpdateOfferAsync(token, command);
+            await _updateHandler.UpdateOfferAsync(token, command).ConfigureAwait(false);
             return NoContent();
         }
 
@@ -71,7 +71,7 @@ namespace Discounts.Api.Controllers
         [Authorize(Roles = Roles.Administrator + "," + Roles.Merchant)]
         public async Task<IActionResult> DeleteOffer(CancellationToken token, Guid id, [FromQuery] string? reason)
         {
-            await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id, reason));
+            await _deleteHandler.DeleteOfferAsync(token, new DeleteOfferCommand(id, reason)).ConfigureAwait(false);
             return NoContent();
         }
     }

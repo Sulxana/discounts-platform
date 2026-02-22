@@ -20,10 +20,10 @@ namespace Discounts.Application.Coupons.Queries.GetMyCoupons
             var userId = _currentUserService.UserId;
             if (userId == null)
             {
-               throw new UnauthorizedAccessException("User is not authenticated.");
+                throw new UnauthorizedAccessException("User is not authenticated.");
             }
 
-            return await _couponRepository.GetByUserIdAsync(token, userId.Value);
+            return await _couponRepository.GetByUserIdAsync(token, userId.Value).ConfigureAwait(false);
         }
     }
 }

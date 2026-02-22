@@ -20,8 +20,8 @@ namespace Discounts.Application.MerchantApplications.Queries.GetUserMerchantAppl
             var userId = _currentUserService.UserId;
             if (userId == null) return null;
 
-            var application = await _repository.GetByUserIdAsync(userId.Value, cancellationToken);
-            
+            var application = await _repository.GetByUserIdAsync(userId.Value, cancellationToken).ConfigureAwait(false);
+
             if (application == null) return null;
 
             return new UserMerchantApplicationDto

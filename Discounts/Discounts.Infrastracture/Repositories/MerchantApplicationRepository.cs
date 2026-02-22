@@ -17,7 +17,7 @@ namespace Discounts.Infrastracture.Persistence.Repositories
         public async Task<MerchantApplication?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.MerchantApplications
-                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<MerchantApplication?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
@@ -25,23 +25,23 @@ namespace Discounts.Infrastracture.Persistence.Repositories
             return await _context.MerchantApplications
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.CreatedAtUtc)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<bool> HasPendingApplicationAsync(Guid userId, CancellationToken cancellationToken)
         {
             return await _context.MerchantApplications
-                .AnyAsync(x => x.UserId == userId && x.Status == MerchantApplicationStatus.Pending, cancellationToken);
+                .AnyAsync(x => x.UserId == userId && x.Status == MerchantApplicationStatus.Pending, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task AddAsync(MerchantApplication application, CancellationToken cancellationToken)
         {
-            await _context.MerchantApplications.AddAsync(application, cancellationToken);
+            await _context.MerchantApplications.AddAsync(application, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<List<MerchantApplicationWithUser>> GetAllWithUsersAsync(
@@ -66,7 +66,7 @@ namespace Discounts.Infrastracture.Persistence.Repositories
                 .OrderByDescending(x => x.Application.CreatedAtUtc)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             return results.Select(x => new MerchantApplicationWithUser(
                 x.Application,

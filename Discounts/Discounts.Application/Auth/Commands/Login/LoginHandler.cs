@@ -2,9 +2,9 @@ using Discounts.Application.Auth.DTOs;
 using Discounts.Application.Auth.Interfaces;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
+using Discounts.Domain.Auth;
 using FluentValidation;
 using Microsoft.Extensions.Options;
-using Discounts.Domain.Auth;
 
 namespace Discounts.Application.Auth.Commands.Login
 {
@@ -27,9 +27,9 @@ namespace Discounts.Application.Auth.Commands.Login
 
         public async Task<AuthResponse> Login(LoginCommand command, CancellationToken token)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
-            var (isSuccess, userId, email, roles) = await _identityService.LoginUserAsync(command.Email, command.Password);
+            var (isSuccess, userId, email, roles) = await _identityService.LoginUserAsync(command.Email, command.Password).ConfigureAwait(false);
 
             if (!isSuccess)
             {
@@ -45,8 +45,8 @@ namespace Discounts.Application.Auth.Commands.Login
 
             var refresh = new RefreshToken(userId, refreshHash, jwtId, refreshExpiresAt);
 
-            await _authRepository.AddRefreshTokenAsync(token, refresh);
-            await _authRepository.SaveChangesAsync(token);
+            await _authRepository.AddRefreshTokenAsync(token, refresh).ConfigureAwait(false);
+            await _authRepository.SaveChangesAsync(token).ConfigureAwait(false);
 
             return new AuthResponse
             {

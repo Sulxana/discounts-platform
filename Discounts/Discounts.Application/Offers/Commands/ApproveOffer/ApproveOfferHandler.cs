@@ -19,13 +19,13 @@ namespace Discounts.Application.Offers.Commands.ApproveOffer
 
         public async Task Handle(ApproveOfferCommand request, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(request, cancellationToken);
+            await _validator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
 
-            var offer = await _repository.GetOfferForUpdateByIdAsync(cancellationToken, request.Id);
+            var offer = await _repository.GetOfferForUpdateByIdAsync(cancellationToken, request.Id).ConfigureAwait(false);
             if (offer == null) throw new NotFoundException(nameof(Offer), request.Id);
 
             offer.Approve();
-            await _repository.SaveChangesAsync(cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
     }

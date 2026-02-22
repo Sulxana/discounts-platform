@@ -15,6 +15,6 @@ namespace Discounts.Application.Offers.Queries
         public string? RejectionMessage { get; init; }
         public string MerchantName { get; init; } = string.Empty;
         public string? ImageUrl { get; set; }
-        
+
     }
 }

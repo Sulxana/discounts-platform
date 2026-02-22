@@ -22,7 +22,7 @@ namespace Discounts.Mvc.Controllers
         private readonly RejectMerchantApplicationHandler _rejectHandler;
 
         public AdminUsersController(
-            IIdentityService identityService, 
+            IIdentityService identityService,
             ISender mediator,
             GetAllMerchantApplicationsHandler getApplicationsHandler,
             ApproveMerchantApplicationHandler approveHandler,
@@ -37,15 +37,15 @@ namespace Discounts.Mvc.Controllers
 
         public async Task<IActionResult> Index(CancellationToken token)
         {
-            var users = await _identityService.GetAllUsersAsync();
-            var applications = await _getApplicationsHandler.Handle(new GetAllMerchantApplicationsQuery(MerchantApplicationStatus.Pending, 1, 100), token);
-            
+            var users = await _identityService.GetAllUsersAsync().ConfigureAwait(false);
+            var applications = await _getApplicationsHandler.Handle(new GetAllMerchantApplicationsQuery(MerchantApplicationStatus.Pending, 1, 100), token).ConfigureAwait(false);
+
             var viewModel = new AdminUsersViewModel
             {
                 Users = users,
                 PendingApplications = applications
             };
-            
+
             return View(viewModel);
         }
 
@@ -57,12 +57,12 @@ namespace Discounts.Mvc.Controllers
             {
                 if (isCurrentlyBlocked)
                 {
-                    await _mediator.Send(new UnblockUserCommand(id), token);
+                    await _mediator.Send(new UnblockUserCommand(id), token).ConfigureAwait(false);
                     TempData["SuccessMessage"] = "User successfully unblocked.";
                 }
                 else
                 {
-                    await _mediator.Send(new BlockUserCommand(id), token);
+                    await _mediator.Send(new BlockUserCommand(id), token).ConfigureAwait(false);
                     TempData["SuccessMessage"] = "User successfully blocked.";
                 }
             }
@@ -80,7 +80,7 @@ namespace Discounts.Mvc.Controllers
         {
             try
             {
-                await _approveHandler.Handle(new ApproveMerchantApplicationCommand(applicationId), token);
+                await _approveHandler.Handle(new ApproveMerchantApplicationCommand(applicationId), token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "User successfully approved as Merchant!";
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace Discounts.Mvc.Controllers
         {
             try
             {
-                await _rejectHandler.Handle(new RejectMerchantApplicationCommand(applicationId, reason), token);
+                await _rejectHandler.Handle(new RejectMerchantApplicationCommand(applicationId, reason), token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Merchant application rejected.";
             }
             catch (Exception ex)

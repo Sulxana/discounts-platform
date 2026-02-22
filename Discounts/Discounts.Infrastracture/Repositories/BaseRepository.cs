@@ -1,10 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Discounts.Infrastracture.Repositories
 {
@@ -21,16 +16,16 @@ namespace Discounts.Infrastracture.Repositories
         #region Methods
         public async Task<List<T>> GetAllAsync(CancellationToken token)
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.ToListAsync(cancellationToken: token).ConfigureAwait(false);
         }
 
-        public async Task<T?> Get(CancellationToken token, params object[] key)
+        public async Task<T?> GetByIdAsync(CancellationToken token, params object[] key)
         {
-            return await _dbSet.FindAsync(key, token);
+            return await _dbSet.FindAsync(key, token).ConfigureAwait(false);
         }
         public async Task Add(CancellationToken token, T entity)
         {
-            await _dbSet.AddAsync(entity, token);
+            await _dbSet.AddAsync(entity, token).ConfigureAwait(false);
             //await _context.SaveChangesAsync(token);
         }
 
@@ -51,7 +46,7 @@ namespace Discounts.Infrastracture.Repositories
         }
         public async Task Remove(CancellationToken token, params object[] key)
         {
-            var entity = await Get(token, key);
+            var entity = await GetByIdAsync(token, key).ConfigureAwait(false);
             if (entity == null) return;
 
             _dbSet.Remove(entity);
@@ -60,12 +55,12 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task SaveChanges(CancellationToken token)
         {
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
         }
 
         public async Task<bool> AnyAsync(CancellationToken token, Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.AnyAsync(predicate, token);
+            return await _dbSet.AnyAsync(predicate, token).ConfigureAwait(false);
         }
         #endregion
 

@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Discounts.Mvc.Services
 {
     public class LocalImageStorageService : IImageStorageService
@@ -27,7 +20,7 @@ namespace Discounts.Mvc.Services
             var fullPath = Path.Combine(uploadsDir, fileName);
 
             using var stream = new FileStream(fullPath, FileMode.Create);
-            await file.CopyToAsync(stream, token);
+            await file.CopyToAsync(stream, token).ConfigureAwait(false);
 
             // Return the URL that can be used by the browser to fetch the image
             return $"/uploads/offers/{fileName}";

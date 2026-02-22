@@ -7,7 +7,7 @@ namespace Discounts.Application.Reservations.Queries.GetUserReservations
     {
         private readonly IReservationRepository _reservationRepository;
         private readonly ICurrentUserService _currentUserService;
-        public GetUserReservationsHandler(IReservationRepository reservationRepository,ICurrentUserService currentUserService)
+        public GetUserReservationsHandler(IReservationRepository reservationRepository, ICurrentUserService currentUserService)
         {
             _reservationRepository = reservationRepository;
             _currentUserService = currentUserService;
@@ -18,14 +18,13 @@ namespace Discounts.Application.Reservations.Queries.GetUserReservations
             if (userId == null)
                 throw new UnauthorizedAccessException("User must be authenticated");
 
-            var reservations = await _reservationRepository.GetUserActiveReservationsWithOffersAsync(userId.Value, token);
-
+            var reservations = await _reservationRepository.GetUserActiveReservationsWithOffersAsync(userId.Value, token).ConfigureAwait(false);
 
             return reservations.Select(r => new ReservationDto
             {
                 Id = r.Reservation.Id,
                 OfferId = r.Reservation.OfferId,
-                OfferTitle = r.OfferTitle,  
+                OfferTitle = r.OfferTitle,
                 Quantity = r.Reservation.Quantity,
                 CreatedAt = r.Reservation.CreatedAt,
                 ExpiresAt = r.Reservation.ExpiresAt,

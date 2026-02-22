@@ -1,5 +1,4 @@
 using Discounts.Application.Auth.Commands.RefreshTokens;
-using Discounts.Application.Auth.DTOs;
 using Discounts.Application.Auth.Interfaces;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
@@ -9,11 +8,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Options;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Auth.Commands
 {
@@ -32,7 +26,7 @@ namespace Discounts.Application.UnitTests.Auth.Commands
             _jwtGeneratorMock = new Mock<IJwtTokenGenerator>();
             _authRepositoryMock = new Mock<IAuthRepository>();
             _validatorMock = new Mock<IValidator<RefreshTokenCommand>>();
-            
+
             var settings = new JwtSettings { RefreshTokenDays = 7 };
             _settingsMock = new Mock<IOptions<JwtSettings>>();
             _settingsMock.Setup(s => s.Value).Returns(settings);
@@ -52,14 +46,14 @@ namespace Discounts.Application.UnitTests.Auth.Commands
             var rawToken = "valid_refresh_token";
             var command = new RefreshTokenCommand { RefreshToken = rawToken };
             var hash = TokenHasher.Sha256Base64(rawToken);
-            
+
             var userId = Guid.NewGuid();
             var email = "test@example.com";
             var roles = new List<string> { Roles.Customer };
-            
+
             var oldJwtId = Guid.NewGuid().ToString();
             var storedToken = new RefreshToken(userId, hash, oldJwtId, DateTime.UtcNow.AddDays(7));
-            
+
             var newAccessToken = "new.access.token";
             var newJwtId = Guid.NewGuid().ToString();
             var newExpiresAt = DateTime.UtcNow.AddMinutes(15);
@@ -67,16 +61,16 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RefreshTokenCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync(storedToken);
-            
+
             _identityServiceMock.Setup(i => i.GetUserByIdAsync(userId))
                 .ReturnsAsync((true, userId, email, roles));
-            
+
             _jwtGeneratorMock.Setup(j => j.GenerateAccessToken(userId, email, roles))
                 .Returns((newAccessToken, newJwtId, newExpiresAt));
-            
+
             _jwtGeneratorMock.Setup(j => j.GenerateRefreshToken())
                 .Returns(newRefreshRaw);
 
@@ -105,12 +99,12 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RefreshTokenCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync((RefreshToken?)null);
 
             // Act
-            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None);
+            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -129,12 +123,12 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RefreshTokenCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync(storedToken);
 
             // Act
-            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None);
+            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -153,15 +147,15 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RefreshTokenCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync(storedToken);
-            
+
             _identityServiceMock.Setup(i => i.GetUserByIdAsync(userId))
                 .ReturnsAsync((false, Guid.Empty, string.Empty, new List<string>())); // User not found
 
             // Act
-            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None);
+            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -179,11 +173,11 @@ namespace Discounts.Application.UnitTests.Auth.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None);
+            var act = async () => await _handler.CreateRefreshToken(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
-            
+
             _authRepositoryMock.Verify(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
         }
     }

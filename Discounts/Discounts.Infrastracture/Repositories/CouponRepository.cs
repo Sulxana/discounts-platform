@@ -13,7 +13,7 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task AddRangeAsync(CancellationToken token, IEnumerable<Coupon> coupons)
         {
-            await _dbSet.AddRangeAsync(coupons, token);
+            await _dbSet.AddRangeAsync(coupons, token).ConfigureAwait(false);
         }
 
         public async Task<List<Coupon>> GetByUserIdAsync(CancellationToken token, Guid userId)
@@ -22,22 +22,22 @@ namespace Discounts.Infrastracture.Repositories
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.PurchasedAt)
-                .ToListAsync(token);
+                .ToListAsync(token).ConfigureAwait(false);
         }
 
         public async Task<bool> HasCouponsForOfferAsync(Guid offerId, CancellationToken token)
         {
-            return await _dbSet.AnyAsync(x => x.OfferId == offerId, token);
+            return await _dbSet.AnyAsync(x => x.OfferId == offerId, token).ConfigureAwait(false);
         }
 
         public async Task<Coupon?> GetByIdAsync(Guid id, CancellationToken token)
         {
-            return await _dbSet.FirstOrDefaultAsync(x => x.Id == id, token);
+            return await _dbSet.FirstOrDefaultAsync(x => x.Id == id, token).ConfigureAwait(false);
         }
 
         public async Task<Coupon?> GetByCodeAsync(string code, CancellationToken token)
         {
-            return await _dbSet.FirstOrDefaultAsync(x => x.Code == code, token);
+            return await _dbSet.FirstOrDefaultAsync(x => x.Code == code, token).ConfigureAwait(false);
         }
     }
 }

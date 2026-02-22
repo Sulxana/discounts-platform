@@ -2,7 +2,7 @@
 
 namespace Discounts.Application.Offers.Commands.RejectOffer
 {
-    public class RejectOfferValidator:AbstractValidator<RejectOfferCommand>
+    public class RejectOfferValidator : AbstractValidator<RejectOfferCommand>
     {
         public RejectOfferValidator()
         {

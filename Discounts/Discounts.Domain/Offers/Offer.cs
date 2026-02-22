@@ -34,8 +34,8 @@ namespace Discounts.Domain.Offers
             if (MerchantId != Guid.Empty) throw new InvalidOperationException("MerchantId is already set");
             MerchantId = merchantId;
         }
-        public required string Title { get; set; }
-        public required string Description { get; set; }
+        public required string Title { get; set; } = string.Empty;
+        public required string Description { get; set; } = string.Empty;
         public Guid CategoryId { get; private set; } // Added CategoryId
         public Category? Category { get; private set; } // Added Category navigation property
         public string? ImageUrl { get; private set; }
@@ -51,7 +51,7 @@ namespace Discounts.Domain.Offers
         public DateTime? DeletedAt { get; private set; }
         public string? RejectionMessage { get; private set; }
         public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
-        
+
         public int MinutesRemaining => (int)Math.Max(0, (EndDate - DateTime.UtcNow).TotalMinutes);
 
         public virtual ICollection<Reservation> Reservations { get; private set; } = new List<Reservation>();
@@ -125,10 +125,10 @@ namespace Discounts.Domain.Offers
                 throw new InvalidOperationException("Offer is deleted or not approved");
 
             if (num < 1)
-                    throw new ArgumentException("Entered quantity must be positive number.");
+                throw new ArgumentException("Entered quantity must be positive number.");
 
             if (RemainingCoupons < num)
-                throw new ArgumentOutOfRangeException("There are not enough coupons");
+                throw new ArgumentOutOfRangeException(nameof(num), "There are not enough coupons");
 
             RemainingCoupons -= num;
         }

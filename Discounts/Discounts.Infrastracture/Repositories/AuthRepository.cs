@@ -16,17 +16,17 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task AddRefreshTokenAsync(CancellationToken token, RefreshToken refreshToken)
         {
-            await _context.RefreshTokens.AddAsync(refreshToken, token);
+            await _context.RefreshTokens.AddAsync(refreshToken, token).ConfigureAwait(false);
         }
 
         public async Task<RefreshToken?> GetRefreshTokenByHashAsync(CancellationToken token, string hash)
         {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.TokenHash == hash, token);
+            return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.TokenHash == hash, token).ConfigureAwait(false);
         }
 
         public async Task SaveChangesAsync(CancellationToken token)
         {
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

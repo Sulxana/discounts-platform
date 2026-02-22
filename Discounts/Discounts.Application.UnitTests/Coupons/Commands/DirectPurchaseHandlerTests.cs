@@ -9,12 +9,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Coupons.Commands
 {
@@ -46,7 +40,7 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
                 _validatorMock.Object);
         }
 
-        private Offer CreateOffer(Guid offerId, OfferStatus status, int remainingCoupons, DateTime expiresAt)
+        private static Offer CreateOffer(Guid offerId, OfferStatus status, int remainingCoupons, DateTime expiresAt)
         {
             var offer = new Offer("Title", "Desc", Guid.NewGuid(), null, 10m, 5m, remainingCoupons + 10, DateTime.UtcNow, expiresAt, Guid.NewGuid());
             var idProp = typeof(Offer).GetProperty("Id");
@@ -72,9 +66,9 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<DirectPurchaseCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId);
-            
+
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
 
@@ -84,7 +78,7 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
             // Assert
             result.Should().HaveCount(quantity);
             offer.RemainingCoupons.Should().Be(7); // 10 - 3
-            
+
             _couponRepositoryMock.Verify(c => c.AddRangeAsync(It.IsAny<CancellationToken>(), It.Is<IEnumerable<Coupon>>(list => list.Count() == quantity)), Times.Once);
             _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -100,7 +94,7 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
@@ -115,11 +109,11 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<DirectPurchaseCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns((Guid?)null);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>()
@@ -135,14 +129,14 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<DirectPurchaseCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(Guid.NewGuid());
-            
+
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync((Offer?)null);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<KeyNotFoundException>()
@@ -159,14 +153,14 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<DirectPurchaseCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(Guid.NewGuid());
-            
+
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -179,46 +173,46 @@ namespace Discounts.Application.UnitTests.Coupons.Commands
             // Arrange
             var offerId = Guid.NewGuid();
             var command = new DirectPurchaseCommand { OfferId = offerId, Quantity = 2 };
-            
+
             // Create offer that expired an hour ago
             var offer = CreateOffer(offerId, OfferStatus.Approved, 10, DateTime.UtcNow.AddHours(-1));
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<DirectPurchaseCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(Guid.NewGuid());
-            
+
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage($"Offer {offer.Title} has expired.");
         }
-        
+
         [Fact]
         public async Task Handle_ShouldThrowArgumentOutOfRangeException_WhenNotEnoughCoupons()
         {
             // Arrange
             var offerId = Guid.NewGuid();
             var command = new DirectPurchaseCommand { OfferId = offerId, Quantity = 100 };
-            
+
             // Only 10 coupons left
             var offer = CreateOffer(offerId, OfferStatus.Approved, 10, DateTime.UtcNow.AddDays(1));
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<DirectPurchaseCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(Guid.NewGuid());
-            
+
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ArgumentOutOfRangeException>();

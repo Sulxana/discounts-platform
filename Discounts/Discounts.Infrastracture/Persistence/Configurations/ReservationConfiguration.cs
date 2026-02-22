@@ -20,7 +20,6 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.Property(x => x.ExpiresAt).IsRequired();
             builder.Property(x => x.Status).IsRequired().HasConversion<string>();
 
-            
             builder.HasOne<ApplicationUser>()
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
@@ -29,7 +28,7 @@ namespace Discounts.Infrastracture.Persistence.Configurations
             builder.HasOne<Offer>()
                 .WithMany(x => x.Reservations)
                 .HasForeignKey(x => x.OfferId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
             builder.HasIndex(x => new { x.UserId, x.OfferId }); // user-ის აქტიური რეზერვები

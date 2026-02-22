@@ -4,7 +4,6 @@ using Discounts.Application.Reservations.Commands.CancelReservation;
 using Discounts.Application.Reservations.Commands.CreateReservation;
 using Discounts.Application.Reservations.Queries.GetUserReservations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
@@ -18,7 +17,7 @@ namespace Discounts.Api.Controllers
         private readonly CreateReservationHandler _createHandler;
         private readonly CancelReservationHandler _cancelHandler;
         private readonly GetUserReservationsHandler _getHandler;
-        public ReservationController(CreateReservationHandler createHandler,CancelReservationHandler cancelHandler,GetUserReservationsHandler getHandler)
+        public ReservationController(CreateReservationHandler createHandler, CancelReservationHandler cancelHandler, GetUserReservationsHandler getHandler)
         {
             _createHandler = createHandler;
             _cancelHandler = cancelHandler;
@@ -34,7 +33,7 @@ namespace Discounts.Api.Controllers
         [ProducesResponseType(typeof(List<ReservationDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ReservationDto>>> GetMyReservations(CancellationToken token)
         {
-            var reservations = await _getHandler.GetUserReservations(token, new GetUserReservationsQuery());
+            var reservations = await _getHandler.GetUserReservations(token, new GetUserReservationsQuery()).ConfigureAwait(false);
             return Ok(reservations);
         }
 
@@ -51,7 +50,7 @@ namespace Discounts.Api.Controllers
             [FromBody] CreateReservationCommand command,
             CancellationToken token)
         {
-            var reservationId = await _createHandler.CreateReservation(token, command);
+            var reservationId = await _createHandler.CreateReservation(token, command).ConfigureAwait(false);
             return Ok(reservationId);
         }
 
@@ -67,7 +66,7 @@ namespace Discounts.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Cancel(Guid id, CancellationToken token)
         {
-            await _cancelHandler.CancelReservationAsync(token, new CancelReservationCommand(id));
+            await _cancelHandler.CancelReservationAsync(token, new CancelReservationCommand(id)).ConfigureAwait(false);
             return NoContent();
         }
 

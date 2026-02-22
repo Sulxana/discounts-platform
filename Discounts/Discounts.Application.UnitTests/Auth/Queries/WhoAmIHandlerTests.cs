@@ -1,13 +1,7 @@
-using Discounts.Application.Auth.DTOs;
 using Discounts.Application.Auth.Queries.WhoAmI;
 using Discounts.Application.Common.Interfaces;
 using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Auth.Queries
 {
@@ -56,12 +50,12 @@ namespace Discounts.Application.UnitTests.Auth.Queries
             _currentUserServiceMock.Setup(c => c.UserId).Returns((Guid?)null);
 
             // Act
-            var act = async () => await _handler.Handle(query, CancellationToken.None);
+            var act = async () => await _handler.Handle(query, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>()
                 .WithMessage("User is not authenticated.");
-            
+
             _identityServiceMock.Verify(i => i.GetUserByIdAsync(It.IsAny<Guid>()), Times.Never);
         }
 
@@ -77,7 +71,7 @@ namespace Discounts.Application.UnitTests.Auth.Queries
                 .ReturnsAsync((false, Guid.Empty, string.Empty, new List<string>()));
 
             // Act
-            var act = async () => await _handler.Handle(query, CancellationToken.None);
+            var act = async () => await _handler.Handle(query, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()

@@ -1,5 +1,5 @@
-﻿using Discounts.Infrastracture.Identity;
-using Discounts.Domain.Auth;
+﻿using Discounts.Domain.Auth;
+using Discounts.Infrastracture.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +12,6 @@ namespace Discounts.Infrastracture.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.TokenHash).IsRequired();
-
 
             builder.HasIndex(x => x.TokenHash).IsUnique();
             builder.HasIndex(x => x.UserId);

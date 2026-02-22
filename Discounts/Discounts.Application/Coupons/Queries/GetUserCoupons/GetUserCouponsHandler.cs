@@ -23,7 +23,7 @@ namespace Discounts.Application.Coupons.Queries.GetUserCoupons
                 throw new UnauthorizedAccessException("You must be logged in to view your coupons.");
             }
 
-            var coupons = await _couponRepository.GetByUserIdAsync(token, userId.Value);
+            var coupons = await _couponRepository.GetByUserIdAsync(token, userId.Value).ConfigureAwait(false);
 
             var dtos = coupons.Select(c => new CouponDto
             {

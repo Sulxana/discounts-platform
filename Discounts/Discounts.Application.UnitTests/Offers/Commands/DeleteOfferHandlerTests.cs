@@ -10,11 +10,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Offers.Commands
 {
@@ -40,7 +35,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 _currentUserServiceMock.Object);
         }
 
-        private Offer CreateValidOffer(Guid merchantId)
+        private static Offer CreateValidOffer(Guid merchantId)
         {
             return new Offer(
                 "Test Offer",
@@ -71,7 +66,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(merchantId);
 
             _couponRepositoryMock.Setup(c => c.HasCouponsForOfferAsync(offerId, It.IsAny<CancellationToken>()))
@@ -102,12 +97,12 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(otherUserId);
             _currentUserServiceMock.Setup(c => c.IsInRole(Roles.Administrator)).Returns(false);
 
             // Act
-            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>();
@@ -134,11 +129,11 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(merchantId);
 
             // Act
-            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -160,7 +155,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(merchantId);
 
             // Simulate sold coupons
@@ -168,7 +163,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(true);
 
             // Act
-            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -190,7 +185,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync((Offer?)null);
 
             // Act
-            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>();
@@ -209,7 +204,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.DeleteOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();

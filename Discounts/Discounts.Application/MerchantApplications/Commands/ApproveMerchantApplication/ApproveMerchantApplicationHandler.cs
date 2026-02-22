@@ -21,7 +21,7 @@ namespace Discounts.Application.MerchantApplications.Commands.ApproveMerchantApp
 
         public async Task Handle(ApproveMerchantApplicationCommand command, CancellationToken token)
         {
-            var application = await _repository.GetByIdAsync(command.Id, token);
+            var application = await _repository.GetByIdAsync(command.Id, token).ConfigureAwait(false);
 
             if (application == null)
             {
@@ -31,12 +31,12 @@ namespace Discounts.Application.MerchantApplications.Commands.ApproveMerchantApp
             application.Approve();
 
             // Assign Merchant Role
-            await _identityService.AddRoleAsync(application.UserId, Roles.Merchant);
-            
-            // Remove Customer Role (per user preference)
-            await _identityService.RemoveRoleAsync(application.UserId, Roles.Customer);
+            await _identityService.AddRoleAsync(application.UserId, Roles.Merchant).ConfigureAwait(false);
 
-            await _repository.SaveChangesAsync(token);
+            // Remove Customer Role (per user preference)
+            await _identityService.RemoveRoleAsync(application.UserId, Roles.Customer).ConfigureAwait(false);
+
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

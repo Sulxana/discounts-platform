@@ -71,7 +71,7 @@
             @if (Model.RemainingCoupons <= 0)
             {
                 <div class="d-grid gap-2">
-                    <button class="btn btn-secondary btn-lg" disabled>Sold Out</button>
+                    <button class="btn btn-secondary btn-lg" disabled>გაყიდულია</button>
                 </div>
             }
             else if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))

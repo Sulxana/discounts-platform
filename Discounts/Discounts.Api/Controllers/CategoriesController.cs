@@ -26,17 +26,17 @@ namespace Discounts.Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-                         
+
         public async Task<ActionResult<List<CategoryDto>>> GetAll(CancellationToken token)
         {
-            var result = await _mediator.Send(new GetAllCategoriesQuery(), token);
+            var result = await _mediator.Send(new GetAllCategoriesQuery(), token).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<Guid>> Create([FromBody] CreateCategoryCommand command, CancellationToken token)
         {
-            var id = await _mediator.Send(command, token);
+            var id = await _mediator.Send(command, token).ConfigureAwait(false);
             return CreatedAtAction(nameof(GetAll), new { id }, id);
         }
 
@@ -44,14 +44,14 @@ namespace Discounts.Api.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCategoryCommand command, CancellationToken token)
         {
             if (id != command.Id) return BadRequest("ID mismatch");
-            await _mediator.Send(command, token);
+            await _mediator.Send(command, token).ConfigureAwait(false);
             return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken token)
         {
-            await _mediator.Send(new DeleteCategoryCommand(id), token);
+            await _mediator.Send(new DeleteCategoryCommand(id), token).ConfigureAwait(false);
             return NoContent();
         }
     }

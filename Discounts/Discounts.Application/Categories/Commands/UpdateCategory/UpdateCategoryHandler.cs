@@ -1,6 +1,5 @@
-using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Categories.Interfaces;
-using Discounts.Application.Common.Interfaces;
+using Discounts.Application.Common.Exceptions;
 using Discounts.Domain.Categories;
 using MediatR;
 
@@ -17,7 +16,7 @@ namespace Discounts.Application.Categories.Commands.UpdateCategory
 
         public async Task Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _repository.GetCategoryByIdAsync(cancellationToken, request.Id);
+            var category = await _repository.GetCategoryByIdAsync(cancellationToken, request.Id).ConfigureAwait(false);
 
             if (category == null)
             {
@@ -26,8 +25,8 @@ namespace Discounts.Application.Categories.Commands.UpdateCategory
 
             category.Name = request.Name;
 
-            await _repository.UpdateCategoryAsync(cancellationToken, category);
-            await _repository.SaveChangesAsync(cancellationToken);
+            await _repository.UpdateCategoryAsync(cancellationToken, category).ConfigureAwait(false);
+            await _repository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

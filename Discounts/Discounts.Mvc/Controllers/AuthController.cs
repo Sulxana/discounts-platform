@@ -32,21 +32,21 @@ namespace Discounts.Mvc.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
             }
 
-            var isLockedOut = await _userManager.IsLockedOutAsync(user);
+            var isLockedOut = await _userManager.IsLockedOutAsync(user).ConfigureAwait(false);
             if (isLockedOut)
             {
                 ModelState.AddModelError(string.Empty, "Account is locked out.");
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: true, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: true, lockoutOnFailure: false).ConfigureAwait(false);
 
             if (result.Succeeded)
             {
@@ -83,13 +83,13 @@ namespace Discounts.Mvc.Controllers
                 LastName = model.LastName
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password).ConfigureAwait(false);
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "Customer");
-                await _signInManager.SignInAsync(user, isPersistent: true);
-                
+                await _userManager.AddToRoleAsync(user, "Customer").ConfigureAwait(false);
+                await _signInManager.SignInAsync(user, isPersistent: true).ConfigureAwait(false);
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -105,7 +105,7 @@ namespace Discounts.Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync().ConfigureAwait(false);
             return RedirectToAction("Index", "Home");
         }
 

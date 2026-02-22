@@ -11,7 +11,7 @@ namespace Discounts.Domain.Reservations
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be positive number");
             if (expiresAt <= CreatedAt)
-                throw new ArgumentOutOfRangeException("CreatedAt must be less than expiredAt");
+                throw new ArgumentOutOfRangeException(nameof(expiresAt), "CreatedAt must be less than expiredAt");
             if (userId == Guid.Empty)
                 throw new ArgumentException("user id must not be empty");
             if (offerId == Guid.Empty)

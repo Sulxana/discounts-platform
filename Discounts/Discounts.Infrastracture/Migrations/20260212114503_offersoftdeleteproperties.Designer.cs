@@ -13,7 +13,7 @@ namespace Discounts.Infrastracture.Migrations
 {
     [DbContext(typeof(DiscountsDbContext))]
     [Migration("20260212114503_offersoftdeleteproperties")]
-    partial class offersoftdeleteproperties
+    partial class OfferSoftDeleteProperties
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,4 +1,3 @@
-using Discounts.Application.Common.Security;
 using Discounts.Domain.Categories;
 using Discounts.Domain.Offers;
 using Discounts.Infrastracture.Identity;
@@ -12,23 +11,23 @@ namespace Discounts.Infrastracture.Seed
     {
         public static async Task SeedAsync(DiscountsDbContext context, UserManager<ApplicationUser> userManager)
         {
-            var merchant = await userManager.FindByEmailAsync("merchant@example.com");
+            var merchant = await userManager.FindByEmailAsync("merchant@example.com").ConfigureAwait(false);
             if (merchant == null) return;
 
-            if (!await context.Set<Category>().AnyAsync())
+            if (!await context.Set<Category>().AnyAsync().ConfigureAwait(false))
             {
                 var technology = new Category("Technology");
                 var food = new Category("Food & Dining");
                 var entertainment = new Category("Entertainment");
 
                 context.Set<Category>().AddRange(technology, food, entertainment);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync().ConfigureAwait(false);
 
-                if (!await context.Set<Offer>().AnyAsync())
+                if (!await context.Set<Offer>().AnyAsync().ConfigureAwait(false))
                 {
                     var offer1 = new Offer(
                         "50% Off Laptops",
-                        "Get half off selected models.",
+                        "GetByIdAsync half off selected models.",
                         technology.Id,
                         "https://example.com/laptop.jpg",
                         1000m,
@@ -55,7 +54,7 @@ namespace Discounts.Infrastracture.Seed
                     offer2.Approve();
 
                     context.Set<Offer>().AddRange(offer1, offer2);
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync().ConfigureAwait(false);
                 }
             }
         }

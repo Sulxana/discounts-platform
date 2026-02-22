@@ -22,7 +22,7 @@ namespace Discounts.Application.Offers.Services
         {
             try
             {
-                var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, offerId);
+                var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, offerId).ConfigureAwait(false);
                 if (offer == null)
                 {
                     _logger.LogWarning($"Offer {offerId} not found during cleanup.");
@@ -32,7 +32,7 @@ namespace Discounts.Application.Offers.Services
                 if (offer.Status != OfferStatus.Approved && offer.Status != OfferStatus.Pending)
                 {
                     _logger.LogInformation($"Offer {offerId} is not Approved or Pending. Status: {offer.Status}. Skipping.");
-                    return true; 
+                    return true;
                 }
 
                 if (offer.EndDate > DateTime.UtcNow)
@@ -42,8 +42,8 @@ namespace Discounts.Application.Offers.Services
                 }
 
                 offer.Expire();
-                await _unitOfWork.SaveChangesAsync(token);
-                
+                await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
+
                 _logger.LogInformation($"Successfully expired offer {offerId}.");
                 return true;
             }

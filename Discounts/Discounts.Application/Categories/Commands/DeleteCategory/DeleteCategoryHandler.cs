@@ -1,6 +1,5 @@
-using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Categories.Interfaces;
-using Discounts.Application.Common.Interfaces;
+using Discounts.Application.Common.Exceptions;
 using Discounts.Domain.Categories;
 using MediatR;
 
@@ -17,15 +16,15 @@ namespace Discounts.Application.Categories.Commands.DeleteCategory
 
         public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _repository.GetCategoryByIdAsync(cancellationToken, request.Id);
+            var category = await _repository.GetCategoryByIdAsync(cancellationToken, request.Id).ConfigureAwait(false);
 
             if (category == null)
             {
                 throw new NotFoundException(nameof(Category), request.Id);
             }
 
-            await _repository.DeleteCategoryAsync(cancellationToken, category);
-            await _repository.SaveChangesAsync(cancellationToken);
+            await _repository.DeleteCategoryAsync(cancellationToken, category).ConfigureAwait(false);
+            await _repository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

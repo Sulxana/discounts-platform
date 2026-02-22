@@ -3,7 +3,6 @@ using Discounts.Application.Common.Security;
 using Discounts.Application.Settings.Commands.UpdateSetting;
 using Discounts.Application.Settings.Queries.GetAllSettings;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
@@ -27,13 +26,13 @@ namespace Discounts.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<GlobalSettingDto>>> GetAll(CancellationToken token)
         {
-            var settings = await _getAllHandler.Handle(new GetAllSettingsQuery(), token);
+            var settings = await _getAllHandler.Handle(new GetAllSettingsQuery(), token).ConfigureAwait(false);
             return Ok(settings);
         }
         [HttpPut("{key}")]
         public async Task<IActionResult> Update(string key, [FromBody] UpdateSettingRequest request, CancellationToken token)
         {
-            await _updateHandler.Handle(new UpdateSettingCommand(key, request.Value), token);
+            await _updateHandler.Handle(new UpdateSettingCommand(key, request.Value), token).ConfigureAwait(false);
             return NoContent();
         }
     }

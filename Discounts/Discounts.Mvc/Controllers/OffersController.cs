@@ -22,10 +22,10 @@ namespace Discounts.Mvc.Controllers
             try
             {
                 var query = new GetOfferByIdQuery(id);
-                var offer = await _getOfferByIdHandler.GetOfferById(token, query);
+                var offer = await _getOfferByIdHandler.GetOfferById(token, query).ConfigureAwait(false);
                 return View(offer);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // In a deeper implementation, handle NotFoundException directly
                 TempData["ErrorMessage"] = "Offer not found or unavailable.";

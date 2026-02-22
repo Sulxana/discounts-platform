@@ -5,7 +5,7 @@ namespace Discounts.Domain.Categories
     public class Category
     {
         public Guid Id { get; set; }
-        public required string Name { get; set; }
+        public required string Name { get; set; } = string.Empty;
         public ICollection<Offer> Offers { get; set; } = new List<Offer>();
 
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]

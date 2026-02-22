@@ -1,5 +1,5 @@
-﻿using Discounts.Application.Common.Interfaces;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Discounts.Application.Common.Interfaces;
 
 namespace Discounts.Api.Infrastracture.Services
 {

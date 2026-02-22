@@ -1,8 +1,6 @@
 ﻿using Discounts.Application.Offers.Interfaces;
-using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Domain.Offers;
 using Discounts.Infrastracture.Persistence.Context;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace Discounts.Infrastracture.Repositories
@@ -15,17 +13,17 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task AddOfferAsync(CancellationToken token, Offer createOffer)
         {
-            await base.Add(token, createOffer);
+            await Add(token, createOffer).ConfigureAwait(false);
         }
 
         public async Task<List<Offer>> GetActiveOfferAsync(CancellationToken token, string? categoryName, decimal? minPrice, decimal? maxPrice, string? searchTerm, OfferStatus? status, int page, int pageSize)
         {
             var now = DateTime.UtcNow;
-            IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().Include(x => x.Category)
+            var query = (IQueryable<Offer>)_context.Set<Offer>().AsNoTracking().Include(x => x.Category)
                 .Where(x => x.Status == OfferStatus.Approved && x.EndDate > now);
 
             if (!string.IsNullOrEmpty(categoryName))
-                query = query.Where(x => x.Category.Name == categoryName);
+                query = query.Where(x => x.Category!.Name == categoryName);
 
             if (minPrice.HasValue)
                 query = query.Where(x => x.DiscountedPrice >= minPrice.Value);
@@ -36,46 +34,43 @@ namespace Discounts.Infrastracture.Repositories
             if (!string.IsNullOrEmpty(searchTerm))
                 query = query.Where(x => x.Title.Contains(searchTerm) || x.Description.Contains(searchTerm));
 
-            // Ignore status parameter if passed, as Active offers are strictly Approved & not expired.
-            // if (status.HasValue) query = query.Where(x => x.Status == status.Value);
-
             query = query.OrderByDescending(x => x.StartDate);
 
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
 
             return result;
         }
-        public async Task<List<Offer>> GetAllOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status, bool Deleted, int page, int pageSize)
+        public async Task<List<Offer>> GetAllOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status, bool deleted, int page, int pageSize)
         {
-            if (Deleted)
+            if (deleted)
             {
-                IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().IgnoreQueryFilters().Include(x => x.Category);
+                var query = (IQueryable<Offer>)_context.Set<Offer>().AsNoTracking().IgnoreQueryFilters().Include(x => x.Category);
 
                 if (!string.IsNullOrEmpty(categoryName))
-                    query = query.Where(x => x.Category.Name == categoryName);
+                    query = query.Where(x => x.Category!.Name == categoryName);
 
                 if (status.HasValue)
                     query = query.Where(x => x.Status == status.Value);
 
                 query = query.OrderByDescending(x => x.StartDate);
 
-                var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+                var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
 
                 return result;
             }
             else
             {
-                IQueryable<Offer> query = _context.Set<Offer>().AsNoTracking().IgnoreQueryFilters().Include(x => x.Category).Where(x => x.IsDeleted == false);
+                var query = (IQueryable<Offer>)_context.Set<Offer>().AsNoTracking().IgnoreQueryFilters().Include(x => x.Category).Where(x => x.IsDeleted == false);
 
                 if (!string.IsNullOrEmpty(categoryName))
-                    query = query.Where(x => x.Category.Name == categoryName);
+                    query = query.Where(x => x.Category!.Name == categoryName);
 
                 if (status.HasValue)
                     query = query.Where(x => x.Status == status.Value);
 
                 query = query.OrderByDescending(x => x.StartDate);
 
-                var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+                var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
                 return result;
             }
 
@@ -83,27 +78,27 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task<List<Offer>> GetDeletedOfferAsync(CancellationToken token, string? categoryName, OfferStatus? status, int page, int pageSize)
         {
-            IQueryable<Offer> query = _dbSet.AsNoTracking().IgnoreQueryFilters().Include(x => x.Category).Where(x => x.IsDeleted == true);
+            var query = (IQueryable<Offer>)_dbSet.AsNoTracking().IgnoreQueryFilters().Include(x => x.Category).Where(x => x.IsDeleted == true);
 
             if (!string.IsNullOrEmpty(categoryName))
-                query = query.Where(x => x.Category.Name == categoryName);
+                query = query.Where(x => x.Category!.Name == categoryName);
 
             if (status.HasValue)
                 query = query.Where(x => x.Status == status.Value);
 
             query = query.OrderByDescending(x => x.DeletedAt);
 
-            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
             return result;
         }
 
         public async Task<Offer?> GetOfferByIdAsync(CancellationToken token, Guid id)
         {
-            //var offer = await base.Get(token, id);
+            //var offer = await base.GetByIdAsync(token, id);
 
             return await _dbSet.AsNoTracking()
                 .Include(x => x.Category)
-                .FirstOrDefaultAsync(o => o.Id == id, token);
+                .FirstOrDefaultAsync(o => o.Id == id, token).ConfigureAwait(false);
         }
         public async Task<Offer?> GetOfferIncludingDeletedAsync(CancellationToken token, Guid id)
         {
@@ -111,31 +106,31 @@ namespace Discounts.Infrastracture.Repositories
                 .IgnoreQueryFilters()
                 .AsNoTracking()
                 .Include(x => x.Category)
-                .FirstOrDefaultAsync(o => o.Id == id, token);
+                .FirstOrDefaultAsync(o => o.Id == id, token).ConfigureAwait(false);
         }
         public async Task<Offer?> GetOfferForUpdateByIdAsync(CancellationToken token, Guid id)
         {
             return await _dbSet
-                .FirstOrDefaultAsync(o => o.Id == id, token); // AsNoTracking
+                .FirstOrDefaultAsync(o => o.Id == id, token).ConfigureAwait(false); // AsNoTracking
         }
 
         public async Task SaveChangesAsync(CancellationToken token)
         {
-            await base.SaveChanges(token);
+            await SaveChanges(token).ConfigureAwait(false);
         }
 
         public async Task UpdateOfferAsync(CancellationToken token, Offer offer)
         {
-            await base.Update(token, offer);
+            await Update(token, offer).ConfigureAwait(false);
         }
         public async Task DeleteOfferAsync(CancellationToken token, Offer offer)
         {
-            await base.Remove(token, offer);
+            await Remove(token, offer).ConfigureAwait(false);
         }
 
         public async Task DeleteOfferAsync(CancellationToken token, Guid offerId)
         {
-            await base.Remove(token, offerId);
+            await Remove(token, offerId).ConfigureAwait(false);
         }
 
         public async Task<List<Offer>> GetExpiredActiveAsync(CancellationToken token)
@@ -143,18 +138,18 @@ namespace Discounts.Infrastracture.Repositories
             var now = DateTime.UtcNow;
             return await _dbSet
                 .Where(o => (o.Status == OfferStatus.Approved || o.Status == OfferStatus.Pending) && o.EndDate < now)
-                .ToListAsync(token);
+                .ToListAsync(token).ConfigureAwait(false);
         }
 
         public async Task<Application.Offers.Queries.GetMerchantDashboardStats.MerchantDashboardStatsDto> GetMerchantDashboardStatsAsync(CancellationToken token, Guid merchantId)
         {
             var stats = new Application.Offers.Queries.GetMerchantDashboardStats.MerchantDashboardStatsDto();
 
-            stats.TotalOffers = await _dbSet.Where(o => o.MerchantId == merchantId).CountAsync(token);
-            stats.ActiveOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Approved).CountAsync(token);
-            stats.ExpiredOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Expired).CountAsync(token);
-            stats.PendingOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Pending).CountAsync(token);
-            stats.RejectedOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Rejected).CountAsync(token);
+            stats.TotalOffers = await _dbSet.Where(o => o.MerchantId == merchantId).CountAsync(token).ConfigureAwait(false);
+            stats.ActiveOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Approved).CountAsync(token).ConfigureAwait(false);
+            stats.ExpiredOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Expired).CountAsync(token).ConfigureAwait(false);
+            stats.PendingOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Pending).CountAsync(token).ConfigureAwait(false);
+            stats.RejectedOffers = await _dbSet.Where(o => o.MerchantId == merchantId && o.Status == OfferStatus.Rejected).CountAsync(token).ConfigureAwait(false);
 
             return stats;
         }
@@ -179,7 +174,7 @@ namespace Discounts.Infrastracture.Repositories
                             RedeemedAt = coupon.RedeemedAt
                         };
 
-            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token);
+            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
         }
 
         public async Task<List<Offer>> GetMerchantOffersAsync(CancellationToken token, Guid merchantId, int page, int pageSize)
@@ -190,7 +185,7 @@ namespace Discounts.Infrastracture.Repositories
                 .OrderByDescending(x => x.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync(token);
+                .ToListAsync(token).ConfigureAwait(false);
         }
 
     }

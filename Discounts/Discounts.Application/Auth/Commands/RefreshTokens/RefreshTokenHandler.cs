@@ -2,7 +2,6 @@ using Discounts.Application.Auth.DTOs;
 using Discounts.Application.Auth.Interfaces;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
-using Discounts.Domain.Auth;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
@@ -27,11 +26,11 @@ namespace Discounts.Application.Auth.Commands.RefreshTokens
 
         public async Task<AuthResponse> CreateRefreshToken(RefreshTokenCommand command, CancellationToken token)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
             var hash = TokenHasher.Sha256Base64(command.RefreshToken);
 
-            var stored = await _authRepository.GetRefreshTokenByHashAsync(token, hash);
+            var stored = await _authRepository.GetRefreshTokenByHashAsync(token, hash).ConfigureAwait(false);
 
             if (stored == null)
                 throw new InvalidOperationException("Invalid refresh token");
@@ -39,13 +38,13 @@ namespace Discounts.Application.Auth.Commands.RefreshTokens
             if (!stored.IsActive())
                 throw new InvalidOperationException("Refresh token is not active");
 
-            var (isSuccess, userId, email, roles) = await _identityService.GetUserByIdAsync(stored.UserId);
+            var (isSuccess, userId, email, roles) = await _identityService.GetUserByIdAsync(stored.UserId).ConfigureAwait(false);
 
             if (!isSuccess)
                 throw new InvalidOperationException("User Not Found");
 
             stored.MarkAsUsed();
-            
+
             var (accessToken, jwtId, expiresAtUtc) = _jwtGenerator.GenerateAccessToken(userId, email, roles);
 
             var newRefreshRaw = _jwtGenerator.GenerateRefreshToken();
@@ -54,8 +53,8 @@ namespace Discounts.Application.Auth.Commands.RefreshTokens
 
             var newRefresh = new Discounts.Domain.Auth.RefreshToken(userId, newRefreshTokenHash, jwtId, refreshExpiresAt);
 
-            await _authRepository.AddRefreshTokenAsync(token, newRefresh);
-            await _authRepository.SaveChangesAsync(token);
+            await _authRepository.AddRefreshTokenAsync(token, newRefresh).ConfigureAwait(false);
+            await _authRepository.SaveChangesAsync(token).ConfigureAwait(false);
 
             return new AuthResponse
             {

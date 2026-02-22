@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Discounts.Infrastracture.Migrations
 {
     /// <inheritdoc />
-    public partial class offersoftdeleteproperties : Migration
+    public partial class OfferSoftDeleteProperties : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

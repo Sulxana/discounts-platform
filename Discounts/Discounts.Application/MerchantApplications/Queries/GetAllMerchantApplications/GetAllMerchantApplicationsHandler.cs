@@ -11,9 +11,9 @@ namespace Discounts.Application.MerchantApplications.Queries.GetAllMerchantAppli
             _repository = repository;
         }
 
-        public async Task<List<MerchantApplicationDto>> Handle(GetAllMerchantApplicationsQuery query,CancellationToken cancellationToken)
+        public async Task<List<MerchantApplicationDto>> Handle(GetAllMerchantApplicationsQuery query, CancellationToken cancellationToken)
         {
-            var applications = await _repository.GetAllWithUsersAsync(query.Status,query.Page,query.PageSize,cancellationToken);
+            var applications = await _repository.GetAllWithUsersAsync(query.Status, query.Page, query.PageSize, cancellationToken).ConfigureAwait(false);
 
             return applications.Select(x => new MerchantApplicationDto
             {

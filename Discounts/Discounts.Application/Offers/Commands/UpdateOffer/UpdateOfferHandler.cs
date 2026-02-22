@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Discounts.Application.Common.Exceptions;
+﻿using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
 using Discounts.Application.Offers.Interfaces;
@@ -7,7 +6,6 @@ using Discounts.Application.Settings.Interfaces;
 using Discounts.Domain.Offers;
 using Discounts.Domain.Settings;
 using FluentValidation;
-using Mapster;
 
 namespace Discounts.Application.Offers.Commands.UpdateOffer
 {
@@ -28,25 +26,23 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
 
         public async Task UpdateOfferAsync(CancellationToken token, UpdateOfferCommand UpdateOffer)
         {
-            await _validator.ValidateAndThrowAsync(UpdateOffer, token);
+            await _validator.ValidateAndThrowAsync(UpdateOffer, token).ConfigureAwait(false);
 
-            var offer = await _repository.GetOfferByIdAsync(token, UpdateOffer.Id);
+            var offer = await _repository.GetOfferByIdAsync(token, UpdateOffer.Id).ConfigureAwait(false);
             if (offer == null) throw new NotFoundException(nameof(Offer), UpdateOffer.Id);
 
             var userId = _currentUserService.UserId;
-            if (userId != offer.MerchantId && !_currentUserService.IsInRole(Roles.Administrator))
+            if (userId == null || (userId != offer.MerchantId && !_currentUserService.IsInRole(Roles.Administrator)))
             {
                 throw new UnauthorizedAccessException("You are not authorized to update this offer.");
             }
 
             var editWindowHours = await _settingsService.GetIntAsync(
-                SettingKeys.MerchantEditWindowHours, defaultValue: 24, token);
-            
+                SettingKeys.MerchantEditWindowHours, defaultValue: 24, token).ConfigureAwait(false);
+
             var cutoffTime = offer.CreatedAt.AddHours(editWindowHours);
             if (DateTime.UtcNow > cutoffTime)
                 throw new InvalidOperationException($"Cannot edit offer after {editWindowHours} hours from creation");
-
-
 
             if (UpdateOffer.DiscountedPrice.HasValue && UpdateOffer.DiscountedPrice >= offer.OriginalPrice)
                 throw new ValidationException("DiscountedPrice must be less than OriginalPrice.");
@@ -69,8 +65,8 @@ namespace Discounts.Application.Offers.Commands.UpdateOffer
             offer.UpdateOfferFields(UpdateOffer.Title, UpdateOffer.Description, UpdateOffer.ImageUrl,
                                     UpdateOffer.DiscountedPrice, UpdateOffer.EndDate);
 
-            await _repository.UpdateOfferAsync(token, offer);
-            await _repository.SaveChangesAsync(token);
+            await _repository.UpdateOfferAsync(token, offer).ConfigureAwait(false);
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

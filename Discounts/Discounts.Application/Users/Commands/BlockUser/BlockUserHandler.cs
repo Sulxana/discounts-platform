@@ -14,8 +14,8 @@ namespace Discounts.Application.Users.Commands.BlockUser
 
         public async Task Handle(BlockUserCommand request, CancellationToken token)
         {
-            var result = await _identityService.BlockUserAsync(request.UserId);
-            
+            var result = await _identityService.BlockUserAsync(request.UserId).ConfigureAwait(false);
+
             if (!result)
             {
                 throw new Exception("Failed to block user");

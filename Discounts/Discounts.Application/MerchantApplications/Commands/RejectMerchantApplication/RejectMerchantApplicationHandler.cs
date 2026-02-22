@@ -17,7 +17,7 @@ namespace Discounts.Application.MerchantApplications.Commands.RejectMerchantAppl
 
         public async Task Handle(RejectMerchantApplicationCommand command, CancellationToken token)
         {
-            var application = await _repository.GetByIdAsync(command.Id, token);
+            var application = await _repository.GetByIdAsync(command.Id, token).ConfigureAwait(false);
 
             if (application == null)
             {
@@ -26,7 +26,7 @@ namespace Discounts.Application.MerchantApplications.Commands.RejectMerchantAppl
 
             application.Reject(command.Reason);
 
-            await _repository.SaveChangesAsync(token);
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

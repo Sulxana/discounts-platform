@@ -9,7 +9,7 @@ namespace Discounts.Domain.MerchantApplications
         public DateTime? ReviewedAtUtc { get; private set; }
         public string? RejectionReason { get; private set; }
 
-        private MerchantApplication() { } 
+        private MerchantApplication() { }
 
         public MerchantApplication(Guid userId)
         {

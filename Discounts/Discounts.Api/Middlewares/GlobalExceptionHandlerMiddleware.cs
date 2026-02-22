@@ -1,7 +1,7 @@
-﻿using Discounts.Application.Common.Exceptions;
+﻿using System.Net;
+using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Common.Models;
 using FluentValidation;
-using System.Net;
 
 namespace Discounts.Api.Middlewares
 {
@@ -22,17 +22,17 @@ namespace Discounts.Api.Middlewares
         {
             try
             {
-                await _next(context);
+                await _next(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                await HandleExceptionAsync(context, ex).ConfigureAwait(false);
             }
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            
+
             if (context.Response.HasStarted)
             {
                 _logger.LogWarning("Response has already started, cannot handle exception");
@@ -40,7 +40,7 @@ namespace Discounts.Api.Middlewares
             }
 
             var response = context.Response;
-            response.Clear(); 
+            response.Clear();
             response.ContentType = "application/json";
 
             var errorResponse = new ErrorResponse
@@ -129,13 +129,12 @@ namespace Discounts.Api.Middlewares
                     break;
             }
 
-            
             var jsonResponse = System.Text.Json.JsonSerializer.Serialize(errorResponse, new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
             });
 
-            await response.WriteAsync(jsonResponse);
+            await response.WriteAsync(jsonResponse).ConfigureAwait(false);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Discounts.Application.Auth.Interfaces;
+using Discounts.Application.Categories.Interfaces;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
+using Discounts.Application.Coupons.Interfaces;
 using Discounts.Application.MerchantApplications.Interfaces;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Reservations.Interfaces;
@@ -12,12 +14,10 @@ using Discounts.Infrastracture.Persistence.Context;
 using Discounts.Infrastracture.Persistence.Repositories;
 using Discounts.Infrastracture.Repositories;
 using Discounts.Infrastracture.Services;
-using Discounts.Application.Coupons.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Discounts.Application.Categories.Interfaces;
 
 namespace Discounts.Infrastracture
 {
@@ -68,7 +68,6 @@ namespace Discounts.Infrastracture
 
             services.AddHostedService<ReservationCleanupWorker>();
             services.AddHostedService<OfferExpirationWorker>();
-
 
             return services;
         }

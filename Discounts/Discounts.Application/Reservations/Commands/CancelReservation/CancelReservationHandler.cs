@@ -25,9 +25,9 @@ namespace Discounts.Application.Reservations.Commands.CancelReservation
 
         public async Task CancelReservationAsync(CancellationToken token, CancelReservationCommand command)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
-            var reservation = await _reservationRepository.GetByIdAsync(token, command.Id);
+            var reservation = await _reservationRepository.GetByIdAsync(token, command.Id).ConfigureAwait(false);
             if (reservation == null)
                 throw new NotFoundException("Reservation not found");
 
@@ -38,18 +38,15 @@ namespace Discounts.Application.Reservations.Commands.CancelReservation
 
             reservation.Cancel();
 
-            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, reservation.OfferId);
-            if (offer != null)
-            {
-                offer.IncreaseStock(reservation.Quantity);
-            }
+            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, reservation.OfferId).ConfigureAwait(false);
+            offer?.IncreaseStock(reservation.Quantity);
 
             // Old Logic:
             // await _offerRepository.SaveChangesAsync(token);
             // await _reservationRepository.SaveChangesAsync(token);
 
             // New Logic:
-            await _unitOfWork.SaveChangesAsync(token);
+            await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
         }
 
     }

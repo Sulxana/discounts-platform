@@ -2,6 +2,6 @@
 {
     public class ConnectionStrings
     {
-        public string DiscountsDb { get; set; }
+        public string DiscountsDb { get; set; } = string.Empty;
     }
 }

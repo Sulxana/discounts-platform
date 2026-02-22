@@ -1,11 +1,11 @@
-using Discounts.Application.Coupons.Commands.DirectPurchase;
-using Discounts.Application.Coupons.Queries.GetMyCoupons;
-using Discounts.Application.Reservations.Commands.PurchaseReservation;
-using Discounts.Application.Coupons.Commands.RedeemCoupon;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Asp.Versioning;
 using Discounts.Application.Common.Security;
+using Discounts.Application.Coupons.Commands.DirectPurchase;
+using Discounts.Application.Coupons.Commands.RedeemCoupon;
+using Discounts.Application.Coupons.Queries.GetMyCoupons;
+using Discounts.Application.Reservations.Commands.PurchaseReservation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
 {
@@ -41,7 +41,7 @@ namespace Discounts.Api.Controllers
         public async Task<IActionResult> PurchaseReservation(Guid reservationId, CancellationToken token)
         {
             var command = new PurchaseReservationCommand { ReservationId = reservationId };
-            var coupons = await _purchaseHandler.Handle(command, token);
+            var coupons = await _purchaseHandler.Handle(command, token).ConfigureAwait(false);
             return Ok(coupons);
         }
 
@@ -60,7 +60,7 @@ namespace Discounts.Api.Controllers
         public async Task<IActionResult> DirectPurchase(Guid offerId, [FromQuery] int quantity = 1, CancellationToken token = default)
         {
             var command = new DirectPurchaseCommand { OfferId = offerId, Quantity = quantity };
-            var coupons = await _directPurchaseHandler.Handle(command, token);
+            var coupons = await _directPurchaseHandler.Handle(command, token).ConfigureAwait(false);
             return Ok(coupons);
         }
 
@@ -75,7 +75,7 @@ namespace Discounts.Api.Controllers
         public async Task<IActionResult> GetMyCoupons(CancellationToken token)
         {
             var query = new GetMyCouponsQuery();
-            var coupons = await _getCouponsHandler.Handle(query, token);
+            var coupons = await _getCouponsHandler.Handle(query, token).ConfigureAwait(false);
             return Ok(coupons);
         }
 
@@ -94,7 +94,7 @@ namespace Discounts.Api.Controllers
         public async Task<IActionResult> RedeemCoupon(string code, CancellationToken token)
         {
             var command = new RedeemCouponCommand { Code = code };
-            await _redeemCouponHandler.Handle(command, token);
+            await _redeemCouponHandler.Handle(command, token).ConfigureAwait(false);
             return Ok(new { Message = "Coupon successfully redeemed." });
         }
     }

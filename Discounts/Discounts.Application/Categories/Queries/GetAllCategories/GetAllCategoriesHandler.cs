@@ -1,5 +1,4 @@
 using Discounts.Application.Categories.Interfaces;
-using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Offers.Queries;
 using Mapster;
 using MediatR;
@@ -17,7 +16,7 @@ namespace Discounts.Application.Categories.Queries.GetAllCategories
 
         public async Task<List<CategoryDto>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var categories = await _repository.GetAllCategoriesAsync(cancellationToken);
+            var categories = await _repository.GetAllCategoriesAsync(cancellationToken).ConfigureAwait(false);
             return categories.Adapt<List<CategoryDto>>();
         }
     }

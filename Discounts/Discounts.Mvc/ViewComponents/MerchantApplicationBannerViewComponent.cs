@@ -20,7 +20,7 @@ namespace Discounts.Mvc.ViewComponents
                 return Content(string.Empty);
             }
 
-            var application = await _mediator.Send(new GetUserMerchantApplicationQuery());
+            var application = await _mediator.Send(new GetUserMerchantApplicationQuery()).ConfigureAwait(false);
 
             if (application != null && application.Status == "Rejected")
             {

@@ -17,18 +17,18 @@ namespace Discounts.Mvc.Controllers
         }
 
         public async Task<IActionResult> Index(
-            string? searchTerm, 
-            string? categoryName, 
-            decimal? minPrice, 
-            decimal? maxPrice, 
+            string? searchTerm,
+            string? categoryName,
+            decimal? minPrice,
+            decimal? maxPrice,
             string? sortBy = null,
-            int page = 1, 
+            int page = 1,
             CancellationToken token = default)
         {
             var query = new GetActiveOffersQuery(categoryName, minPrice, maxPrice, searchTerm, OfferStatus.Approved, page, 12);
-            
-            var offers = await _mediator.Send(query, token);
-            var categories = await _mediator.Send(new GetAllCategoriesQuery(), token);
+
+            var offers = await _mediator.Send(query, token).ConfigureAwait(false);
+            var categories = await _mediator.Send(new GetAllCategoriesQuery(), token).ConfigureAwait(false);
 
             var vm = new HomeViewModel
             {

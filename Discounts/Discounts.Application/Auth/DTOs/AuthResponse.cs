@@ -4,6 +4,6 @@
     {
         public string AccessToken { get; init; } = null!;
         public string RefreshToken { get; init; } = null!;
-        public DateTime ExpiresAt { get; init; } 
+        public DateTime ExpiresAt { get; init; }
     }
 }

@@ -1,13 +1,12 @@
+using System.Reflection;
 using Discounts.Application;
 using Discounts.Infrastracture;
-using Mapster;
-using MapsterMapper;
-using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Identity;
-
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,12 +39,11 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
-builder.Services.AddSingleton<Microsoft.AspNetCore.Authentication.ISystemClock, Microsoft.AspNetCore.Authentication.SystemClock>();
-
-
+builder.Services.AddSingleton(TimeProvider.System);
 
 // Configure authentication scheme for Identity
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
@@ -80,7 +78,7 @@ else
     app.UseHsts();
 }
 
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();

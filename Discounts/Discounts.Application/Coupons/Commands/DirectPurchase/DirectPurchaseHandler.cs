@@ -29,13 +29,13 @@ namespace Discounts.Application.Coupons.Commands.DirectPurchase
 
         public async Task<List<Guid>> Handle(DirectPurchaseCommand command, CancellationToken token)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
             var userId = _currentUserService.UserId;
             if (userId == null)
                 throw new UnauthorizedAccessException("User must be authenticated to purchase.");
 
-            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, command.OfferId);
+            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, command.OfferId).ConfigureAwait(false);
             if (offer == null)
                 throw new KeyNotFoundException($"Offer {command.OfferId} not found.");
 
@@ -48,15 +48,15 @@ namespace Discounts.Application.Coupons.Commands.DirectPurchase
             offer.DecreaseStock(command.Quantity);
 
             var coupons = new List<Coupon>();
-            for (int i = 0; i < command.Quantity; i++)
+            for (var i = 0; i < command.Quantity; i++)
             {
                 var coupon = new Coupon(userId.Value, offer.Id, null, offer.EndDate);
                 coupons.Add(coupon);
             }
 
-            await _couponRepository.AddRangeAsync(token, coupons);
+            await _couponRepository.AddRangeAsync(token, coupons).ConfigureAwait(false);
 
-            await _unitOfWork.SaveChangesAsync(token);
+            await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
 
             _logger.LogInformation($"User {userId} directly purchased {command.Quantity} coupons for offer {offer.Id}.");
 

@@ -2,7 +2,6 @@
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Domain.Offers;
 using FluentValidation;
-using Mapster;
 
 namespace Discounts.Application.Offers.Commands.CreateOffer
 {
@@ -21,7 +20,7 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
 
         public async Task<Guid> CreateOffer(CancellationToken token, CreateOfferCommand createOffer)
         {
-            await _validator.ValidateAndThrowAsync(createOffer, token);
+            await _validator.ValidateAndThrowAsync(createOffer, token).ConfigureAwait(false);
 
             var userId = _currentUserService.UserId;
             if (userId == null) throw new UnauthorizedAccessException();
@@ -39,8 +38,8 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
                 userId.Value
             );
 
-            await _repository.AddOfferAsync(token, offer);
-            await _repository.SaveChangesAsync(token);
+            await _repository.AddOfferAsync(token, offer).ConfigureAwait(false);
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
 
             return offer.Id;
         }

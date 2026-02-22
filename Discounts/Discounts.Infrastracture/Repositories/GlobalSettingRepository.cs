@@ -15,23 +15,23 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task<GlobalSetting?> GetByKeyAsync(CancellationToken cancellationToken, string key)
         {
-            return await _context.GlobalSettings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
+            return await _context.GlobalSettings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<List<GlobalSetting>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _context.GlobalSettings
                 .OrderBy(s => s.Key)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task AddAsync(CancellationToken token, GlobalSetting setting)
         {
-            await _context.GlobalSettings.AddAsync(setting, token);
+            await _context.GlobalSettings.AddAsync(setting, token).ConfigureAwait(false);
         }
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

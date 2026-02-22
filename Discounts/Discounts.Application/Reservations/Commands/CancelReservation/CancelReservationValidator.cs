@@ -2,7 +2,7 @@
 
 namespace Discounts.Application.Reservations.Commands.CancelReservation
 {
-    public class CancelReservationValidator:AbstractValidator<CancelReservationCommand>
+    public class CancelReservationValidator : AbstractValidator<CancelReservationCommand>
     {
         public CancelReservationValidator()
         {

@@ -54,6 +54,8 @@ services:
     ports:
       - "5000:8080"
       - "5001:8081"
+    volumes:
+      - ./uploads:/app/wwwroot/uploads
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DiscountsDb=Server=discounts-db;Database=DiscountsDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;

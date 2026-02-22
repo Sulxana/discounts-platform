@@ -1,8 +1,8 @@
 using Discounts.Application.Common.Interfaces;
-using Discounts.Application.Reservations.Interfaces;
-using Discounts.Domain.Coupons;
 using Discounts.Application.Coupons.Interfaces;
 using Discounts.Application.Offers.Interfaces;
+using Discounts.Application.Reservations.Interfaces;
+using Discounts.Domain.Coupons;
 using Microsoft.Extensions.Logging;
 
 namespace Discounts.Application.Reservations.Commands.PurchaseReservation
@@ -26,7 +26,7 @@ namespace Discounts.Application.Reservations.Commands.PurchaseReservation
 
         public async Task<List<Guid>> Handle(PurchaseReservationCommand command, CancellationToken token)
         {
-            var reservation = await _reservationRepository.GetByIdAsync(token, command.ReservationId);
+            var reservation = await _reservationRepository.GetByIdAsync(token, command.ReservationId).ConfigureAwait(false);
 
             if (reservation == null)
                 throw new KeyNotFoundException($"Reservation {command.ReservationId} not found.");
@@ -39,20 +39,20 @@ namespace Discounts.Application.Reservations.Commands.PurchaseReservation
 
             reservation.MarkAsCompleted();
 
-            var offer = await _offerRepository.GetOfferByIdAsync(token, reservation.OfferId);
+            var offer = await _offerRepository.GetOfferByIdAsync(token, reservation.OfferId).ConfigureAwait(false);
             if (offer == null)
                 throw new KeyNotFoundException($"Offer {reservation.OfferId} not found.");
 
             var coupons = new List<Coupon>();
-            for (int i = 0; i < reservation.Quantity; i++)
+            for (var i = 0; i < reservation.Quantity; i++)
             {
                 var coupon = new Coupon(reservation.UserId, reservation.OfferId, reservation.Id, offer.EndDate);
                 coupons.Add(coupon);
             }
 
-            await _couponRepository.AddRangeAsync(token, coupons);
+            await _couponRepository.AddRangeAsync(token, coupons).ConfigureAwait(false);
 
-            await _unitOfWork.SaveChangesAsync(token);
+            await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
 
             _logger.LogInformation($"Successfully purchased reservation {command.ReservationId}. Created {coupons.Count} coupons.");
 

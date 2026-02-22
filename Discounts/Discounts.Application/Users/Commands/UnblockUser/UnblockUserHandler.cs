@@ -14,7 +14,7 @@ namespace Discounts.Application.Users.Commands.UnblockUser
 
         public async Task Handle(UnblockUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await _identityService.UnblockUserAsync(request.UserId);
+            var result = await _identityService.UnblockUserAsync(request.UserId).ConfigureAwait(false);
 
             if (!result)
             {

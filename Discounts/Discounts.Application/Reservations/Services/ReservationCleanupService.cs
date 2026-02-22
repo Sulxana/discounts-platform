@@ -24,7 +24,7 @@ namespace Discounts.Application.Reservations.Services
         {
             try
             {
-                var reservation = await _reservationRepository.GetByIdAsync(token, reservationId);
+                var reservation = await _reservationRepository.GetByIdAsync(token, reservationId).ConfigureAwait(false);
 
                 if (reservation == null)
                 {
@@ -46,7 +46,7 @@ namespace Discounts.Application.Reservations.Services
 
                 reservation.MarkAsExpired(DateTime.UtcNow);
 
-                var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, reservation.OfferId);
+                var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, reservation.OfferId).ConfigureAwait(false);
                 if (offer != null)
                 {
                     offer.IncreaseStock(reservation.Quantity);
@@ -56,7 +56,7 @@ namespace Discounts.Application.Reservations.Services
                     _logger.LogWarning($"Offer {reservation.OfferId} not found. Stock not restored.");
                 }
 
-                await _unitOfWork.SaveChangesAsync(token);
+                await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
                 _logger.LogInformation($"Successfully cleaned up reservation {reservationId}");
                 return true;
             }

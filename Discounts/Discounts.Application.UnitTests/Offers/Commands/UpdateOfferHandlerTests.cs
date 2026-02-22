@@ -1,4 +1,3 @@
-using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Common.Security;
 using Discounts.Application.Offers.Commands.UpdateOffer;
@@ -10,11 +9,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Offers.Commands
 {
@@ -40,7 +34,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 _currentUserServiceMock.Object);
         }
 
-        private Offer CreateValidOffer(Guid merchantId, DateTime createdAt)
+        private static Offer CreateValidOffer(Guid merchantId, DateTime createdAt)
         {
             var offer = new Offer(
                 "Test Offer",
@@ -90,7 +84,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
             _repositoryMock.Verify(r => r.UpdateOfferAsync(It.IsAny<CancellationToken>(), offer), Times.Once);
             _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
-        
+
         [Fact]
         public async Task UpdateOfferAsync_ShouldThrowUnauthorizedAccessException_WhenUserIsNotOwnerOrAdmin()
         {
@@ -106,12 +100,12 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(otherUserId);
             _currentUserServiceMock.Setup(c => c.IsInRole(Roles.Administrator)).Returns(false);
 
             // Act
-            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>();
@@ -125,7 +119,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
             var offerId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
             var command = new UpdateOfferCommand { Id = offerId, Title = "New Title" };
-            
+
             // Created 25 hours ago
             var offer = CreateValidOffer(merchantId, DateTime.UtcNow.AddHours(-25));
 
@@ -134,13 +128,13 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-                
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(merchantId);
             _settingsServiceMock.Setup(s => s.GetIntAsync(SettingKeys.MerchantEditWindowHours, 24, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(24); // Window is 24 hours
 
             // Act
-            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -162,13 +156,13 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-                
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(merchantId);
             _settingsServiceMock.Setup(s => s.GetIntAsync(SettingKeys.MerchantEditWindowHours, 24, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(24);
 
             // Act
-            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>()
@@ -182,7 +176,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
             // Arrange
             var offerId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
-            var command = new UpdateOfferCommand { Id = offerId, DiscountedPrice = 110m }; 
+            var command = new UpdateOfferCommand { Id = offerId, DiscountedPrice = 110m };
             var offer = CreateValidOffer(merchantId, DateTime.UtcNow); // Original price is 100
 
             _validatorMock
@@ -190,13 +184,13 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(new ValidationResult());
             _repositoryMock.Setup(r => r.GetOfferByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-                
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(merchantId);
             _settingsServiceMock.Setup(s => s.GetIntAsync(SettingKeys.MerchantEditWindowHours, 24, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(24);
 
             // Act
-            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.UpdateOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>()

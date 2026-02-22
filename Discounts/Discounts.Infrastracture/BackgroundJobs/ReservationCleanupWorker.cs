@@ -14,7 +14,7 @@ namespace Discounts.Infrastracture.BackgroundJobs
         // Default interval 
         private readonly TimeSpan _defaultInterval = TimeSpan.FromMinutes(1);
 
-        public ReservationCleanupWorker(IServiceScopeFactory serviceScopeFactory,ILogger<ReservationCleanupWorker> logger)
+        public ReservationCleanupWorker(IServiceScopeFactory serviceScopeFactory, ILogger<ReservationCleanupWorker> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
@@ -28,14 +28,14 @@ namespace Discounts.Infrastracture.BackgroundJobs
             {
                 try
                 {
-                    await ProcessCleanup(stoppingToken);
+                    await ProcessCleanup(stoppingToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error occurred while processing reservation cleanup.");
                 }
-                
-                await Task.Delay(_defaultInterval, stoppingToken);
+
+                await Task.Delay(_defaultInterval, stoppingToken).ConfigureAwait(false);
             }
 
             _logger.LogInformation("Reservation Cleanup Worker stopping.");
@@ -48,12 +48,12 @@ namespace Discounts.Infrastracture.BackgroundJobs
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var repo = scope.ServiceProvider.GetRequiredService<IReservationRepository>();
-                var reservations = await repo.GetExpiredActiveAsync(token);
+                var reservations = await repo.GetExpiredActiveAsync(token).ConfigureAwait(false);
                 expiredIds = reservations.Select(r => r.Id).ToList();
             }
 
             if (!expiredIds.Any()) return;
-            
+
             _logger.LogInformation($"Found {expiredIds.Count} expired reservations. Processing individually...");
 
             foreach (var id in expiredIds)
@@ -63,7 +63,7 @@ namespace Discounts.Infrastracture.BackgroundJobs
                     try
                     {
                         var cleanupService = scope.ServiceProvider.GetRequiredService<IReservationCleanupService>();
-                        await cleanupService.ProcessReservation(id, token);
+                        await cleanupService.ProcessReservation(id, token).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {

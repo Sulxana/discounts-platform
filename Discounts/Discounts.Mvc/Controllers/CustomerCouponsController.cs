@@ -29,7 +29,7 @@ namespace Discounts.Mvc.Controllers
                     Quantity = quantity
                 };
 
-                await _directPurchaseHandler.Handle(command, token);
+                await _directPurchaseHandler.Handle(command, token).ConfigureAwait(false);
 
                 TempData["SuccessMessage"] = "Successfully purchased the coupon!";
                 return RedirectToAction("MyCoupons", "Customer");

@@ -33,17 +33,17 @@ namespace Discounts.Application.Coupons.Commands.RedeemCoupon
 
         public async Task Handle(RedeemCouponCommand command, CancellationToken token)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
             var merchantId = _currentUserService.UserId;
             if (merchantId == null)
                 throw new UnauthorizedAccessException("You must be logged in as a merchant to redeem coupons.");
 
-            var coupon = await _couponRepository.GetByCodeAsync(command.Code, token);
+            var coupon = await _couponRepository.GetByCodeAsync(command.Code, token).ConfigureAwait(false);
             if (coupon == null)
                 throw new KeyNotFoundException($"Coupon with code {command.Code} not found.");
 
-            var offer = await _offerRepository.GetOfferByIdAsync(token, coupon.OfferId);
+            var offer = await _offerRepository.GetOfferByIdAsync(token, coupon.OfferId).ConfigureAwait(false);
             if (offer == null)
                 throw new KeyNotFoundException($"Associated Offer for coupon {command.Code} not found.");
 
@@ -52,7 +52,7 @@ namespace Discounts.Application.Coupons.Commands.RedeemCoupon
 
             coupon.Redeem();
 
-            await _unitOfWork.SaveChangesAsync(token);
+            await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
 
             _logger.LogInformation($"Merchant {merchantId} successfully redeemed coupon {coupon.Code}.");
         }

@@ -4,7 +4,7 @@
     {
         private GlobalSetting()
         {
-            
+
         }
         public GlobalSetting(string key, string value, string description, SettingType type)
         {

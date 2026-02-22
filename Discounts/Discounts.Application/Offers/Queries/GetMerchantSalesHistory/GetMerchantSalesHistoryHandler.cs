@@ -23,6 +23,6 @@ public class GetMerchantSalesHistoryHandler : IRequestHandler<GetMerchantSalesHi
             throw new UnauthorizedAccessException("Merchant ID cannot be determined.");
         }
 
-        return await _repository.GetMerchantSalesHistoryAsync(cancellationToken, merchantId.Value, request.Page, request.PageSize);
+        return await _repository.GetMerchantSalesHistoryAsync(cancellationToken, merchantId.Value, request.Page, request.PageSize).ConfigureAwait(false);
     }
 }

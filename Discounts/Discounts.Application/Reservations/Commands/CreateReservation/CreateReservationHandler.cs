@@ -6,7 +6,6 @@ using Discounts.Domain.Offers;
 using Discounts.Domain.Reservations;
 using Discounts.Domain.Settings;
 using FluentValidation;
-using Mapster;
 
 namespace Discounts.Application.Reservations.Commands.CreateReservation
 {
@@ -31,17 +30,15 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
             _unitOfWork = unitOfWork;
         }
 
-
-
         public async Task<Guid> CreateReservation(CancellationToken token, CreateReservationCommand command)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
             var userId = _currentUserService.UserId;
             if (userId == null)
                 throw new UnauthorizedAccessException("User must be authenticated");
 
-            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, command.OfferId);
+            var offer = await _offerRepository.GetOfferForUpdateByIdAsync(token, command.OfferId).ConfigureAwait(false);
             if (offer == null)
                 throw new InvalidOperationException("Offer not found");
 
@@ -51,7 +48,7 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
             if (offer.EndDate < DateTime.UtcNow)
                 throw new InvalidOperationException("This offer has expired");
 
-            var hasActiveReservation = await _reservationRepository.HasActiveReservationForOfferAsync(userId.Value, command.OfferId, token);
+            var hasActiveReservation = await _reservationRepository.HasActiveReservationForOfferAsync(userId.Value, command.OfferId, token).ConfigureAwait(false);
 
             if (hasActiveReservation)
                 throw new InvalidOperationException("You already have an active reservation for this offer");
@@ -62,22 +59,21 @@ namespace Discounts.Application.Reservations.Commands.CreateReservation
             offer.DecreaseStock(command.Quantity);
 
             var expirationMinutes = await _settingsService.GetIntAsync(
-               SettingKeys.ReservationExpirationMinutes, defaultValue: 30, token);
-
+               SettingKeys.ReservationExpirationMinutes, defaultValue: 30, token).ConfigureAwait(false);
 
             var expiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes);
 
             var reservation = new Reservation(userId.Value, command.OfferId, command.Quantity, expiresAt);
-            
+
             // Old Logic
-            
+
             //await _reservationRepository.AddAsync(token, reservation);
             //await _reservationRepository.SaveChangesAsync(token);
             //await _offerRepository.SaveChangesAsync(token);
-            
+
             // New Logic
-            await _reservationRepository.AddAsync(token, reservation);
-            await _unitOfWork.SaveChangesAsync(token);
+            await _reservationRepository.AddAsync(token, reservation).ConfigureAwait(false);
+            await _unitOfWork.SaveChangesAsync(token).ConfigureAwait(false);
 
             return reservation.Id;
         }

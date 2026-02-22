@@ -16,14 +16,14 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task AddAsync(CancellationToken token, Reservation reservation)
         {
-            await _context.Reservations.AddAsync(reservation, token);
+            await _context.Reservations.AddAsync(reservation, token).ConfigureAwait(false);
         }
 
         public async Task<Reservation?> GetByIdAsync(CancellationToken token, Guid id)
         {
-            return await _context.Reservations.FirstOrDefaultAsync(r => r.Id == id, token);
+            return await _context.Reservations.FirstOrDefaultAsync(r => r.Id == id, token).ConfigureAwait(false);
         }
-        public async Task<List<(Reservation Reservation, string OfferTitle, decimal Price)>> GetUserActiveReservationsWithOffersAsync(Guid userId,CancellationToken token)
+        public async Task<List<(Reservation Reservation, string OfferTitle, decimal Price)>> GetUserActiveReservationsWithOffersAsync(Guid userId, CancellationToken token)
         {
             var results = await _context.Reservations
                 .Where(r => r.UserId == userId && r.Status == ReservationStatus.Active)
@@ -32,7 +32,7 @@ namespace Discounts.Infrastracture.Repositories
                     offer => offer.Id,
                     (reservation, offer) => new { Reservation = reservation, OfferTitle = offer.Title, Price = offer.DiscountedPrice })
                 .OrderByDescending(x => x.Reservation.CreatedAt)
-                .ToListAsync(token);
+                .ToListAsync(token).ConfigureAwait(false);
 
             return results.Select(x => (x.Reservation, x.OfferTitle, x.Price)).ToList();
         }
@@ -41,19 +41,19 @@ namespace Discounts.Infrastracture.Repositories
             var now = DateTime.UtcNow;
             return await _context.Reservations
                 .Where(r => r.Status == ReservationStatus.Active && r.ExpiresAt < now)
-                .ToListAsync(token); ;
+                .ToListAsync(token).ConfigureAwait(false); ;
         }
 
         public async Task<bool> HasActiveReservationForOfferAsync(Guid userId, Guid offerId, CancellationToken token)
         {
             return await _context.Reservations
                 .AnyAsync(r => r.UserId == userId &&
-                r.OfferId == offerId && r.Status == ReservationStatus.Active,token);
+                r.OfferId == offerId && r.Status == ReservationStatus.Active, token).ConfigureAwait(false);
         }
 
         public async Task SaveChangesAsync(CancellationToken token)
         {
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

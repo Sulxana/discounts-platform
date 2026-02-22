@@ -25,14 +25,14 @@ namespace Discounts.Infrastracture.BackgroundJobs
             {
                 try
                 {
-                    await ProcessExpiration(stoppingToken);
+                    await ProcessExpiration(stoppingToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error in Offer Expiration Worker.");
                 }
 
-                await Task.Delay(_interval, stoppingToken);
+                await Task.Delay(_interval, stoppingToken).ConfigureAwait(false);
             }
 
             _logger.LogInformation("Offer Expiration Worker stopping.");
@@ -45,7 +45,7 @@ namespace Discounts.Infrastracture.BackgroundJobs
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var repo = scope.ServiceProvider.GetRequiredService<IOfferRepository>();
-                var offers = await repo.GetExpiredActiveAsync(token);
+                var offers = await repo.GetExpiredActiveAsync(token).ConfigureAwait(false);
                 expiredIds = offers.Select(o => o.Id).ToList();
             }
 
@@ -60,7 +60,7 @@ namespace Discounts.Infrastracture.BackgroundJobs
                     try
                     {
                         var service = scope.ServiceProvider.GetRequiredService<IOfferCleanupService>();
-                        await service.ProcessOffer(id, token);
+                        await service.ProcessOffer(id, token).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {

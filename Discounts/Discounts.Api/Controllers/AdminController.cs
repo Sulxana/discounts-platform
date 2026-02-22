@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.ComponentModel.DataAnnotations;
+using Asp.Versioning;
 using Discounts.Application.Common.Security;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
@@ -13,7 +14,6 @@ using Discounts.Domain.MerchantApplications;
 using Discounts.Domain.Offers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Discounts.Api.Controllers
 {
@@ -45,7 +45,7 @@ namespace Discounts.Api.Controllers
         [HttpGet("offers/{id:guid}")]
         public async Task<ActionResult<OfferDetailsDto>> GetOfferIncludingDeletedAsync(CancellationToken token, Guid id)
         {
-            var result = await _getHandler.GetOfferIncludingDeletedAsync(token, new GetOfferByIdQuery(id));
+            var result = await _getHandler.GetOfferIncludingDeletedAsync(token, new GetOfferByIdQuery(id)).ConfigureAwait(false);
             if (result == null) return NotFound();
 
             return Ok(result);
@@ -57,7 +57,7 @@ namespace Discounts.Api.Controllers
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _mediator.Send(new GetAllOffersQuery(category?.Name, status, deleted, page, pageSize), token);
+            var result = await _mediator.Send(new GetAllOffersQuery(category?.Name, status, deleted, page, pageSize), token).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -67,7 +67,7 @@ namespace Discounts.Api.Controllers
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _getDeletedHandler.GetDeletedOffers(token, new GetDeletedOffersQuery(category.Name, status, page, pageSize));
+            var result = await _getDeletedHandler.GetDeletedOffers(token, new GetDeletedOffersQuery(category?.Name, status, page, pageSize)).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -79,50 +79,49 @@ namespace Discounts.Api.Controllers
             CancellationToken token = default)
         {
             var query = new GetAllMerchantApplicationsQuery(status, page, pageSize);
-            var result = await _getAllMerchantApplicationsHandler.Handle(query, token);
+            var result = await _getAllMerchantApplicationsHandler.Handle(query, token).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpPut("offers/{id:guid}/approve")]
         public async Task<IActionResult> ApproveOffer(CancellationToken token, Guid id)
         {
-            await _mediator.Send(new ApproveOfferCommand(id), token);
+            await _mediator.Send(new ApproveOfferCommand(id), token).ConfigureAwait(false);
             return NoContent();
         }
 
         [HttpPut("offers/{id:guid}/reject")]
         public async Task<IActionResult> RejectOffer(CancellationToken token, Guid id, [FromQuery][Required] string reason)
         {
-            await _rejectOfferHandler.RejectOfferAsync(token, new RejectOfferCommand(id, reason));
+            await _rejectOfferHandler.RejectOfferAsync(token, new RejectOfferCommand(id, reason)).ConfigureAwait(false);
             return NoContent();
         }
 
         [HttpPut("merchant-applications/{id:guid}/approve")]
         public async Task<IActionResult> Approve(Guid id, CancellationToken token)
         {
-            await _approveUserHandler.Handle(new ApproveMerchantApplicationCommand(id), token);
+            await _approveUserHandler.Handle(new ApproveMerchantApplicationCommand(id), token).ConfigureAwait(false);
             return NoContent();
         }
 
         [HttpPut("merchant-applications/{id:guid}/reject")]
         public async Task<IActionResult> Reject(Guid id, [FromQuery][Required] string reason, CancellationToken token)
         {
-            await _rejectUserHandler.Handle(new RejectMerchantApplicationCommand(id, reason), token);
+            await _rejectUserHandler.Handle(new RejectMerchantApplicationCommand(id, reason), token).ConfigureAwait(false);
             return NoContent();
         }
 
-        
         [HttpPost("users/{id:guid}/block")]
         public async Task<IActionResult> BlockUser(Guid id, [FromServices] Discounts.Application.Users.Commands.BlockUser.BlockUserHandler handler, CancellationToken token)
         {
-            await handler.Handle(new Discounts.Application.Users.Commands.BlockUser.BlockUserCommand(id), token);
+            await handler.Handle(new Application.Users.Commands.BlockUser.BlockUserCommand(id), token).ConfigureAwait(false);
             return NoContent();
         }
 
         [HttpPost("users/{id:guid}/unblock")]
         public async Task<IActionResult> UnblockUser(Guid id, [FromServices] Discounts.Application.Users.Commands.UnblockUser.UnblockUserHandler handler, CancellationToken token)
         {
-            await handler.Handle(new Discounts.Application.Users.Commands.UnblockUser.UnblockUserCommand(id), token);
+            await handler.Handle(new Application.Users.Commands.UnblockUser.UnblockUserCommand(id), token).ConfigureAwait(false);
             return NoContent();
         }
 
@@ -136,7 +135,7 @@ namespace Discounts.Api.Controllers
                 LastName = request.LastName,
                 Email = request.Email
             };
-            await handler.Handle(command, token);
+            await handler.Handle(command, token).ConfigureAwait(false);
             return NoContent();
         }
     }

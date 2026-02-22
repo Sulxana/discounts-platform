@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Redeem Coupon";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <h2 class="mb-4 text-center">Redeem Customer Coupon</h2>
+        
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="Redeem" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 border border-danger p-2 rounded bg-light" role="alert"></div>
+                    
+                    <div class="mb-4">
+                        <label for="code" class="form-label fs-5 fw-semibold">Coupon Code</label>
+                        <input type="text" id="code" name="code" class="form-control form-control-lg text-center" placeholder="e.g. A1B2C3D4" required autocomplete="off" style="letter-spacing: 2px; text-transform: uppercase;" />
+                        <div class="form-text mt-2 text-center">Enter the unique code provided by the customer to redeem their offer.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-upc-scan me-2" style="font-style: normal;">📱</i> Verify & Redeem
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

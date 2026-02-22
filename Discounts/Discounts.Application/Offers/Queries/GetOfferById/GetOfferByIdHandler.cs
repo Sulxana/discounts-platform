@@ -21,7 +21,7 @@ namespace Discounts.Application.Offers.Queries.GetOfferById
             {
                 throw new ValidationException("Offer id cannot be empty.");
             }
-            var result = await _repository.GetOfferByIdAsync(token, query.Id);
+            var result = await _repository.GetOfferByIdAsync(token, query.Id).ConfigureAwait(false);
             if (result == null)
                 throw new NotFoundException(nameof(Offer), query.Id);
 
@@ -33,7 +33,7 @@ namespace Discounts.Application.Offers.Queries.GetOfferById
             {
                 throw new ValidationException("Offer id cannot be empty.");
             }
-            var result = await _repository.GetOfferIncludingDeletedAsync(token, query.Id);
+            var result = await _repository.GetOfferIncludingDeletedAsync(token, query.Id).ConfigureAwait(false);
             if (result == null)
                 throw new NotFoundException(nameof(Offer), query.Id);
 

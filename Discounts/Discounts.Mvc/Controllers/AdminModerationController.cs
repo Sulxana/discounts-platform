@@ -1,12 +1,7 @@
-using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
-using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
-using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
 using Discounts.Application.Offers.Commands.ApproveOffer;
 using Discounts.Application.Offers.Commands.RejectOffer;
 using Discounts.Application.Offers.Queries.GetAllOffers;
-using Discounts.Domain.MerchantApplications;
 using Discounts.Domain.Offers;
-using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +19,11 @@ namespace Discounts.Mvc.Controllers
         }
 
         // --- Offers Moderation ---
-        
+
         public async Task<IActionResult> Index(int page = 1, CancellationToken token = default)
         {
             var query = new GetAllOffersQuery(null, OfferStatus.Pending, false, page, 20);
-            var offers = await _mediator.Send(query, token);
+            var offers = await _mediator.Send(query, token).ConfigureAwait(false);
             ViewBag.CurrentPage = page;
             return View(offers);
         }
@@ -39,7 +34,7 @@ namespace Discounts.Mvc.Controllers
         {
             try
             {
-                await _mediator.Send(new ApproveOfferCommand(id), token);
+                await _mediator.Send(new ApproveOfferCommand(id), token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Offer approved successfully.";
             }
             catch (Exception ex)
@@ -61,7 +56,7 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                await _mediator.Send(new RejectOfferCommand(id, reason), token);
+                await _mediator.Send(new RejectOfferCommand(id, reason), token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Offer rejected.";
             }
             catch (Exception ex)

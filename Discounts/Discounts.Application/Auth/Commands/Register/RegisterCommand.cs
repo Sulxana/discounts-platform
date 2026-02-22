@@ -1,5 +1,3 @@
-using Discounts.Application.Auth.DTOs;
-
 namespace Discounts.Application.Auth.Commands.Register
 {
     public class RegisterCommand

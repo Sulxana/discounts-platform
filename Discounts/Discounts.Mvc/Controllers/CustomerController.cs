@@ -13,7 +13,7 @@ namespace Discounts.Mvc.Controllers
         private readonly Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication.GetUserMerchantApplicationHandler _getUserAppHandler;
 
         public CustomerController(
-            GetUserCouponsHandler getUserCouponsHandler, 
+            GetUserCouponsHandler getUserCouponsHandler,
             ApplyMerchantHandler applyMerchantHandler,
             Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication.GetUserMerchantApplicationHandler getUserAppHandler)
         {
@@ -25,10 +25,10 @@ namespace Discounts.Mvc.Controllers
         public async Task<IActionResult> MyCoupons(CancellationToken token)
         {
             var appQuery = new Discounts.Application.MerchantApplications.Queries.GetUserMerchantApplication.GetUserMerchantApplicationQuery();
-            ViewBag.MerchantApplication = await _getUserAppHandler.Handle(appQuery, token);
+            ViewBag.MerchantApplication = await _getUserAppHandler.Handle(appQuery, token).ConfigureAwait(false);
 
             var query = new GetUserCouponsQuery();
-            var coupons = await _getUserCouponsHandler.Handle(query, token);
+            var coupons = await _getUserCouponsHandler.Handle(query, token).ConfigureAwait(false);
             return View(coupons);
         }
 
@@ -39,7 +39,7 @@ namespace Discounts.Mvc.Controllers
             try
             {
                 var command = new ApplyMerchantCommand();
-                await _applyMerchantHandler.Handle(command, token);
+                await _applyMerchantHandler.Handle(command, token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Successfully applied to become a merchant. Please wait for an admin to approve your application.";
             }
             catch (Exception ex)

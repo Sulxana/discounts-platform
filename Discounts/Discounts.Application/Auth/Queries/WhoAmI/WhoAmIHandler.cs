@@ -19,13 +19,13 @@ namespace Discounts.Application.Auth.Queries.WhoAmI
         public async Task<WhoAmIResponse> Handle(WhoAmIQuery query, CancellationToken token)
         {
             var userId = _currentUserService.UserId;
-            
+
             if (userId == null)
             {
                 throw new UnauthorizedAccessException("User is not authenticated.");
             }
 
-            var (isSuccess, _, email, roles) = await _identityService.GetUserByIdAsync(userId.Value);
+            var (isSuccess, _, email, roles) = await _identityService.GetUserByIdAsync(userId.Value).ConfigureAwait(false);
 
             if (!isSuccess)
             {

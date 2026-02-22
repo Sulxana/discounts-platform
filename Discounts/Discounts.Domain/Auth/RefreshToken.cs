@@ -24,7 +24,7 @@ public class RefreshToken
     public DateTime ExpiresAt { get; private set; }
     public DateTime? RevokedAt { get; private set; }
     public DateTime? UsedAt { get; private set; }
-    
+
     public void MarkAsUsed()
     {
         UsedAt = DateTime.UtcNow;

@@ -19,14 +19,14 @@ namespace Discounts.Application.Settings.Commands.UpdateSetting
             var normalizedKey = command.Key?.Trim().ToLowerInvariant() ?? string.Empty;
             var trimmedValue = command.Value?.Trim() ?? string.Empty;
 
-            var setting = await _repository.GetByKeyAsync(token, command.Key);
+            var setting = await _repository.GetByKeyAsync(token, normalizedKey).ConfigureAwait(false);
 
             if (setting == null)
                 throw new InvalidOperationException($"Setting with key '{command.Key}' not found");
-            
+
             setting.UpdateValue(trimmedValue);
 
-            await _repository.SaveChangesAsync(token);
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
             _settingsService.RemoveFromCache(normalizedKey);
         }
     }

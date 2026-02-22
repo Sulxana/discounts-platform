@@ -18,9 +18,9 @@ namespace Discounts.Application.Offers.Queries.GetActiveOffers
 
         public async Task<List<OfferListItemDto>> Handle(GetActiveOffersQuery request, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(request, cancellationToken);
+            await _validator.ValidateAndThrowAsync(request, cancellationToken).ConfigureAwait(false);
 
-            var offers = await _repository.GetActiveOfferAsync(cancellationToken, request.CategoryName, request.MinPrice, request.MaxPrice, request.SearchTerm, request.Status, request.Page, request.PageSize);
+            var offers = await _repository.GetActiveOfferAsync(cancellationToken, request.CategoryName, request.MinPrice, request.MaxPrice, request.SearchTerm, request.Status, request.Page, request.PageSize).ConfigureAwait(false);
 
             return offers.Adapt<List<OfferListItemDto>>();
         }

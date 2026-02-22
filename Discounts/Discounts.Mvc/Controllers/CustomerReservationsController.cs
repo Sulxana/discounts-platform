@@ -1,6 +1,6 @@
+using Discounts.Application.Reservations.Commands.CancelReservation;
 using Discounts.Application.Reservations.Commands.CreateReservation;
 using Discounts.Application.Reservations.Commands.PurchaseReservation;
-using Discounts.Application.Reservations.Commands.CancelReservation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +15,7 @@ namespace Discounts.Mvc.Controllers
         private readonly CancelReservationHandler _cancelReservationHandler;
 
         public CustomerReservationsController(
-            CreateReservationHandler createReservationHandler, 
+            CreateReservationHandler createReservationHandler,
             Discounts.Application.Reservations.Queries.GetUserReservations.GetUserReservationsHandler getUserReservationsHandler,
             PurchaseReservationHandler purchaseReservationHandler,
             CancelReservationHandler cancelReservationHandler)
@@ -30,7 +30,7 @@ namespace Discounts.Mvc.Controllers
         public async Task<IActionResult> MyReservations(CancellationToken token)
         {
             var query = new Discounts.Application.Reservations.Queries.GetUserReservations.GetUserReservationsQuery();
-            var reservations = await _getUserReservationsHandler.GetUserReservations(token, query);
+            var reservations = await _getUserReservationsHandler.GetUserReservations(token, query).ConfigureAwait(false);
             return View(reservations);
         }
 
@@ -49,7 +49,7 @@ namespace Discounts.Mvc.Controllers
                     Quantity = quantity
                 };
 
-                await _createReservationHandler.CreateReservation(token, command);
+                await _createReservationHandler.CreateReservation(token, command).ConfigureAwait(false);
 
                 TempData["SuccessMessage"] = "Successfully reserved the coupon. Please purchase it before it expires.";
                 return RedirectToAction("MyReservations");
@@ -70,7 +70,7 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                await _purchaseReservationHandler.Handle(new PurchaseReservationCommand { ReservationId = reservationId }, token);
+                await _purchaseReservationHandler.Handle(new PurchaseReservationCommand { ReservationId = reservationId }, token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Successfully purchased the reserved coupon!";
                 return RedirectToAction("MyCoupons", "Customer");
             }
@@ -90,7 +90,7 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                await _cancelReservationHandler.CancelReservationAsync(token, new CancelReservationCommand(id));
+                await _cancelReservationHandler.CancelReservationAsync(token, new CancelReservationCommand(id)).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Reservation cancelled successfully.";
                 return RedirectToAction("MyReservations");
             }

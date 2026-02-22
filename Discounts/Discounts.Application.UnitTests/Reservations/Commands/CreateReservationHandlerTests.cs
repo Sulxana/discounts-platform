@@ -10,11 +10,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Reservations.Commands
 {
@@ -46,7 +41,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 _unitOfWorkMock.Object);
         }
 
-        private Offer CreateValidOffer(OfferStatus status = OfferStatus.Approved, int remainingCoupons = 10, int expirationDays = 7)
+        private static Offer CreateValidOffer(OfferStatus status = OfferStatus.Approved, int remainingCoupons = 10, int expirationDays = 7)
         {
             var offer = new Offer(
                 "Test Offer",
@@ -85,7 +80,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId);
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _reservationRepositoryMock.Setup(r => r.HasActiveReservationForOfferAsync(userId, offerId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(false);
             _settingsServiceMock.Setup(s => s.GetIntAsync(SettingKeys.ReservationExpirationMinutes, 30, It.IsAny<CancellationToken>()))
@@ -112,7 +107,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             _currentUserServiceMock.Setup(c => c.UserId).Returns((Guid?)null);
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>()
@@ -134,7 +129,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync((Offer?)null);
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -156,7 +151,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -178,7 +173,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -199,12 +194,12 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId);
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _reservationRepositoryMock.Setup(r => r.HasActiveReservationForOfferAsync(userId, offerId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(true); // Already has reservation
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -225,18 +220,18 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId);
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
-            
+
             _reservationRepositoryMock.Setup(r => r.HasActiveReservationForOfferAsync(userId, offerId, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(false); 
+                .ReturnsAsync(false);
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage("only 3 coupons are available");
         }
-        
+
         [Fact]
         public async Task CreateReservation_ShouldThrowValidationException_WhenCommandIsInvalid()
         {
@@ -248,7 +243,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.CreateReservation(CancellationToken.None, command);
+            var act = async () => await _handler.CreateReservation(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();

@@ -5,12 +5,11 @@ using Discounts.Application.Offers.Queries.GetMerchantOffers;
 using Discounts.Application.Offers.Queries.GetOfferById;
 using Discounts.Application.Settings.Interfaces;
 using Discounts.Domain.Settings;
+using Discounts.Mvc.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Http;
-using Discounts.Mvc.Services;
 
 namespace Discounts.Mvc.Controllers
 {
@@ -46,21 +45,21 @@ namespace Discounts.Mvc.Controllers
         public async Task<IActionResult> Index(int page = 1, CancellationToken token = default)
         {
             var query = new GetMerchantOffersQuery(page, 20);
-            var offers = await _getMerchantOffersHandler.Handle(query, token);
+            var offers = await _getMerchantOffersHandler.Handle(query, token).ConfigureAwait(false);
             ViewBag.CurrentPage = page;
             return View(offers);
         }
 
         private async Task FetchCategoriesToViewBag(CancellationToken token)
         {
-            var categories = await _mediator.Send(new GetAllCategoriesQuery(), token);
+            var categories = await _mediator.Send(new GetAllCategoriesQuery(), token).ConfigureAwait(false);
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(CancellationToken token)
         {
-            await FetchCategoriesToViewBag(token);
+            await FetchCategoriesToViewBag(token).ConfigureAwait(false);
             return View();
         }
 
@@ -70,7 +69,7 @@ namespace Discounts.Mvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await FetchCategoriesToViewBag(token);
+                await FetchCategoriesToViewBag(token).ConfigureAwait(false);
                 return View(command);
             }
 
@@ -78,17 +77,17 @@ namespace Discounts.Mvc.Controllers
             {
                 if (ImageFile is { Length: > 0 })
                 {
-                    command.ImageUrl = await _imageStorage.SaveAsync(ImageFile, token);
+                    command.ImageUrl = await _imageStorage.SaveAsync(ImageFile, token).ConfigureAwait(false);
                 }
 
-                await _createOfferHandler.CreateOffer(token, command);
+                await _createOfferHandler.CreateOffer(token, command).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Offer created successfully. It is now pending approval.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await FetchCategoriesToViewBag(token);
+                await FetchCategoriesToViewBag(token).ConfigureAwait(false);
                 return View(command);
             }
         }
@@ -100,10 +99,10 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                var offer = await _getOfferByIdHandler.GetOfferById(token, new GetOfferByIdQuery(id));
+                var offer = await _getOfferByIdHandler.GetOfferById(token, new GetOfferByIdQuery(id)).ConfigureAwait(false);
 
                 var editWindowHours = await _settingsService.GetIntAsync(
-                    SettingKeys.MerchantEditWindowHours, defaultValue: 24, token);
+                    SettingKeys.MerchantEditWindowHours, defaultValue: 24, token).ConfigureAwait(false);
                 var cutoffTime = offer.CreatedAt.AddHours(editWindowHours);
                 if (DateTime.UtcNow > cutoffTime)
                 {
@@ -145,10 +144,10 @@ namespace Discounts.Mvc.Controllers
             {
                 if (ImageFile is { Length: > 0 })
                 {
-                    command.ImageUrl = await _imageStorage.SaveAsync(ImageFile, token);
+                    command.ImageUrl = await _imageStorage.SaveAsync(ImageFile, token).ConfigureAwait(false);
                 }
 
-                await _updateOfferHandler.UpdateOfferAsync(token, command);
+                await _updateOfferHandler.UpdateOfferAsync(token, command).ConfigureAwait(false);
                 TempData["SuccessMessage"] = "Offer updated successfully.";
                 return RedirectToAction("Index");
             }

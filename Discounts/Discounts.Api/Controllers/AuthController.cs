@@ -3,8 +3,8 @@ using Discounts.Application.Auth.Commands.Login;
 using Discounts.Application.Auth.Commands.RefreshTokens;
 using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Revoke;
-using Discounts.Application.Auth.Queries.WhoAmI;
 using Discounts.Application.Auth.DTOs;
+using Discounts.Application.Auth.Queries.WhoAmI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,21 +33,21 @@ namespace Discounts.Api.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register(CancellationToken token, [FromBody] RegisterCommand command)
         {
-            var result = await _registerHandler.Register(command, token);
+            var result = await _registerHandler.Register(command, token).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponse>> Login(CancellationToken token, [FromBody] LoginCommand command)
         {
-            var result = await _loginHandler.Login(command, token);
+            var result = await _loginHandler.Login(command, token).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpPost("refresh")]
         public async Task<ActionResult<AuthResponse>> RefreshToken(CancellationToken token, [FromBody] RefreshTokenCommand command)
         {
-            var result = await _refreshTokenHandler.CreateRefreshToken(command, token);
+            var result = await _refreshTokenHandler.CreateRefreshToken(command, token).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -55,7 +55,7 @@ namespace Discounts.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Revoke(CancellationToken token, [FromBody] RevokeCommand command)
         {
-            await _revokeHandler.RevokeToken(command, token);
+            await _revokeHandler.RevokeToken(command, token).ConfigureAwait(false);
             return NoContent();
         }
 
@@ -63,7 +63,7 @@ namespace Discounts.Api.Controllers
         [Authorize]
         public async Task<ActionResult<WhoAmIResponse>> WhoAmI(CancellationToken token)
         {
-            var result = await _whoAmIHandler.Handle(new WhoAmIQuery(), token);
+            var result = await _whoAmIHandler.Handle(new WhoAmIQuery(), token).ConfigureAwait(false);
             return Ok(result);
         }
     }

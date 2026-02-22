@@ -9,11 +9,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Reservations.Commands
 {
@@ -42,7 +37,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 _unitOfWorkMock.Object);
         }
 
-        private Reservation CreateReservation(Guid reservationId, Guid userId, Guid offerId, int quantity)
+        private static Reservation CreateReservation(Guid reservationId, Guid userId, Guid offerId, int quantity)
         {
             var reservation = new Reservation(userId, offerId, quantity, DateTime.UtcNow.AddMinutes(30));
             var idProp = typeof(Reservation).GetProperty("Id");
@@ -50,7 +45,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             return reservation;
         }
 
-        private Offer CreateOffer(Guid offerId, int remainingCoupons)
+        private static Offer CreateOffer(Guid offerId, int remainingCoupons)
         {
             var offer = new Offer("Title", "Desc", Guid.NewGuid(), null, 10m, 5m, remainingCoupons + 10, DateTime.UtcNow, DateTime.UtcNow.AddDays(1), Guid.NewGuid());
             var idProp = typeof(Offer).GetProperty("Id");
@@ -69,7 +64,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             var userId = Guid.NewGuid();
             var offerId = Guid.NewGuid();
             var quantity = 2;
-            
+
             var command = new CancelReservationCommand(reservationId);
             var reservation = CreateReservation(reservationId, userId, offerId, quantity);
             var offer = CreateOffer(offerId, 5); // 5 coupons remaining
@@ -78,9 +73,9 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync(new ValidationResult());
             _reservationRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<CancellationToken>(), reservationId))
                 .ReturnsAsync(reservation);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId); // Match owner
-            
+
             _offerRepositoryMock.Setup(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), offerId))
                 .ReturnsAsync(offer);
 
@@ -106,7 +101,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.CancelReservationAsync(CancellationToken.None, command);
+            var act = async () => await _handler.CancelReservationAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
@@ -127,7 +122,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync((Reservation?)null);
 
             // Act
-            var act = async () => await _handler.CancelReservationAsync(CancellationToken.None, command);
+            var act = async () => await _handler.CancelReservationAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>()
@@ -141,7 +136,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             var reservationId = Guid.NewGuid();
             var reservationOwnerId = Guid.NewGuid();
             var differentUserId = Guid.NewGuid();
-            
+
             var command = new CancelReservationCommand(reservationId);
             var reservation = CreateReservation(reservationId, reservationOwnerId, Guid.NewGuid(), 2);
 
@@ -149,16 +144,16 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync(new ValidationResult());
             _reservationRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<CancellationToken>(), reservationId))
                 .ReturnsAsync(reservation);
-            
+
             _currentUserServiceMock.Setup(c => c.UserId).Returns(differentUserId); // Different user
 
             // Act
-            var act = async () => await _handler.CancelReservationAsync(CancellationToken.None, command);
+            var act = async () => await _handler.CancelReservationAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>()
                 .WithMessage("You can only cancel your own reservations.");
-            
+
             _offerRepositoryMock.Verify(r => r.GetOfferForUpdateByIdAsync(It.IsAny<CancellationToken>(), It.IsAny<Guid>()), Times.Never);
         }
     }

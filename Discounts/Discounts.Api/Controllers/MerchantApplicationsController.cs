@@ -2,7 +2,6 @@
 using Discounts.Application.Common.Security;
 using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Discounts.Api.Controllers
@@ -24,7 +23,7 @@ namespace Discounts.Api.Controllers
         public async Task<ActionResult<Guid>> Apply(CancellationToken token)
         {
             var command = new ApplyMerchantCommand();
-            var result = await _applyMerchantHandler.Handle(command, token);
+            var result = await _applyMerchantHandler.Handle(command, token).ConfigureAwait(false);
             return Ok(result);
         }
     }

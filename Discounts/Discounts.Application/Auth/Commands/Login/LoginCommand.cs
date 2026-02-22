@@ -1,5 +1,3 @@
-using Discounts.Application.Auth.DTOs;
-
 namespace Discounts.Application.Auth.Commands.Login
 {
     public class LoginCommand

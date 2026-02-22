@@ -16,17 +16,17 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task AddCategoryAsync(CancellationToken token, Category category)
         {
-            await _context.Categories.AddAsync(category, token);
+            await _context.Categories.AddAsync(category, token).ConfigureAwait(false);
         }
 
         public async Task<Category?> GetCategoryByIdAsync(CancellationToken token, Guid id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id, token);
+            return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id, token).ConfigureAwait(false);
         }
 
         public async Task<List<Category>> GetAllCategoriesAsync(CancellationToken token)
         {
-            return await _context.Categories.ToListAsync(token);
+            return await _context.Categories.ToListAsync(token).ConfigureAwait(false);
         }
 
         public Task UpdateCategoryAsync(CancellationToken token, Category category)
@@ -43,7 +43,7 @@ namespace Discounts.Infrastracture.Repositories
 
         public async Task SaveChangesAsync(CancellationToken token)
         {
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

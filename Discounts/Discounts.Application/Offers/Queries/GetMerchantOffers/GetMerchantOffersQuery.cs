@@ -1,7 +1,3 @@
-using Discounts.Application.Offers.Queries.GetAllOffers;
-using Discounts.Domain.Offers;
-using MediatR;
-
 namespace Discounts.Application.Offers.Queries.GetMerchantOffers
 {
     public class GetMerchantOffersQuery

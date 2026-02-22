@@ -7,11 +7,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Mapster;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Offers.Commands
 {
@@ -97,7 +92,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.CreateOffer(CancellationToken.None, command);
+            var act = async () => await _handler.CreateOffer(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
@@ -120,7 +115,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
             _currentUserServiceMock.Setup(c => c.UserId).Returns((Guid?)null);
 
             // Act
-            var act = async () => await _handler.CreateOffer(CancellationToken.None, command);
+            var act = async () => await _handler.CreateOffer(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<UnauthorizedAccessException>();

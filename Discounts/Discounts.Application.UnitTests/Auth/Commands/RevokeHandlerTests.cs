@@ -6,11 +6,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Auth.Commands
 {
@@ -41,7 +36,7 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RevokeCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync(storedToken);
 
@@ -63,7 +58,7 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RevokeCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync((RefreshToken?)null);
 
@@ -91,7 +86,7 @@ namespace Discounts.Application.UnitTests.Auth.Commands
 
             _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<RevokeCommand>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
-            
+
             _authRepositoryMock.Setup(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), hash))
                 .ReturnsAsync(storedToken);
 
@@ -114,11 +109,11 @@ namespace Discounts.Application.UnitTests.Auth.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.RevokeToken(command, CancellationToken.None);
+            var act = async () => await _handler.RevokeToken(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
-            
+
             _authRepositoryMock.Verify(a => a.GetRefreshTokenByHashAsync(It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
             _authRepositoryMock.Verify(a => a.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }

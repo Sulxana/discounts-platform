@@ -20,13 +20,12 @@ namespace Discounts.Infrastracture.Persistence.Context
 
         }
         public DbSet<Offer> Offer { get; set; }
-        public DbSet<RefreshToken> RefreshTokens{ get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<MerchantApplication> MerchantApplications { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<GlobalSetting> GlobalSettings { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<Category> Categories { get; set; }
-
 
         #region Configuration
         protected override void OnModelCreating(ModelBuilder modelBuilder)

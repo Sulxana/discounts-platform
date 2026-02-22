@@ -1,5 +1,4 @@
 ﻿using Discounts.Application.Common.Exceptions;
-using Discounts.Application.Offers.Commands.ApproveOffer;
 using Discounts.Application.Offers.Interfaces;
 using Discounts.Domain.Offers;
 using FluentValidation;
@@ -19,13 +18,13 @@ namespace Discounts.Application.Offers.Commands.RejectOffer
 
         public async Task RejectOfferAsync(CancellationToken token, RejectOfferCommand rejectOffer)
         {
-            await _validator.ValidateAndThrowAsync(rejectOffer, token);
+            await _validator.ValidateAndThrowAsync(rejectOffer, token).ConfigureAwait(false);
 
-            var offer = await _repository.GetOfferForUpdateByIdAsync(token, rejectOffer.Id);
+            var offer = await _repository.GetOfferForUpdateByIdAsync(token, rejectOffer.Id).ConfigureAwait(false);
             if (offer == null) throw new NotFoundException(nameof(Offer), rejectOffer.Id);
 
             offer.Reject(rejectOffer.Reason);
-            await _repository.SaveChangesAsync(token);
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

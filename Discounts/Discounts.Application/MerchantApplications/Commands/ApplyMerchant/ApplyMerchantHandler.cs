@@ -1,12 +1,11 @@
 using Discounts.Application.Common.Interfaces;
-using Discounts.Application.Common.Exceptions;
 using Discounts.Application.MerchantApplications.Interfaces;
 using Discounts.Domain.MerchantApplications;
 using FluentValidation;
 
 namespace Discounts.Application.MerchantApplications.Commands.ApplyMerchant
 {
-    public record ApplyMerchantCommand() ;
+    public record ApplyMerchantCommand();
 
     public class ApplyMerchantHandler
     {
@@ -28,7 +27,7 @@ namespace Discounts.Application.MerchantApplications.Commands.ApplyMerchant
             }
 
             // Check for existing pending application
-            var existingPending = await _repository.HasPendingApplicationAsync(userId.Value, token);
+            var existingPending = await _repository.HasPendingApplicationAsync(userId.Value, token).ConfigureAwait(false);
 
             if (existingPending)
             {
@@ -37,8 +36,8 @@ namespace Discounts.Application.MerchantApplications.Commands.ApplyMerchant
 
             var application = new MerchantApplication(userId.Value);
 
-            await _repository.AddAsync(application, token);
-            await _repository.SaveChangesAsync(token);
+            await _repository.AddAsync(application, token).ConfigureAwait(false);
+            await _repository.SaveChangesAsync(token).ConfigureAwait(false);
 
             return application.Id;
         }

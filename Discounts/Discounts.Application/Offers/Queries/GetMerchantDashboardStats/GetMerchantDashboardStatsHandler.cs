@@ -1,6 +1,5 @@
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Offers.Interfaces;
-using Discounts.Domain.Offers;
 using MediatR;
 
 namespace Discounts.Application.Offers.Queries.GetMerchantDashboardStats;
@@ -24,6 +23,6 @@ public class GetMerchantDashboardStatsHandler : IRequestHandler<GetMerchantDashb
             throw new UnauthorizedAccessException("Merchant ID cannot be determined.");
         }
 
-        return await _repository.GetMerchantDashboardStatsAsync(cancellationToken, merchantId.Value);
+        return await _repository.GetMerchantDashboardStatsAsync(cancellationToken, merchantId.Value).ConfigureAwait(false);
     }
 }

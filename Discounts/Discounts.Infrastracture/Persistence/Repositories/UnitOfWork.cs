@@ -14,7 +14,7 @@ namespace Discounts.Infrastracture.Persistence.Repositories
 
         public async Task SaveChangesAsync(CancellationToken token = default)
         {
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
         }
     }
 }

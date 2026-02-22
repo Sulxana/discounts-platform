@@ -12,7 +12,7 @@ namespace Discounts.Application.Settings.Queries.GetAllSettings
         }
         public async Task<List<GlobalSettingDto>> Handle(GetAllSettingsQuery query, CancellationToken token)
         {
-            var settings = await _repository.GetAllAsync(token);
+            var settings = await _repository.GetAllAsync(token).ConfigureAwait(false);
             return settings.Select(s => new GlobalSettingDto
             {
                 Key = s.Key,

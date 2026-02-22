@@ -6,11 +6,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Offers.Commands
 {
@@ -82,7 +77,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
@@ -106,7 +101,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync((Offer?)null);
 
             // Act
-            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>();
@@ -145,14 +140,14 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage("Only pending offers can be approved."); // The actual exception in Offer.cs hardcodes "approved" for Reject too for some reason - tested against actual Domain logic
             _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
-        
+
         [Fact]
         public async Task RejectOfferAsync_ShouldThrowArgumentException_WhenReasonIsEmpty()
         {
@@ -182,11 +177,11 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command);
+            var act = async () => await _handler.RejectOfferAsync(CancellationToken.None, command).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ArgumentException>()
-                .WithMessage("Rejection reason is required."); 
+                .WithMessage("Rejection reason is required.");
             _repositoryMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
     }

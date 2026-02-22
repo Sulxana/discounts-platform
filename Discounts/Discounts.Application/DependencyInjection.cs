@@ -3,8 +3,15 @@ using Discounts.Application.Auth.Commands.RefreshTokens;
 using Discounts.Application.Auth.Commands.Register;
 using Discounts.Application.Auth.Commands.Revoke;
 using Discounts.Application.Auth.Queries.WhoAmI;
-using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
+using Discounts.Application.Categories.Commands.CreateCategory;
+using Discounts.Application.Categories.Commands.DeleteCategory;
+using Discounts.Application.Categories.Commands.UpdateCategory;
+using Discounts.Application.Categories.Queries.GetAllCategories;
+using Discounts.Application.Coupons.Commands.DirectPurchase;
 using Discounts.Application.Coupons.Commands.RedeemCoupon;
+using Discounts.Application.Coupons.Queries.GetMyCoupons;
+using Discounts.Application.Coupons.Queries.GetUserCoupons;
+using Discounts.Application.MerchantApplications.Commands.ApplyMerchant;
 using Discounts.Application.MerchantApplications.Commands.ApproveMerchantApplication;
 using Discounts.Application.MerchantApplications.Commands.RejectMerchantApplication;
 using Discounts.Application.MerchantApplications.Queries.GetAllMerchantApplications;
@@ -13,6 +20,7 @@ using Discounts.Application.Offers.Commands.CreateOffer;
 using Discounts.Application.Offers.Commands.DeleteOffer;
 using Discounts.Application.Offers.Commands.RejectOffer;
 using Discounts.Application.Offers.Commands.UpdateOffer;
+using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Offers.Queries.GetActiveOffers;
 using Discounts.Application.Offers.Queries.GetAllOffers;
 using Discounts.Application.Offers.Queries.GetDeletedOffers;
@@ -20,28 +28,19 @@ using Discounts.Application.Offers.Queries.GetMerchantDashboardStats;
 using Discounts.Application.Offers.Queries.GetMerchantOffers;
 using Discounts.Application.Offers.Queries.GetMerchantSalesHistory;
 using Discounts.Application.Offers.Queries.GetOfferById;
+using Discounts.Application.Offers.Services;
 using Discounts.Application.Reservations.Commands.CancelReservation;
 using Discounts.Application.Reservations.Commands.CreateReservation;
+using Discounts.Application.Reservations.Commands.PurchaseReservation;
 using Discounts.Application.Reservations.Queries.GetUserReservations;
+using Discounts.Application.Reservations.Services;
 using Discounts.Application.Settings.Commands.UpdateSetting;
 using Discounts.Application.Settings.Queries.GetAllSettings;
-using Discounts.Application.Reservations.Services;
-using Discounts.Application.Offers.Services;
-using Discounts.Application.Offers.Interfaces;
-using Discounts.Application.Reservations.Interfaces;
-using Discounts.Application.Reservations.Commands.PurchaseReservation;
-using Discounts.Application.Coupons.Commands.DirectPurchase;
-using Discounts.Application.Coupons.Queries.GetMyCoupons;
-using Discounts.Application.Coupons.Queries.GetUserCoupons;
+using Discounts.Application.Users.Commands.BlockUser;
+using Discounts.Application.Users.Commands.UnblockUser;
+using Discounts.Application.Users.Commands.UpdateUser;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Discounts.Application.Users.Commands.BlockUser;
-using Discounts.Application.Users.Commands.UpdateUser;
-using Discounts.Application.Users.Commands.UnblockUser;
-using Discounts.Application.Categories.Commands.CreateCategory;
-using Discounts.Application.Categories.Commands.UpdateCategory;
-using Discounts.Application.Categories.Commands.DeleteCategory;
-using Discounts.Application.Categories.Queries.GetAllCategories;
 
 namespace Discounts.Application
 {
@@ -86,7 +85,7 @@ namespace Discounts.Application
 
             services.AddScoped<IReservationCleanupService, ReservationCleanupService>();
             services.AddScoped<IOfferCleanupService, OfferCleanupService>();
-            
+
             services.AddScoped<PurchaseReservationHandler>();
             services.AddScoped<DirectPurchaseHandler>();
             services.AddScoped<GetMyCouponsHandler>();

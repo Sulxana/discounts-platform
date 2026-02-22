@@ -18,7 +18,7 @@ namespace Discounts.Mvc.Controllers
 
         public async Task<IActionResult> Index(CancellationToken token)
         {
-            var settings = await _mediator.Send(new GetAllSettingsQuery(), token);
+            var settings = await _mediator.Send(new GetAllSettingsQuery(), token).ConfigureAwait(false);
             return View(settings);
         }
 
@@ -34,7 +34,7 @@ namespace Discounts.Mvc.Controllers
 
             try
             {
-                await _mediator.Send(new UpdateSettingCommand(key, value), token);
+                await _mediator.Send(new UpdateSettingCommand(key, value), token).ConfigureAwait(false);
                 TempData["SuccessMessage"] = $"Setting '{key}' updated successfully.";
             }
             catch (Exception ex)

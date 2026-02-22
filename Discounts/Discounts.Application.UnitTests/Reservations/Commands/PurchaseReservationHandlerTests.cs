@@ -1,19 +1,13 @@
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Coupons.Interfaces;
+using Discounts.Application.Offers.Interfaces;
 using Discounts.Application.Reservations.Commands.PurchaseReservation;
 using Discounts.Application.Reservations.Interfaces;
 using Discounts.Domain.Coupons;
 using Discounts.Domain.Reservations;
-using Discounts.Application.Offers.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Reservations.Commands
 {
@@ -42,7 +36,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 _offerRepositoryMock.Object);
         }
 
-        private Reservation CreateReservation(Guid reservationId, int quantity, DateTime expiresAt)
+        private static Reservation CreateReservation(Guid reservationId, int quantity, DateTime expiresAt)
         {
             var reservation = new Reservation(Guid.NewGuid(), Guid.NewGuid(), quantity, expiresAt);
             var idProp = typeof(Reservation).GetProperty("Id");
@@ -56,7 +50,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             // Arrange
             var reservationId = Guid.NewGuid();
             var command = new PurchaseReservationCommand { ReservationId = reservationId };
-            var reservation = CreateReservation(reservationId, 3, DateTime.UtcNow.AddMinutes(30)); 
+            var reservation = CreateReservation(reservationId, 3, DateTime.UtcNow.AddMinutes(30));
 
             _reservationRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<CancellationToken>(), reservationId))
                 .ReturnsAsync(reservation);
@@ -72,7 +66,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             // Assert
             result.Should().HaveCount(3);
             reservation.IsCompleted().Should().BeTrue();
-            
+
             _couponRepositoryMock.Verify(c => c.AddRangeAsync(It.IsAny<CancellationToken>(), It.Is<IEnumerable<Coupon>>(list => list.Count() == 3)), Times.Once);
             _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -88,12 +82,12 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync((Reservation?)null);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<KeyNotFoundException>()
                 .WithMessage($"Reservation {reservationId} not found.");
-            
+
             _couponRepositoryMock.Verify(c => c.AddRangeAsync(It.IsAny<CancellationToken>(), It.IsAny<IEnumerable<Coupon>>()), Times.Never);
             _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -104,7 +98,7 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             // Arrange
             var reservationId = Guid.NewGuid();
             var command = new PurchaseReservationCommand { ReservationId = reservationId };
-            var reservation = CreateReservation(reservationId, 3, DateTime.UtcNow.AddMinutes(30)); 
+            var reservation = CreateReservation(reservationId, 3, DateTime.UtcNow.AddMinutes(30));
 
             reservation.Cancel(); // Status becomes Cancelled
 
@@ -112,12 +106,12 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync(reservation);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage($"Reservation {reservationId} is not active. Status: Cancelled");
-            
+
             _couponRepositoryMock.Verify(c => c.AddRangeAsync(It.IsAny<CancellationToken>(), It.IsAny<IEnumerable<Coupon>>()), Times.Never);
         }
 
@@ -127,10 +121,10 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
             // Arrange
             var reservationId = Guid.NewGuid();
             var command = new PurchaseReservationCommand { ReservationId = reservationId };
-            
+
             // Create valid reservation first to pass constructor validation
-            var reservation = CreateReservation(reservationId, 3, DateTime.UtcNow.AddMinutes(30)); 
-            
+            var reservation = CreateReservation(reservationId, 3, DateTime.UtcNow.AddMinutes(30));
+
             // Backdate ExpiresAt so it simulates an expired active reservation
             var expiresAtProp = typeof(Reservation).GetProperty("ExpiresAt");
             expiresAtProp?.SetValue(reservation, DateTime.UtcNow.AddMinutes(-30));
@@ -139,12 +133,12 @@ namespace Discounts.Application.UnitTests.Reservations.Commands
                 .ReturnsAsync(reservation);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage($"Reservation {reservationId} has expired.");
-            
+
             _couponRepositoryMock.Verify(c => c.AddRangeAsync(It.IsAny<CancellationToken>(), It.IsAny<IEnumerable<Coupon>>()), Times.Never);
         }
     }

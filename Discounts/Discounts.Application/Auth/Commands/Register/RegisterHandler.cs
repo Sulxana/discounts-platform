@@ -27,17 +27,17 @@ namespace Discounts.Application.Auth.Commands.Register
 
         public async Task<AuthResponse> Register(RegisterCommand command, CancellationToken token)
         {
-            await _validator.ValidateAndThrowAsync(command, token);
+            await _validator.ValidateAndThrowAsync(command, token).ConfigureAwait(false);
 
-            var (isSuccess, error, userId) = await _identityService.CreateUserAsync(command.Email, command.Password, command.FirstName, command.LastName, Roles.Customer);
-            
+            var (isSuccess, error, userId) = await _identityService.CreateUserAsync(command.Email, command.Password, command.FirstName, command.LastName, Roles.Customer).ConfigureAwait(false);
+
             if (!isSuccess)
             {
-                 throw new InvalidOperationException(error);
+                throw new InvalidOperationException(error);
             }
 
-            var roles = await _identityService.GetUserRolesAsync(userId); 
-            
+            var roles = await _identityService.GetUserRolesAsync(userId).ConfigureAwait(false);
+
             var (accessToken, jwtId, expiresAt) = _jwtGenerator.GenerateAccessToken(userId, command.Email, roles);
 
             var refreshRaw = _jwtGenerator.GenerateRefreshToken();
@@ -47,8 +47,8 @@ namespace Discounts.Application.Auth.Commands.Register
 
             var refresh = new RefreshToken(userId, refreshHash, jwtId, refreshExpiresAt);
 
-            await _authRepository.AddRefreshTokenAsync(token, refresh);
-            await _authRepository.SaveChangesAsync(token);
+            await _authRepository.AddRefreshTokenAsync(token, refresh).ConfigureAwait(false);
+            await _authRepository.SaveChangesAsync(token).ConfigureAwait(false);
 
             return new AuthResponse
             {

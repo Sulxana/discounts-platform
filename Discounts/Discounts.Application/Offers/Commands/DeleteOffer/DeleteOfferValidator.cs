@@ -2,7 +2,7 @@
 
 namespace Discounts.Application.Offers.Commands.DeleteOffer
 {
-    public class DeleteOfferValidator:AbstractValidator<DeleteOfferCommand>
+    public class DeleteOfferValidator : AbstractValidator<DeleteOfferCommand>
     {
         public DeleteOfferValidator()
         {

@@ -1,6 +1,5 @@
 using Discounts.Application.Common.Interfaces;
 using Discounts.Application.Offers.Interfaces;
-using Discounts.Application.Offers.Queries;
 using Mapster;
 
 namespace Discounts.Application.Offers.Queries.GetMerchantOffers
@@ -24,7 +23,7 @@ namespace Discounts.Application.Offers.Queries.GetMerchantOffers
                 throw new UnauthorizedAccessException("You must be logged in as a merchant.");
             }
 
-            var offers = await _repository.GetMerchantOffersAsync(token, merchantId.Value, query.Page, query.PageSize);
+            var offers = await _repository.GetMerchantOffersAsync(token, merchantId.Value, query.Page, query.PageSize).ConfigureAwait(false);
             return offers.Adapt<List<OfferListItemDto>>();
         }
     }

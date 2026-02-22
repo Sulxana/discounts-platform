@@ -20,7 +20,7 @@ namespace Discounts.Domain.Coupons
         public Guid UserId { get; private set; }
         public Guid OfferId { get; private set; }
         public Guid? SourceReservationId { get; private set; } // Link to original reservation
-        public string Code { get; private set; } // Unique QR/Barcode string
+        public string Code { get; private set; } = string.Empty; // Unique QR/Barcode string
         public DateTime PurchasedAt { get; private set; }
         public DateTime ExpiresAt { get; private set; }
         public bool IsRedeemed { get; private set; }

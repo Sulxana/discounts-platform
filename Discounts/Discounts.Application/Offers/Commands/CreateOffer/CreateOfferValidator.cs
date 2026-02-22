@@ -10,7 +10,6 @@ namespace Discounts.Application.Offers.Commands.CreateOffer
                 .NotEmpty().WithMessage("Title is required.")
                 .Length(3, 50).WithMessage("Title must be between 3 and 50 characters.");
 
-
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required.")
                 .MinimumLength(10);

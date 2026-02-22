@@ -39,7 +39,7 @@ namespace Discounts.Api.Controllers
                                                                             [FromQuery] int page = 1,
                                                                             [FromQuery] int pageSize = 20)
         {
-            var result = await _mediator.Send(new GetActiveOffersQuery(category, null, null, null, status, page, pageSize), token);
+            var result = await _mediator.Send(new GetActiveOffersQuery(category, null, null, null, status, page, pageSize), token).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -54,7 +54,7 @@ namespace Discounts.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<OfferDetailsDto>> GetOfferById(CancellationToken token, Guid id)
         {
-            var result = await _getHandler.GetOfferById(token, new GetOfferByIdQuery(id));
+            var result = await _getHandler.GetOfferById(token, new GetOfferByIdQuery(id)).ConfigureAwait(false);
             if (result == null) return NotFound();
 
             return Ok(result);

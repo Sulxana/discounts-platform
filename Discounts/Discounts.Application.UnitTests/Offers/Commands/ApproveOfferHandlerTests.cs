@@ -6,11 +6,6 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Discounts.Application.UnitTests.Offers.Commands
 {
@@ -80,7 +75,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ThrowsAsync(new ValidationException(validationFailures));
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<ValidationException>();
@@ -104,7 +99,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync((Offer?)null);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>();
@@ -143,7 +138,7 @@ namespace Discounts.Application.UnitTests.Offers.Commands
                 .ReturnsAsync(offer);
 
             // Act
-            var act = async () => await _handler.Handle(command, CancellationToken.None);
+            var act = async () => await _handler.Handle(command, CancellationToken.None).ConfigureAwait(false);
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()

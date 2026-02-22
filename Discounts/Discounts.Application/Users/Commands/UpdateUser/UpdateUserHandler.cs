@@ -1,4 +1,3 @@
-using Discounts.Application.Common.Exceptions;
 using Discounts.Application.Common.Interfaces;
 using MediatR;
 
@@ -14,12 +13,12 @@ namespace Discounts.Application.Users.Commands.UpdateUser
         }
 
         public async Task Handle(UpdateUserCommand request, CancellationToken token)
-        {  
-            var result = await _identityService.UpdateUserAsync(request.UserId, request.Email, request.FirstName, request.LastName);
-             if (!result)
-             {
-                 throw new Exception("Failed to update user");
-             }
+        {
+            var result = await _identityService.UpdateUserAsync(request.UserId, request.Email, request.FirstName, request.LastName).ConfigureAwait(false);
+            if (!result)
+            {
+                throw new Exception("Failed to update user");
+            }
         }
     }
 }
